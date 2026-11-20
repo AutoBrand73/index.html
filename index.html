@@ -1,134 +1,172 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoBrand73 — Магазин автозапчастей</title>
-    <script>
-        var SUPABASE_URL = 'https://fnlupijomjpopqtnyodv.supabase.co/rest/v1/';
-        var SUPABASE_KEY = 'sb_publishable_l1pVfFfga-1Tu9Yr1ms2Lw_PrY1CoZw';
-    </script>
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8fafc; color: #1e293b; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.5; }
-        .hidden { display: none !important; }
-        .flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; } .flex-1 { flex: 1; }
-        .items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
-        .gap-1\.5 { gap: 6px; } .gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .gap-4 { gap: 16px; }
-        .max-w-6xl { max-width: 1152px; margin: 0 auto; width: 100%; }
-        .max-w-5xl { max-width: 1024px; margin: 0 auto; width: 100%; }
-        .max-w-4xl { max-width: 896px; margin: 0 auto; width: 100%; }
-        .max-w-2xl { max-width: 672px; margin: 0 auto; width: 100%; }
-        .max-w-md { max-width: 448px; width: 100%; }
-        .w-full { width: 100%; } .h-full { height: 100%; } .w-20 { width: 80px; } .w-48 { width: 192px; }
-        .p-3 { padding: 12px; } .p-4 { padding: 16px; } .p-5 { padding: 20px; } .p-6 { padding: 24px; }
-        .px-1\.5 { padding-left: 6px; padding-right: 6px; } .px-2 { padding-left: 8px; padding-right: 8px; }
-        .px-2\.5 { padding-left: 10px; padding-right: 10px; } .px-3 { padding-left: 12px; padding-right: 12px; }
-        .px-3\.5 { padding-left: 14px; padding-right: 14px; } .px-4 { padding-left: 16px; padding-right: 16px; }
-        .px-8 { padding-left: 32px; padding-right: 32px; }
-        .py-0\.5 { padding-top: 2px; padding-bottom: 2px; } .py-1 { padding-top: 4px; padding-bottom: 4px; }
-        .py-2 { padding-top: 8px; padding-bottom: 8px; } .py-2\.5 { padding-top: 10px; padding-bottom: 10px; }
-        .py-3 { padding-top: 12px; padding-bottom: 12px; } .py-3\.5 { padding-top: 14px; padding-bottom: 14px; }
-        .py-4 { padding-top: 16px; padding-bottom: 16px; } .py-8 { padding-top: 32px; padding-bottom: 32px; }
-        .py-10 { padding-top: 40px; padding-bottom: 40px; }
-        .pb-3 { padding-bottom: 12px; } .pb-4 { padding-bottom: 16px; } .pt-4 { padding-top: 16px; }
-        .mt-1 { margin-top: 4px; } .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; } .mt-4 { margin-top: 16px; }
-        .mb-1 { margin-bottom: 4px; } .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 12px; }
-        .mb-4 { margin-bottom: 16px; } .mb-6 { margin-bottom: 24px; }
-        .space-y-2 > * + * { margin-top: 8px; } .space-y-3 > * + * { margin-top: 12px; }
-        .space-y-4 > * + * { margin-top: 16px; } .space-y-6 > * + * { margin-top: 24px; }
-        .grid { display: grid; gap: 12px; }
-        @media (min-width: 640px) {
-            .sm\:flex-row { flex-direction: row; }
-            .sm\:text-3xl { font-size: 30px; }
-            .sm\:grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
-        }
-        .bg-slate-50 { background: #f8fafc; } .bg-slate-100 { background: #f1f5f9; }
-        .bg-slate-900 { background: #0f172a; } .bg-white { background: #ffffff; }
-        .bg-blue-50 { background: #eff6ff; } .bg-blue-600 { background: #2563eb; } .bg-blue-800 { background: #1e40af; }
-        .bg-amber-100 { background: #fef3c7; } .bg-amber-500 { background: #f59e0b; }
-        .bg-green-600 { background: #16a34a; } .bg-red-50 { background: #fef2f2; }
-        .bg-black\/50 { background: rgba(0,0,0,0.55); }
-        .text-white { color: #ffffff; } .text-slate-300 { color: #cbd5e1; } .text-slate-500 { color: #64748b; }
-        .text-slate-700 { color: #334155; } .text-slate-800 { color: #1e293b; } .text-slate-900 { color: #0f172a; }
-        .text-blue-100 { color: #dbeafe; } .text-blue-200 { color: #bfdbfe; } .text-blue-400 { color: #60a5fa; }
-        .text-blue-600 { color: #2563eb; } .text-blue-700 { color: #1d4ed8; }
-        .text-amber-300 { color: #fcd34d; } .text-amber-900 { color: #78350f; }
-        .text-red-500 { color: #ef4444; } .text-red-600 { color: #dc2626; } .text-red-700 { color: #b91c1c; }
-        .text-\[11px\] { font-size: 11px; } .text-xs { font-size: 12px; } .text-sm { font-size: 14px; }
-        .text-base { font-size: 16px; } .text-lg { font-size: 18px; } .text-xl { font-size: 20px; } .text-2xl { font-size: 24px; }
-        .font-medium { font-weight: 500; } .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; }
-        .font-mono { font-family: monospace; } .uppercase { text-transform: uppercase; } .underline { text-decoration: underline; }
-        .text-center { text-align: center; } .leading-none { line-height: 1; }
-        .rounded { border-radius: 4px; } .rounded-lg { border-radius: 8px; } .rounded-xl { border-radius: 12px; }
-        .rounded-2xl { border-radius: 16px; } .rounded-full { border-radius: 9999px; }
-        .border { border: 1px solid #e2e8f0; } .border-b { border-bottom: 1px solid #e2e8f0; }
-        .border-t { border-top: 1px solid #e2e8f0; } .border-slate-300 { border-color: #cbd5e1; }
-        .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .sticky { position: sticky; } .top-0 { top: 0; } .fixed { position: fixed; } .inset-0 { inset: 0; } .z-30 { z-index: 30; } .z-50 { z-index: 50; }
-        .overflow-y-auto { overflow-y: auto; }
-        a { text-decoration: none; color: inherit; }
-        button { cursor: pointer; border: none; background: transparent; font-family: inherit; }
-        button.border { border: 1px solid #cbd5e1; }
-        button:hover { opacity: 0.92; }
-        input, textarea, select { font-family: inherit; border: 1px solid #cbd5e1; outline: none; background: #fff; }
-        input:focus, textarea:focus, select:focus { border-color: #2563eb; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoBrand73 — Магазин автозапчастей</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+<body class="bg-slate-100 min-h-screen">
 
-    <div class="bg-slate-900 text-slate-300 text-xs py-2">
-        <div class="max-w-6xl mx-auto px-4 flex flex-wrap justify-between items-center gap-2">
-            <div>📍 г. Димитровград • 🕒 Ежедневно 09:00 – 17:00</div>
-            <div class="flex items-center gap-4">
-                <span class="text-white font-semibold">+7 (927) 834-39-93</span>
-                <button type="button" onclick="openVinModal()" class="text-blue-400 underline">Запрос по VIN</button>
-            </div>
-        </div>
+<!-- верхняя полоса с контактами -->
+<div class="bg-slate-800 text-slate-200 text-sm">
+  <div class="max-w-6xl mx-auto px-4 py-2 flex flex-wrap justify-between items-center gap-2">
+    <span>📍 г. Димитровград • 🕒 Ежедневно 09:00 – 17:00</span>
+    <div class="flex items-center gap-4">
+      <a href="tel:+79278343993" class="font-bold hover:text-white">+7 (927) 834-39-93</a>
+      <button type="button" onclick="openVinModal()" class="bg-blue-600 text-white px-3 py-1 rounded-lg font-semibold">Запрос по VIN</button>
     </div>
+  </div>
+</div>
 
-    <header class="bg-white shadow-sm sticky top-0 z-30">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-            <a href="#" onclick="showPage('shop'); return false;" class="flex items-center gap-2">
-                <div class="bg-blue-600 text-white font-bold text-xl px-2.5 py-1 rounded-lg">AB73</div>
-                <div>
-                    <div class="font-bold text-lg leading-none text-slate-900">Auto<span class="text-blue-600">Brand73</span></div>
-                    <div class="text-[11px] text-slate-500">Запчасти для иномарок</div>
-                </div>
-            </a>
+<!-- HEADER SECTION -->
+<header class="bg-white border-b sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="showPage('shop')">
+      <div class="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black">AB73</div>
+      <div>
+        <div class="font-black text-lg leading-tight">AutoBrand73</div>
+        <div class="text-xs text-slate-500">Запчасти для иномарок</div>
+      </div>
+    </div>
+    <nav class="flex flex-wrap items-center gap-2">
+      <button type="button" onclick="showPage('shop')" class="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100">Каталог</button>
+      <button type="button" id="nav-cabinet" onclick="showPage('cabinet')" class="hidden px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100">Мои заказы</button>
+      <button type="button" id="nav-admin" onclick="showPage('admin')" class="hidden px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100">⚙️ Админ-панель</button>
+      <button type="button" id="nav-auth" onclick="openAuthModal()" class="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white">Войти</button>
+      <button type="button" id="nav-logout" onclick="logoutUser()" class="hidden px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100">Выйти</button>
+      <button type="button" onclick="toggleCart()" class="relative px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100">🛒<span id="cart-badge">0</span></button>
+    </nav>
+  </div>
+</header>
+<!-- END HEADER SECTION -->
 
-            <div class="flex items-center gap-2">
-                <button type="button" onclick="showPage('shop')" class="px-3 py-2 rounded-lg text-sm font-medium bg-slate-100">Каталог</button>
-                <button type="button" id="nav-cabinet" onclick="showPage('cabinet')" class="hidden px-3 py-2 rounded-lg text-sm font-medium bg-blue-50 text-blue-700">Мои заказы</button>
-                <button type="button" id="nav-admin" onclick="showPage('admin')" class="hidden px-3 py-2 rounded-lg text-sm font-bold bg-amber-100 text-amber-900">⚙️ Админ-панель</button>
-                <button type="button" id="nav-auth" onclick="openAuthModal()" class="px-3 py-2 rounded-lg text-sm font-medium border border-slate-300">Войти</button>
-                <button type="button" id="nav-logout" onclick="logoutUser()" class="hidden px-3 py-2 rounded-lg text-sm text-slate-500">Выйти</button>
-                <button type="button" onclick="toggleCart()" class="flex items-center gap-1.5 bg-slate-900 text-white px-3.5 py-2 rounded-lg text-sm font-medium">
-                    <span>🛒</span>
-                    <span id="cart-badge" class="bg-amber-500 text-slate-900 text-xs font-bold px-1.5 py-0.5 rounded-full">0</span>
-                </button>
-            </div>
-        </div>
-    </header>
+<main class="max-w-6xl mx-auto px-4 py-8">
 
-    <div id="page-shop" class="flex-1">
-        <section class="bg-blue-800 text-white py-10 px-4">
-            <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-2xl sm:text-3xl font-bold mb-2">Поиск автозапчастей по артикулу</h1>
-                <p class="text-blue-100 text-sm mb-6">Актуальные цены и сроки со складов поставщиков</p>
-                <form onsubmit="handleSearch(event)" class="flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto">
-                    <input type="text" id="search-input" placeholder="Введите артикул (например: 0986424797)..." class="flex-1 px-4 py-3.5 rounded-lg text-slate-900 text-base" required>
-                    <button type="submit" class="bg-amber-500 text-slate-900 font-bold px-8 py-3.5 rounded-lg">Найти</button>
-                </form>
-                <div class="mt-3 text-xs text-blue-200">
-                    Не знаете артикул? <button type="button" onclick="openVinModal()" class="text-amber-300 underline font-semibold">Отправьте запрос по VIN-коду</button>
-                </div>
-            </div>
-        </section>
+  <!-- страница магазина -->
+  <div id="page-shop">
+    <!-- FORM SECTION -->
+    <section class="bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-2xl p-8 mb-8">
+      <h1 class="text-2xl md:text-3xl font-black mb-2">Поиск автозапчастей по артикулу</h1>
+      <p class="text-blue-100 text-sm">Актуальные цены и сроки со складов поставщиков</p>
+      <form onsubmit="handleSearch(event)" class="mt-6 flex flex-col sm:flex-row gap-3 max-w-xl">
+        <input id="search-input" placeholder="Артикул, например P85023" class="flex-1 rounded-xl px-4 py-3 text-slate-900">
+        <button type="submit" class="bg-white text-blue-700 font-bold px-6 py-3 rounded-xl">Найти</button>
+      </form>
+    </section>
+    <!-- END FORM SECTION -->
 
-        <main class="max-w-6xl mx-auto px-4 py-8">
-            <div id="loader" class="hidden py-10 text-center font-medium text-blue-700">⏳ Опрашиваем склады поставщиков...</div>
-    <script src="app.js"></script>
+    <section class="mb-8">
+      <p class="text-slate-600 mb-2">Не знаете артикул?</p>
+      <button type="button" onclick="openVinModal()" class="bg-white border px-5 py-2.5 rounded-xl font-semibold hover:bg-slate-50">Отправьте запрос по VIN-коду</button>
+    </section>
+
+    <!-- MAIN SECTION -->
+    <section>
+      <div id="loader" class="hidden bg-white p-6 rounded-xl border text-center">⏳ Опрашиваем склады поставщиков...</div>
+      <div id="offers-list" class="space-y-3"></div>
+    </section>
+    <!-- END MAIN SECTION -->
+  </div>
+
+  <!-- личный кабинет -->
+  <div id="page-cabinet" class="hidden">
+    <h1 class="text-2xl font-black mb-4">Личный кабинет</h1>
+    <div id="cabinet-user-info" class="bg-white p-4 rounded-xl border mb-6"></div>
+    <h2 class="font-bold mb-3">Мои заказы</h2>
+    <div id="user-orders-list" class="space-y-3"></div>
+  </div>
+
+  <!-- админ-панель -->
+  <div id="page-admin" class="hidden">
+    <h1 class="text-2xl font-black mb-4">Админ-панель</h1>
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button type="button" id="tab-btn-orders" onclick="switchAdminTab('orders')" class="px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">Заказы</button>
+      <button type="button" id="tab-btn-suppliers" onclick="switchAdminTab('suppliers')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Поставщики</button>
+      <button type="button" id="tab-btn-markups" onclick="switchAdminTab('markups')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Наценки</button>
+    </div>
+    <div id="admin-tab-orders" class="space-y-3"></div>
+    <div id="admin-tab-suppliers" class="hidden space-y-3">
+      <div id="admin-suppliers-list" class="space-y-3"></div>
+    </div>
+    <div id="admin-tab-markups" class="hidden space-y-3">
+      <div id="admin-markups-list" class="space-y-3"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="mt-12 bg-white border-t">
+  <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-slate-500 flex flex-wrap justify-between gap-4">
+    <div>
+      <div class="font-black text-slate-800">AutoBrand73</div>
+      <div>Запчасти для иномарок • Димитровград</div>
+    </div>
+    <div>
+      <div>Ежедневно 09:00 – 17:00</div>
+      <a href="tel:+79278343993" class="font-bold text-blue-700">+7 (927) 834-39-93</a>
+    </div>
+  </div>
+</footer>
+
+<!-- корзина -->
+<div id="cart-drawer" class="hidden fixed inset-0 z-50 bg-black/40">
+  <div class="bg-white w-full md:w-96 h-full ml-auto p-5 flex flex-col">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-black">Корзина</h2>
+      <button type="button" onclick="toggleCart()" class="text-2xl px-2">✕</button>
+    </div>
+    <div id="cart-items" class="flex-1 space-y-2 overflow-y-auto"></div>
+    <div class="border-t pt-4 mt-4">
+      <div class="flex justify-between font-bold mb-3"><span>Итого:</span><span id="cart-total">0 ₽</span></div>
+      <form id="checkout-form" onsubmit="submitCartOrder(event)" class="hidden space-y-2">
+        <input id="ord-name" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2">
+        <input id="ord-phone" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2">
+        <input id="ord-vin" placeholder="VIN (необязательно)" class="w-full border rounded-lg px-3 py-2 uppercase">
+        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg">Оформить заказ</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- модальное окно авторизации -->
+<div id="auth-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40 p-4">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+    <div class="flex justify-between items-center mb-4">
+      <h2 id="auth-title" class="text-lg font-black">Вход в личный кабинет</h2>
+      <button type="button" onclick="closeAuthModal()" class="text-2xl px-2">✕</button>
+    </div>
+    <form onsubmit="handleAuth(event)" class="space-y-3">
+      <div id="reg-fields" class="hidden space-y-3">
+        <input id="auth-name" placeholder="Имя" class="w-full border rounded-lg px-3 py-2">
+        <input id="auth-phone" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2">
+        <input id="auth-vin" placeholder="VIN автомобиля (необязательно)" class="w-full border rounded-lg px-3 py-2 uppercase">
+      </div>
+      <input id="auth-email" type="email" required placeholder="Email" class="w-full border rounded-lg px-3 py-2">
+      <input id="auth-pass" type="password" required minlength="6" placeholder="Пароль" class="w-full border rounded-lg px-3 py-2">
+      <button id="auth-submit-btn" type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg">Войти</button>
+    </form>
+    <button type="button" id="auth-switch-btn" onclick="toggleAuthMode()" class="w-full mt-3 text-sm text-blue-600">Нет аккаунта? Зарегистрироваться</button>
+  </div>
+</div>
+
+<!-- модальное окно запроса по VIN -->
+<div id="vin-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40 p-4">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-black">Запрос по VIN-коду</h2>
+      <button type="button" onclick="closeVinModal()" class="text-2xl px-2">✕</button>
+    </div>
+    <form onsubmit="submitVinOrder(event)" class="space-y-3">
+      <input id="vin-name" required placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2">
+      <input id="vin-phone" required placeholder="Телефон" class="w-full border rounded-lg px-3 py-2">
+      <input id="vin-code" required placeholder="VIN-код автомобиля" class="w-full border rounded-lg px-3 py-2 uppercase">
+      <textarea id="vin-parts" required placeholder="Какие запчасти нужны?" rows="3" class="w-full border rounded-lg px-3 py-2"></textarea>
+      <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg">Отправить запрос</button>
+    </form>
+  </div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
-  
