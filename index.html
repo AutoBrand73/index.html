@@ -5,194 +5,179 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AutoBrand73 — Магазин автозапчастей</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>
-    .ai-msg-user { background: #2563eb; color: #fff; border-radius: 1rem 1rem 0.25rem 1rem; padding: 0.75rem 1rem; max-width: 85%; margin-left: auto; }
-    .ai-msg-bot  { background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem 1rem 1rem 0.25rem; padding: 0.75rem 1rem; max-width: 85%; }
-    .ai-btn { display: inline-block; background: #2563eb; color: #fff; font-size: 0.8rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.6rem; margin: 0.2rem 0.3rem 0.2rem 0; cursor: pointer; }
-    .ai-btn-ghost { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-    .ai-btn:hover { opacity: 0.85; }
-</style>
 </head>
-<body class="bg-slate-100 min-h-screen flex flex-col">
+<body class="bg-slate-100 min-h-screen">
 
-<!-- ШАПКА -->
-<header class="bg-white border-b">
-    <div class="max-w-6xl mx-auto px-4 py-2 flex flex-wrap justify-between items-center gap-2 text-sm text-slate-600">
-        <div>📍 г. Димитровград • 🕒 Ежедневно 09:00 – 17:00</div>
-        <div class="flex items-center gap-3">
-            <a href="tel:+79278343993" class="font-bold text-blue-700">+7 (927) 834-39-93</a>
-            <button type="button" onclick="openVinModal()" class="bg-amber-500 text-white px-3 py-1.5 rounded-lg font-semibold">Запрос по VIN</button>
-        </div>
+<!-- Верхняя панель -->
+<div class="bg-slate-900 text-white text-sm">
+  <div class="max-w-6xl mx-auto px-4 py-2 flex flex-wrap gap-3 justify-between items-center">
+    <div>📍 г. Димитровград • 🕒 Ежедневно 09:00 – 17:00</div>
+    <div class="flex items-center gap-4">
+      <a href="tel:+79278343993" class="font-bold">+7 (927) 834-39-93</a>
+      <button onclick="openVinModal()" class="bg-blue-600 px-3 py-1.5 rounded-lg font-semibold">Запрос по VIN</button>
     </div>
-    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
-        <div class="w-11 h-11 rounded-xl bg-blue-700 text-white font-black flex items-center justify-center">AB73</div>
-        <div class="mr-auto">
-            <div class="text-xl font-black text-slate-800">AutoBrand73</div>
-            <div class="text-xs text-slate-500">Запчасти для иномарок</div>
-        </div>
-        <button type="button" onclick="showPage('catalog')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border hover:border-blue-500">Каталог</button>
-        <button type="button" onclick="showPage('cabinet')" id="nav-cabinet" class="hidden px-4 py-2 rounded-lg text-sm font-bold bg-white border hover:border-blue-500">Мои заказы</button>
-        <button type="button" onclick="showPage('admin')" id="nav-admin" class="hidden px-4 py-2 rounded-lg text-sm font-bold bg-white border hover:border-blue-500">⚙️ Админ-панель</button>
-        <button type="button" onclick="openAuthModal()" id="nav-auth" class="px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">Войти</button>
-        <button type="button" onclick="logoutUser()" id="nav-logout" class="hidden px-4 py-2 rounded-lg text-sm font-bold bg-white border">Выйти</button>
-        <button type="button" onclick="toggleCart()" class="px-4 py-2 rounded-lg text-sm font-bold bg-slate-800 text-white">🛒 <span id="cart-badge">0</span></button>
+  </div>
+</div>
+
+<!-- Шапка -->
+<header class="bg-white border-b sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-4 justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black">AB</div>
+      <div>
+        <div class="font-black text-xl leading-tight">AutoBrand73</div>
+        <div class="text-xs text-slate-500">Запчасти для иномарок</div>
+      </div>
     </div>
+    <nav class="flex flex-wrap items-center gap-2">
+      <button onclick="showPage('catalog')" class="px-4 py-2 rounded-lg bg-white border font-semibold text-sm">Каталог</button>
+      <button id="nav-cabinet" onclick="showPage('cabinet')" class="hidden px-4 py-2 rounded-lg bg-white border font-semibold text-sm">Мои заказы</button>
+      <button id="nav-admin" onclick="showPage('admin')" class="hidden px-4 py-2 rounded-lg bg-slate-800 text-white font-semibold text-sm">⚙️ Админ-панель</button>
+      <button id="nav-auth" onclick="openAuthModal()" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm">Войти</button>
+      <button id="nav-logout" onclick="logoutUser()" class="hidden px-4 py-2 rounded-lg bg-white border font-semibold text-sm">Выйти</button>
+      <button onclick="toggleCart()" class="relative px-4 py-2 rounded-lg bg-slate-900 text-white font-semibold text-sm">🛒 <span id="cart-badge">0</span></button>
+    </nav>
+  </div>
 </header>
 
-<main class="max-w-6xl mx-auto w-full px-4 py-6 flex-1">
+<!-- ГЛАВНАЯ: ПОИСК -->
+<section id="page-shop" class="max-w-6xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-black mb-1">Поиск автозапчастей по артикулу</h1>
+  <p class="text-slate-500 mb-6">Актуальные цены и сроки со складов поставщиков</p>
+  <form onsubmit="return handleSearch(event)" class="flex flex-wrap gap-2 mb-4">
+    <input id="search-input" placeholder="Артикул или название, например: фильтр масляный Rio" class="flex-1 border rounded-lg px-4 py-3 min-w-[220px]">
+    <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold">Найти</button>
+  </form>
+  <p class="text-sm text-slate-500 mb-6">Не знаете артикул? <button onclick="openVinModal()" class="text-blue-600 font-semibold underline">Отправьте запрос по VIN-коду</button></p>
+  <div id="loader" class="hidden bg-white p-6 rounded-xl border text-center">⏳ Ищем запчасть...</div>
+  <div id="offers-list" class="space-y-3"></div>
+</section>
 
-    <!-- СТРАНИЦА: МАГАЗИН / ПОИСК -->
-    <section id="page-shop">
-        <div class="bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-2xl p-8 mb-6">
-            <h1 class="text-2xl md:text-3xl font-black mb-2">Поиск автозапчастей по артикулу</h1>
-            <p class="text-blue-100 mb-6">Актуальные цены и сроки со складов поставщиков</p>
-            <form onsubmit="handleSearch(event)" class="flex flex-wrap gap-2">
-                <input id="search-input" type="text" placeholder="Артикул или название, например: 04152-31090" class="flex-1 min-w-[220px] px-4 py-3 rounded-xl text-slate-800">
-                <button type="submit" class="bg-amber-500 hover:bg-amber-600 px-8 py-3 rounded-xl font-bold">Найти</button>
-            </form>
-            <div class="mt-4 text-sm text-blue-100">Не знаете артикул?
-                <button type="button" onclick="showPage('catalog')" class="underline font-bold">Подберите через каталог или ИИ-помощника</button>
-                или <button type="button" onclick="openVinModal()" class="underline font-bold">отправьте запрос по VIN-коду</button>
-            </div>
-        </div>
-        <div id="loader" class="hidden bg-white p-4 rounded-xl border text-slate-600 mb-4">⏳ Опрашиваем склады поставщиков...</div>
-        <div id="offers-list" class="space-y-3"></div>
-    </section>
+<!-- КАТАЛОГ -->
+<section id="page-catalog" class="hidden max-w-6xl mx-auto px-4 py-8">
+  <div class="flex gap-2 mb-6">
+    <button id="cat-tabbtn-manual" onclick="switchCatTab('manual')" class="px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">🔧 Ручной подбор</button>
+    <button id="cat-tabbtn-ai" onclick="switchCatTab('ai')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">🤖 ИИ-подбор</button>
+  </div>
 
-    <!-- СТРАНИЦА: КАТАЛОГ -->
-    <section id="page-catalog" class="hidden">
-        <h1 class="text-2xl font-black text-slate-800 mb-4">Каталог и подбор автозапчастей</h1>
-        <div class="flex gap-2 mb-5">
-            <button type="button" id="cat-btn-manual" onclick="catalogTab('manual')" class="px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">Ручной подбор</button>
-            <button type="button" id="cat-btn-ai" onclick="catalogTab('ai')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">🤖 ИИ-подбор</button>
-        </div>
+  <div id="cat-panel-manual" class="bg-white rounded-2xl border p-6">
+    <h2 class="text-xl font-black mb-4">Подбор запчастей по автомобилю</h2>
+    <div class="grid md:grid-cols-3 gap-4 mb-6">
+      <div>
+        <label class="text-xs text-slate-500 font-semibold">Марка</label>
+        <select id="cat-brand" onchange="catOnBrandChange()" class="w-full border rounded-lg px-3 py-2"><option value="">— выберите марку —</option></select>
+      </div>
+      <div>
+        <label class="text-xs text-slate-500 font-semibold">Модель</label>
+        <select id="cat-model" disabled class="w-full border rounded-lg px-3 py-2"><option value="">— сначала марка —</option></select>
+      </div>
+      <div>
+        <label class="text-xs text-slate-500 font-semibold">Год выпуска (необязательно)</label>
+        <input id="cat-year" type="number" min="1980" max="2030" placeholder="например, 2015" class="w-full border rounded-lg px-3 py-2">
+      </div>
+    </div>
+    <h3 class="font-bold mb-3">Выберите группу запчастей:</h3>
+    <div id="cat-parts-grid" class="grid grid-cols-2 md:grid-cols-4 gap-2"></div>
+  </div>
 
-        <!-- Вкладка: ручной подбор -->
-        <div id="cat-tab-manual" class="bg-white rounded-2xl border p-5">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                <div>
-                    <label class="text-xs font-bold text-slate-500">1. Марка</label>
-                    <select id="cat-brand" onchange="catBrandChanged()" class="w-full border rounded-lg px-3 py-2 text-sm"><option value="">— выберите марку —</option></select>
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500">2. Модель</label>
-                    <select id="cat-model" onchange="showCatParts()" disabled class="w-full border rounded-lg px-3 py-2 text-sm bg-slate-100"><option value="">— сначала марку —</option></select>
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500">3. Год выпуска (необязательно)</label>
-                    <input id="cat-year" type="text" placeholder="например, 2015" class="w-full border rounded-lg px-3 py-2 text-sm">
-                </div>
-            </div>
-            <div class="flex flex-wrap gap-2 mb-3">
-                <button type="button" onclick="catRequest()" class="bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-bold">Не нашли? Отправить запрос менеджеру</button>
-            </div>
-            <div id="cat-hint" class="text-sm font-semibold text-slate-700 mb-3"></div>
-            <div id="cat-grid" class="grid grid-cols-2 md:grid-cols-4 gap-2"></div>
-        </div>
+  <div id="cat-panel-ai" class="hidden bg-white rounded-2xl border p-6">
+    <h2 class="text-xl font-black mb-1">🤖 ИИ-помощник по подбору</h2>
+    <p class="text-sm text-slate-500 mb-4">Опишите автомобиль и нужную деталь обычными словами — например: «передние колодки на Kia Rio 2015». Помощник сам распознает марку, модель и деталь и запустит поиск.</p>
+    <div id="ai-chat" class="border rounded-xl p-4 h-96 overflow-y-auto space-y-3 mb-4 bg-slate-50"></div>
+    <div class="flex gap-2">
+      <input id="ai-input" placeholder="Напишите запрос..." class="flex-1 border rounded-lg px-4 py-2" onkeydown="if(event.key==='Enter'){event.preventDefault();aiSend();}">
+      <button onclick="aiSend()" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold">Отправить</button>
+    </div>
+  </div>
+</section>
 
-        <!-- Вкладка: ИИ-подбор -->
-        <div id="cat-tab-ai" class="hidden bg-white rounded-2xl border p-5">
-            <div class="flex items-center gap-2 mb-1">
-                <span class="text-xl">🤖</span>
-                <div class="font-black text-slate-800">ИИ-помощник подбора</div>
-            </div>
-            <p class="text-xs text-slate-500 mb-4">Опишите автомобиль и деталь обычными словами — помощник распознает марку, модель и нужную запчасть, предложит связанные позиции и сразу запустит поиск.</p>
-            <div id="ai-chat" class="flex flex-col gap-2 mb-4 max-h-[420px] overflow-y-auto p-2 bg-slate-50 rounded-xl border"></div>
-            <form onsubmit="aiSend(event)" class="flex gap-2">
-                <input id="ai-input" type="text" placeholder="Например: передние колодки на Hyundai Solaris 2018" class="flex-1 border rounded-xl px-4 py-2.5 text-sm">
-                <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold">Отправить</button>
-            </form>
-        </div>
-    </section>
+<!-- КАБИНЕТ -->
+<section id="page-cabinet" class="hidden max-w-6xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-black mb-4">Личный кабинет</h1>
+  <div class="bg-white rounded-2xl border p-6 mb-6">
+    <div id="cabinet-user-info" class="text-sm text-slate-600">Загрузка...</div>
+  </div>
+  <h2 class="font-bold text-lg mb-3">Мои заказы</h2>
+  <div id="user-orders-list" class="space-y-3"></div>
+</section>
 
-    <!-- СТРАНИЦА: КАБИНЕТ -->
-    <section id="page-cabinet" class="hidden">
-        <h1 class="text-2xl font-black text-slate-800 mb-4">Личный кабинет</h1>
-        <div id="cabinet-user-info" class="bg-white p-4 rounded-xl border text-sm text-slate-600 mb-4"></div>
-        <h2 class="font-black text-slate-800 mb-3">Мои заказы</h2>
-        <div id="user-orders-list" class="space-y-3"></div>
-    </section>
+<!-- АДМИН-ПАНЕЛЬ -->
+<section id="page-admin" class="hidden max-w-6xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-black mb-4">Админ-панель</h1>
+  <div class="flex flex-wrap gap-2 mb-6">
+    <button id="tab-btn-orders" onclick="switchAdminTab('orders')" class="px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">Заказы</button>
+    <button id="tab-btn-suppliers" onclick="switchAdminTab('suppliers')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Поставщики</button>
+    <button id="tab-btn-markups" onclick="switchAdminTab('markups')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Наценки</button>
+  </div>
+  <div id="admin-tab-orders" class="space-y-3"></div>
+  <div id="admin-tab-suppliers" class="hidden space-y-3"><div id="admin-suppliers-list"></div></div>
+  <div id="admin-tab-markups" class="hidden space-y-3"><div id="admin-markups-list"></div></div>
+</section>
 
-    <!-- СТРАНИЦА: АДМИНКА -->
-    <section id="page-admin" class="hidden">
-        <h1 class="text-2xl font-black text-slate-800 mb-4">Админ-панель</h1>
-        <div class="flex flex-wrap gap-2 mb-4">
-            <button type="button" id="tab-btn-orders" onclick="switchAdminTab('orders')" class="px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">Заказы</button>
-            <button type="button" id="tab-btn-suppliers" onclick="switchAdminTab('suppliers')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Поставщики</button>
-            <button type="button" id="tab-btn-markups" onclick="switchAdminTab('markups')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Наценки</button>
-        </div>
-        <div id="admin-tab-orders" class="space-y-3"></div>
-        <div id="admin-tab-suppliers" class="hidden space-y-3"><div id="admin-suppliers-list"></div></div>
-        <div id="admin-tab-markups" class="hidden space-y-3"></div>
-    </section>
-
-</main>
-
-<footer class="bg-white border-t mt-8">
-    <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-500">AutoBrand73 — Магазин автозапчастей • г. Димитровград • +7 (927) 834-39-93 • Ежедневно 09:00 – 17:00</div>
+<footer class="max-w-6xl mx-auto px-4 py-10 text-center text-sm text-slate-500">
+  AutoBrand73 • Димитровград • Ежедневно 09:00–17:00 • +7 (927) 834-39-93
 </footer>
 
 <!-- КОРЗИНА -->
-<div id="cart-drawer" class="hidden fixed inset-0 z-40">
-    <div class="absolute inset-0 bg-black/40" onclick="toggleCart()"></div>
-    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl p-5 overflow-y-auto">
-        <div class="flex justify-between items-center mb-4">
-            <div class="font-black text-xl">Корзина</div>
-            <button type="button" onclick="toggleCart()" class="text-2xl text-slate-400">&times;</button>
-        </div>
-        <div id="cart-items" class="space-y-2 mb-4"></div>
-        <div class="flex justify-between font-black text-lg border-t pt-3 mb-4"><span>Итого:</span><span id="cart-total">0 ₽</span></div>
-        <form id="checkout-form" onsubmit="submitCartOrder(event)" class="space-y-2 hidden">
-            <input id="ord-name" type="text" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2 text-sm" required>
-            <input id="ord-phone" type="tel" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2 text-sm" required>
-            <input id="ord-vin" type="text" placeholder="VIN (необязательно)" class="w-full border rounded-lg px-3 py-2 text-sm uppercase">
-            <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">Оформить заказ</button>
-        </form>
-    </div>
+<div id="cart-drawer" class="hidden fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex-col">
+  <div class="flex justify-between items-center p-4 border-b">
+    <div class="font-black text-lg">Корзина</div>
+    <button onclick="toggleCart()" class="text-slate-400 text-2xl px-2">✕</button>
+  </div>
+  <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+  <div class="border-t p-4">
+    <div class="flex justify-between font-black text-lg mb-3"><span>Итого:</span><span id="cart-total">0 ₽</span></div>
+    <form id="checkout-form" class="hidden space-y-2" onsubmit="return submitCartOrder(event)">
+      <input id="ord-name" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2">
+      <input id="ord-phone" placeholder="Телефон" required class="w-full border rounded-lg px-3 py-2">
+      <input id="ord-vin" placeholder="VIN (необязательно)" class="w-full border rounded-lg px-3 py-2 uppercase">
+      <button class="w-full bg-green-600 text-white py-3 rounded-lg font-bold">Оформить заказ</button>
+    </form>
+  </div>
 </div>
 
 <!-- МОДАЛКА ВХОДА -->
-<div id="auth-modal" class="hidden fixed inset-0 z-50">
-    <div class="absolute inset-0 bg-black/40" onclick="closeAuthModal()"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-            <div id="auth-title" class="font-black text-xl mb-4">Вход в личный кабинет</div>
-            <form onsubmit="handleAuth(event)" class="space-y-3">
-                <div id="reg-fields" class="hidden space-y-3">
-                    <input id="auth-name" type="text" placeholder="Имя" class="w-full border rounded-lg px-3 py-2 text-sm">
-                    <input id="auth-phone" type="tel" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2 text-sm">
-                    <input id="auth-vin" type="text" placeholder="VIN автомобиля (необязательно)" class="w-full border rounded-lg px-3 py-2 text-sm uppercase">
-                </div>
-                <input id="auth-email" type="email" placeholder="Email" class="w-full border rounded-lg px-3 py-2 text-sm" required>
-                <input id="auth-pass" type="password" placeholder="Пароль (мин. 6 символов)" class="w-full border rounded-lg px-3 py-2 text-sm" required>
-                <button id="auth-submit-btn" type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">Войти</button>
-            </form>
-            <button type="button" onclick="toggleAuthMode()" id="auth-switch-btn" class="mt-3 text-sm text-blue-600 underline w-full text-center">Нет аккаунта? Зарегистрироваться</button>
-        </div>
+<div id="auth-modal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center p-4">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
+    <div class="flex justify-between items-center mb-4">
+      <div id="auth-title" class="font-black text-lg">Вход в личный кабинет</div>
+      <button onclick="closeAuthModal()" class="text-slate-400 text-2xl px-1">✕</button>
     </div>
+    <form onsubmit="return handleAuth(event)" class="space-y-3">
+      <div id="reg-fields" class="hidden space-y-3">
+        <input id="auth-name" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2">
+        <input id="auth-phone" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2">
+        <input id="auth-vin" placeholder="VIN автомобиля (необязательно)" class="w-full border rounded-lg px-3 py-2 uppercase">
+      </div>
+      <input id="auth-email" type="email" placeholder="E-mail" required class="w-full border rounded-lg px-3 py-2">
+      <input id="auth-pass" type="password" placeholder="Пароль (мин. 6 символов)" required minlength="6" class="w-full border rounded-lg px-3 py-2">
+      <button id="auth-submit-btn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Войти</button>
+    </form>
+    <button id="auth-switch-btn" onclick="toggleAuthMode()" class="w-full text-center text-sm text-blue-600 mt-3">Нет аккаунта? Зарегистрироваться</button>
+  </div>
 </div>
 
 <!-- МОДАЛКА VIN -->
-<div id="vin-modal" class="hidden fixed inset-0 z-50">
-    <div class="absolute inset-0 bg-black/40" onclick="closeVinModal()"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-            <div class="font-black text-xl mb-1">Запрос подбора по VIN</div>
-            <p class="text-xs text-slate-500 mb-4">Менеджер подберёт запчасти и перезвонит вам.</p>
-            <form onsubmit="submitVinOrder(event)" class="space-y-3">
-                <input id="vin-name" type="text" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2 text-sm" required>
-                <input id="vin-phone" type="tel" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2 text-sm" required>
-                <input id="vin-code" type="text" placeholder="VIN-код" class="w-full border rounded-lg px-3 py-2 text-sm uppercase" required>
-                <input id="vin-parts" type="text" placeholder="Что нужно найти (необязательно)" class="w-full border rounded-lg px-3 py-2 text-sm">
-                <button type="submit" class="w-full bg-amber-500 text-white py-3 rounded-xl font-bold">Отправить запрос</button>
-            </form>
-        </div>
+<div id="vin-modal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center p-4">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
+    <div class="flex justify-between items-center mb-4">
+      <div class="font-black text-lg">Запрос по VIN-коду</div>
+      <button onclick="closeVinModal()" class="text-slate-400 text-2xl px-1">✕</button>
     </div>
+    <form onsubmit="return submitVinOrder(event)" class="space-y-3">
+      <input id="vin-name" placeholder="Ваше имя" required class="w-full border rounded-lg px-3 py-2">
+      <input id="vin-phone" placeholder="Телефон" required class="w-full border rounded-lg px-3 py-2">
+      <input id="vin-code" placeholder="VIN-код" required class="w-full border rounded-lg px-3 py-2 uppercase">
+      <textarea id="vin-parts" rows="3" placeholder="Какие детали нужны?" class="w-full border rounded-lg px-3 py-2"></textarea>
+      <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Отправить запрос</button>
+    </form>
+  </div>
 </div>
 
 <script>
-var SUPABASE_URL = 'https://fnlupijomjpopqtnyodv.supabase.co';
+var SUPABASE_URL = 'https://fnlupijomjpopqtnyodv.supabase.co/rest/v1/';
 var SUPABASE_KEY = 'sb_publishable_l1pVfFfga-1Tu9Yr1ms2Lw_PrY1CoZw';
+
 var currentUser = null;
 var currentProfile = null;
 var isRegisterMode = false;
@@ -208,22 +193,22 @@ function sbHeaders(token) {
 }
 
 function esc(s) {
-    return String(s == null ? '' : s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    return String(s === null || s === undefined ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-/* ============ АВТОРИЗАЦИЯ ============ */
-
+/* ---------- АВТОРИЗАЦИЯ ---------- */
 function openAuthModal() {
     var m = document.getElementById('auth-modal');
     m.classList.remove('hidden');
+    m.classList.add('flex');
 }
-
 function closeAuthModal() {
     var m = document.getElementById('auth-modal');
     m.classList.add('hidden');
+    m.classList.remove('flex');
 }
-
 function toggleAuthMode() {
     isRegisterMode = !isRegisterMode;
     document.getElementById('auth-title').textContent = isRegisterMode ? 'Регистрация покупателя' : 'Вход в личный кабинет';
@@ -231,7 +216,6 @@ function toggleAuthMode() {
     document.getElementById('auth-switch-btn').textContent = isRegisterMode ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться';
     document.getElementById('reg-fields').className = isRegisterMode ? 'space-y-3' : 'hidden';
 }
-
 function handleAuth(e) {
     e.preventDefault();
     var emailVal = document.getElementById('auth-email').value.trim();
@@ -243,21 +227,16 @@ function handleAuth(e) {
         headers: sbHeaders(),
         body: JSON.stringify({ email: emailVal, password: passVal })
     })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (data.error_description || data.error || data.msg) {
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+        if (data.error || data.error_description || data.msg) {
             alert('Ошибка: ' + (data.error_description || data.msg || data.error));
             return;
         }
         var u = data.user || (data.session && data.session.user);
         var tok = data.access_token || (data.session && data.session.access_token);
-        if (isRegisterMode && !tok) {
-            alert('Регистрация успешна! Подтвердите почту по письму от Supabase и войдите.');
-            toggleAuthMode();
-            return;
-        }
         if (!u || !tok) {
-            alert('Не удалось авторизоваться. Проверьте email и пароль.');
+            alert('Проверьте почту: подтвердите регистрацию по письму и войдите заново.');
             return;
         }
         currentUser = { uid: u.id, mail: u.email, token: tok };
@@ -271,16 +250,16 @@ function handleAuth(e) {
                 method: 'POST',
                 headers: sbHeaders(tok),
                 body: JSON.stringify({ id: u.id, email: emailVal, full_name: nameVal, phone: phoneVal, vin: vinVal, role: 'user' })
-            }).then(function() {
+            }).then(function () {
                 loadProfile();
                 closeAuthModal();
-            }).catch(function() { loadProfile(); closeAuthModal(); });
+            });
         } else {
             loadProfile();
             closeAuthModal();
         }
     })
-    .catch(function(err) { alert('Ошибка сети: ' + err.message); });
+    .catch(function (err) { alert('Ошибка сети: ' + err.message); });
 }
 
 function loadProfile() {
@@ -288,12 +267,11 @@ function loadProfile() {
     fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + currentUser.uid + '&select=*', {
         headers: sbHeaders(currentUser.token)
     })
-    .then(function(r) { return r.json(); })
-    .then(function(rows) {
+    .then(function (r) { return r.json(); })
+    .then(function (rows) {
         currentProfile = (rows && rows.length > 0) ? rows[0] : { email: currentUser.mail, role: 'user' };
         updateNavUI();
-    })
-    .catch(function() { currentProfile = { email: currentUser.mail, role: 'user' }; updateNavUI(); });
+    });
 }
 
 function updateNavUI() {
@@ -329,161 +307,65 @@ function showPage(page) {
     window.scrollTo(0, 0);
 }
 
-/* ============ ПОИСК ============ */
-
+/* ---------- ПОИСК (через серверную функцию, ключи не утекают) ---------- */
 function handleSearch(e) {
     e.preventDefault();
-    var q = document.getElementById('search-input').value.trim();
-    if (!q) return;
-    performSearch(q);
+    runSearch(document.getElementById('search-input').value.trim());
+    return false;
 }
 
-function performSearch(q) {
+function runSearch(q) {
+    if (!q) return;
+    showPage('shop');
+    document.getElementById('search-input').value = q;
     var box = document.getElementById('offers-list');
     var loader = document.getElementById('loader');
     box.innerHTML = '';
     loader.classList.remove('hidden');
-    fetch('/api/search?q=' + encodeURIComponent(q))
-    .then(function(r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-    })
-    .then(function(data) {
-        if (data && data.ok) {
-            loader.classList.add('hidden');
-            renderOffers(data.items || [], q);
-        } else {
-            return clientSearch(q);
-        }
-    })
-    .catch(function() { clientSearch(q); });
-}
 
-function clientSearch(q) {
-    var box = document.getElementById('offers-list');
-    var loader = document.getElementById('loader');
-    return Promise.all([
-        fetch(SUPABASE_URL + '/rest/v1/suppliers?is_active=eq.true&select=*', { headers: sbHeaders() }).then(function(r) { return r.ok ? r.json() : []; }),
-        fetch(SUPABASE_URL + '/rest/v1/markups?select=*&order=price_from.asc', { headers: sbHeaders() }).then(function(r) { return r.ok ? r.json() : []; })
-    ]).then(function(res) {
-        var suppliers = res[0] || [];
-        var rules = res[1] || [];
-        if (suppliers.length === 0) {
-            loader.classList.add('hidden');
-            box.innerHTML = '<div class="bg-red-50 text-red-700 p-4 rounded-xl">Нет активных поставщиков. Добавьте ключи Росско в Админ-панели.</div>';
+    fetch('/api/search?q=' + encodeURIComponent(q))
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+        loader.classList.add('hidden');
+        if (data && data.ok === false) {
+            box.innerHTML = '<div class="bg-red-50 text-red-700 p-4 rounded-xl">' + esc(data.error || 'Ошибка поиска') + '</div>';
             return;
         }
-        function applyMarkup(buyPrice) {
-            var pct = 15;
-            for (var i = 0; i < rules.length; i++) {
-                if (buyPrice >= rules[i].price_from && buyPrice <= rules[i].price_to) { pct = rules[i].percent; break; }
-            }
-            return Math.ceil(buyPrice * (1 + pct / 100));
+        var items = (data && data.items) ? data.items : [];
+        if (items.length === 0) {
+            box.innerHTML = '<div class="bg-white p-6 rounded-xl border text-center">По запросу <b>' + esc(q) + '</b> ничего не найдено.<br>' +
+                '<button onclick="openVinModal(\'Ищу: ' + esc(q).replace(/'/g, '') + '\')" class="mt-3 text-blue-600 font-semibold underline">Отправить запрос менеджеру</button></div>';
+            return;
         }
-        var promises = [];
-        for (var s = 0; s < suppliers.length; s++) {
-            if (!suppliers[s].key1 || !suppliers[s].key2) continue;
-            promises.push(rosskoSoap(suppliers[s], q, applyMarkup));
+        for (var i = 0; i < items.length; i++) {
+            var p = items[i];
+            var div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-4';
+            div.innerHTML = '<div><div class="font-bold">' + esc(p.brand) + ' <span class="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded">' + esc(p.art) + '</span></div>' +
+                '<div class="text-sm text-slate-700">' + esc(p.name) + '</div>' +
+                '<div class="text-xs text-slate-500 mt-1">Срок: <b>' + esc(p.days) + '</b> • Остаток: <b>' + esc(p.stock) + ' шт.</b></div></div>' +
+                '<div class="flex items-center gap-4"><div class="text-xl font-bold">' + esc(p.price) + ' ₽</div>' +
+                '<button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">В корзину</button></div>';
+            (function (item) {
+                div.querySelector('button').onclick = function () { addToCart(item); };
+            })(p);
+            box.appendChild(div);
         }
-        return Promise.all(promises).then(function(results) {
-            loader.classList.add('hidden');
-            var all = [];
-            for (var i = 0; i < results.length; i++) all = all.concat(results[i]);
-            all.sort(function(a, b) { return a.price - b.price; });
-            renderOffers(all, q);
-        });
-    }).catch(function(err) {
+    })
+    .catch(function (err) {
         loader.classList.add('hidden');
-        box.innerHTML = '<div class="bg-amber-50 text-amber-800 p-4 rounded-xl"><b>Браузерный режим поиска ограничен.</b><br>Прямой запрос к API Росско заблокирован политикой CORS (' + esc(err.message) + ').<br>Решение: загрузите рядом файл <span class="font-mono">api/search.js</span> на Vercel — тогда поиск пойдёт через сервер и заработает полностью.</div>';
+        box.innerHTML = '<div class="bg-red-50 text-red-700 p-4 rounded-xl">Не удалось выполнить поиск: ' + esc(err.message) +
+            '. Убедитесь, что файл api/search.js загружен на Vercel.</div>';
     });
 }
 
-function rosskoSoap(sup, text, applyMarkup) {
-    var xmlBody = '<?xml version="1.0" encoding="utf-8"?>' +
-        '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">' +
-        '<soap:Body><GetSearch xmlns="http://rossko.ru">' +
-        '<KEY1>' + sup.key1.trim() + '</KEY1><KEY2>' + sup.key2.trim() + '</KEY2>' +
-        '<text>' + text.replace(/[<>&\'"]/g, '') + '</text>' +
-        '<delivery_id>000000001</delivery_id>' +
-        '</GetSearch></soap:Body></soap:Envelope>';
-    return fetch('https://api.rossko.ru/service/v2.1/GetSearch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/xml; charset=utf-8', 'SOAPAction': 'http://rossko.ru/GetSearch' },
-        body: xmlBody
-    })
-    .then(function(r) { return r.text(); })
-    .then(function(xml) { return parseRosskoXml(xml, sup, applyMarkup); })
-    .catch(function() { return []; });
-}
-
-function tagVal(chunk, tag) {
-    var m = chunk.match(new RegExp('<(?:[\\w-]+:)?' + tag + '\\s*>([\\s\\S]*?)<\\/(?:[\\w-]+:)?' + tag + '\\s*>', 'i'));
-    return m ? m[1] : '';
-}
-
-function parseRosskoXml(xml, sup, applyMarkup) {
-    var out = [];
-    if (/<(?:\w+:)?Success\s*>\s*false\s*</i.test(xml)) return out;
-    var partBlocks = xml.split(/<\s*(?:[\w-]+:)?Part\s*>/i);
-    for (var i = 1; i < partBlocks.length; i++) {
-        var chunk = partBlocks[i].split(/<\s*\/?\s*(?:[\w-]+:)?Part\b/i)[0];
-        var brand = tagVal(chunk, 'brand');
-        var art = tagVal(chunk, 'partnumber');
-        var name = tagVal(chunk, 'name');
-        var stockBlocks = chunk.split(/<\s*(?:[\w-]+:)?stock\s*>/i);
-        for (var j = 1; j < stockBlocks.length; j++) {
-            var sBlock = stockBlocks[j].split(/<\s*\/?\s*(?:[\w-]+:)?stock\b/i)[0];
-            var priceRaw = parseFloat(tagVal(sBlock, 'price').replace(',', '.')) || 0;
-            var count = parseInt(tagVal(sBlock, 'count')) || 0;
-            var delivery = parseInt(tagVal(sBlock, 'delivery')) || 1;
-            if (priceRaw > 0 && count > 0) {
-                out.push({
-                    supplier: sup.name,
-                    brand: brand,
-                    art: art,
-                    name: name,
-                    days: (delivery + (parseInt(sup.extra_days) || 0)) + ' дн.',
-                    stock: count,
-                    price: applyMarkup(priceRaw)
-                });
-            }
-        }
-    }
-    return out;
-}
-
-function renderOffers(items, q) {
-    var box = document.getElementById('offers-list');
-    if (!items || items.length === 0) {
-        box.innerHTML = '<div class="bg-white p-6 rounded-xl border text-center">По запросу <b>' + esc(q) + '</b> ничего не найдено.<br><span class="text-sm text-slate-500">Попробуйте артикул целиком или отправьте запрос по VIN.</span></div>';
-        return;
-    }
-    box.innerHTML = '';
-    for (var i = 0; i < items.length; i++) {
-        var p = items[i];
-        var div = document.createElement('div');
-        div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-4';
-        div.innerHTML = '<div><div class="font-bold">' + esc(p.brand) + ' <span class="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded">' + esc(p.art) + '</span></div>' +
-            '<div class="text-sm text-slate-700">' + esc(p.name) + '</div>' +
-            '<div class="text-xs text-slate-500 mt-1">Поставщик: ' + esc(p.supplier) + ' • Срок: <b>' + esc(p.days) + '</b> • Остаток: <b>' + esc(p.stock) + ' шт.</b></div></div>' +
-            '<div class="flex items-center gap-4"><div class="text-xl font-bold">' + esc(p.price) + ' ₽</div>' +
-            '<button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">В корзину</button></div>';
-        (function(item) {
-            div.querySelector('button').onclick = function() { addToCart(item); };
-        })(p);
-        box.appendChild(div);
-    }
-}
-
-/* ============ КОРЗИНА ============ */
-
+/* ---------- КОРЗИНА ---------- */
 function addToCart(item) {
-    var found = cart.find(function(c) { return c.art === item.art && c.price === item.price; });
+    var found = cart.find(function (c) { return c.art === item.art && c.price === item.price; });
     if (found) found.qty += 1;
     else cart.push({ brand: item.brand, art: item.art, name: item.name, price: item.price, qty: 1 });
     updateCartUI();
 }
-
 function updateCartUI() {
     var qty = 0, sum = 0;
     var box = document.getElementById('cart-items');
@@ -493,10 +375,12 @@ function updateCartUI() {
         sum += cart[i].price * cart[i].qty;
         var row = document.createElement('div');
         row.className = 'border rounded-lg p-3 flex justify-between items-center text-sm';
-        row.innerHTML = '<div><b>' + esc(cart[i].brand) + ' ' + esc(cart[i].art) + '</b><br>' + cart[i].qty + ' шт. × ' + cart[i].price + ' ₽</div>' +
+        row.innerHTML = '<div><b>' + esc(cart[i].brand) + ' ' + esc(cart[i].art) + '</b><br>' +
+            '<span class="text-slate-500">' + esc(cart[i].name) + '</span><br>' +
+            cart[i].qty + ' шт. × ' + cart[i].price + ' ₽</div>' +
             '<button type="button" class="text-red-500 font-bold px-2">✕</button>';
-        (function(idx) {
-            row.querySelector('button').onclick = function() { cart.splice(idx, 1); updateCartUI(); };
+        (function (idx) {
+            row.querySelector('button').onclick = function () { cart.splice(idx, 1); updateCartUI(); };
         })(i);
         box.appendChild(row);
     }
@@ -504,15 +388,14 @@ function updateCartUI() {
     document.getElementById('cart-total').textContent = sum + ' ₽';
     document.getElementById('checkout-form').classList.toggle('hidden', cart.length === 0);
 }
-
 function toggleCart() {
     var d = document.getElementById('cart-drawer');
     d.classList.toggle('hidden');
+    d.classList.toggle('flex');
 }
-
 function submitCartOrder(e) {
     e.preventDefault();
-    if (cart.length === 0) return;
+    if (!currentUser) { openAuthModal(); return false; }
     var sum = 0, lines = new Array();
     for (var i = 0; i < cart.length; i++) {
         sum += cart[i].price * cart[i].qty;
@@ -531,26 +414,31 @@ function submitCartOrder(e) {
         method: 'POST',
         headers: sbHeaders(currentUser && currentUser.token),
         body: JSON.stringify(payload)
-    })
-    .then(function(r) {
+    }).then(function (r) {
         if (r.ok) {
             cart = new Array();
             updateCartUI();
             toggleCart();
-            e.target.reset();
-            alert('Заказ оформлен! Менеджер свяжется с вами.');
+            alert('Заказ оформлен!');
         } else {
-            alert('Не удалось оформить заказ. Проверьте настройки RLS в Supabase.');
+            alert('Не удалось сохранить заказ. Проверьте права записи в таблице orders.');
         }
-    })
-    .catch(function(err) { alert('Ошибка сети: ' + err.message); });
+    }).catch(function (err) { alert('Ошибка сети: ' + err.message); });
+    return false;
 }
 
-/* ============ ЗАПРОС ПО VIN ============ */
-
-function openVinModal() { var m = document.getElementById('vin-modal'); m.classList.remove('hidden'); }
-function closeVinModal() { var m = document.getElementById('vin-modal'); m.classList.add('hidden'); }
-
+/* ---------- VIN ---------- */
+function openVinModal(prefText) {
+    var m = document.getElementById('vin-modal');
+    if (prefText) document.getElementById('vin-parts').value = prefText;
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+}
+function closeVinModal() {
+    var m = document.getElementById('vin-modal');
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+}
 function submitVinOrder(e) {
     e.preventDefault();
     var payload = {
@@ -558,7 +446,7 @@ function submitVinOrder(e) {
         customer_name: document.getElementById('vin-name').value,
         customer_phone: document.getElementById('vin-phone').value,
         vin: document.getElementById('vin-code').value.toUpperCase(),
-        items: 'ЗАПРОС ПО VIN: ' + document.getElementById('vin-parts').value,
+        items: 'ПОДБОР ПО VIN: ' + document.getElementById('vin-parts').value,
         total_price: 0,
         status: 'Запрос по VIN'
     };
@@ -566,21 +454,19 @@ function submitVinOrder(e) {
         method: 'POST',
         headers: sbHeaders(currentUser && currentUser.token),
         body: JSON.stringify(payload)
-    })
-    .then(function(r) {
+    }).then(function (r) {
         if (r.ok) {
             closeVinModal();
             e.target.reset();
-            alert('Запрос отправлен! Менеджер подберёт запчасти и свяжется с вами.');
+            alert('Запрос по VIN отправлен!');
         } else {
-            alert('Не удалось отправить запрос. Проверьте настройки RLS в Supabase.');
+            alert('Не удалось отправить запрос. Проверьте права записи в таблице orders.');
         }
-    })
-    .catch(function(err) { alert('Ошибка сети: ' + err.message); });
+    }).catch(function (err) { alert('Ошибка сети: ' + err.message); });
+    return false;
 }
 
-/* ============ КАБИНЕТ ============ */
-
+/* ---------- КАБИНЕТ ---------- */
 function loadUserOrders() {
     if (!currentUser) return;
     document.getElementById('cabinet-user-info').textContent = 'Аккаунт: ' + currentUser.mail;
@@ -589,25 +475,23 @@ function loadUserOrders() {
     fetch(SUPABASE_URL + '/rest/v1/orders?user_id=eq.' + currentUser.uid + '&order=id.desc', {
         headers: sbHeaders(currentUser.token)
     })
-    .then(function(r) { return r.json(); })
-    .then(function(orders) {
+    .then(function (r) { return r.json(); })
+    .then(function (orders) {
         if (!orders || orders.length === 0) { box.innerHTML = '<p class="text-slate-500">У вас пока нет заказов.</p>'; return; }
         box.innerHTML = '';
         for (var i = 0; i < orders.length; i++) {
             var o = orders[i];
             var div = document.createElement('div');
             div.className = 'bg-white p-4 rounded-xl border';
-            div.innerHTML = '<div class="flex justify-between font-bold mb-1"><span>Заказ №' + o.id + '</span><span class="text-blue-600">' + esc(o.status) + '</span></div>' +
+            div.innerHTML = '<div class="flex justify-between font-bold mb-1"><span>Заказ №' + esc(o.id) + '</span><span class="text-blue-600">' + esc(o.status) + '</span></div>' +
                 '<div class="text-sm text-slate-700">' + esc(o.items) + '</div>' +
-                '<div class="text-sm font-bold mt-2">Сумма: ' + o.total_price + ' ₽</div>';
+                '<div class="text-sm font-bold mt-2">Сумма: ' + esc(o.total_price) + ' ₽</div>';
             box.appendChild(div);
         }
-    })
-    .catch(function(e) { box.innerHTML = '<p class="text-red-600">Ошибка загрузки: ' + esc(e.message) + '</p>'; });
+    });
 }
 
-/* ============ АДМИНКА ============ */
-
+/* ---------- АДМИН-ПАНЕЛЬ ---------- */
 function switchAdminTab(tab) {
     var tabs = new Array('orders', 'suppliers', 'markups');
     for (var i = 0; i < tabs.length; i++) {
@@ -623,31 +507,28 @@ function switchAdminTab(tab) {
 }
 
 function loadAdminOrders() {
-    if (!currentUser) return;
     var box = document.getElementById('admin-tab-orders');
     box.innerHTML = 'Загрузка заказов...';
     fetch(SUPABASE_URL + '/rest/v1/orders?order=id.desc', { headers: sbHeaders(currentUser.token) })
-    .then(function(r) { return r.json(); })
-    .then(function(orders) {
+    .then(function (r) { return r.json(); })
+    .then(function (orders) {
         box.innerHTML = '';
-        if (!orders || orders.length === 0) { box.innerHTML = '<p class="text-slate-500">Заказов пока нет.</p>'; return; }
         for (var i = 0; i < orders.length; i++) {
             var o = orders[i];
             var div = document.createElement('div');
             div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-4';
-            div.innerHTML = '<div><div class="font-bold">Заказ №' + o.id + ' • ' + esc(o.customer_name) + ' (' + esc(o.customer_phone) + ')</div>' +
+            div.innerHTML = '<div><div class="font-bold">Заказ №' + esc(o.id) + ' • ' + esc(o.customer_name) + ' (' + esc(o.customer_phone) + ')</div>' +
                 '<div class="text-xs text-slate-500">VIN: ' + esc(o.vin || 'не указан') + '</div>' +
                 '<div class="text-sm mt-1">' + esc(o.items) + '</div>' +
-                '<div class="font-bold text-blue-700 mt-1">Итого: ' + o.total_price + ' ₽</div></div>' +
+                '<div class="font-bold text-blue-700 mt-1">Итого: ' + esc(o.total_price) + ' ₽</div></div>' +
                 '<select class="border rounded-lg px-3 py-2 text-sm font-semibold">' +
                 '<option ' + (o.status === 'Новый' ? 'selected' : '') + '>Новый</option>' +
                 '<option ' + (o.status === 'Запрос по VIN' ? 'selected' : '') + '>Запрос по VIN</option>' +
-                '<option ' + (o.status === 'Подбор по каталогу' ? 'selected' : '') + '>Подбор по каталогу</option>' +
                 '<option ' + (o.status === 'Заказано у поставщика' ? 'selected' : '') + '>Заказано у поставщика</option>' +
                 '<option ' + (o.status === 'Готов к выдаче' ? 'selected' : '') + '>Готов к выдаче</option>' +
                 '<option ' + (o.status === 'Выдан' ? 'selected' : '') + '>Выдан</option></select>';
-            (function(orderId) {
-                div.querySelector('select').onchange = function(ev) {
+            (function (orderId) {
+                div.querySelector('select').onchange = function (ev) {
                     fetch(SUPABASE_URL + '/rest/v1/orders?id=eq.' + orderId, {
                         method: 'PATCH',
                         headers: sbHeaders(currentUser.token),
@@ -657,492 +538,542 @@ function loadAdminOrders() {
             })(o.id);
             box.appendChild(div);
         }
-    })
-    .catch(function(e) { box.innerHTML = '<div class="text-red-600">Ошибка: ' + esc(e.message) + '</div>'; });
+    });
 }
 
 function loadAdminSuppliers() {
-    if (!currentUser) return;
     var box = document.getElementById('admin-suppliers-list');
     box.innerHTML = 'Загрузка...';
     fetch(SUPABASE_URL + '/rest/v1/suppliers?order=id.asc', { headers: sbHeaders(currentUser.token) })
-    .then(function(r) { return r.json(); })
-    .then(function(list) {
-        box.innerHTML = '<div><button type="button" onclick="addSupplier()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold mb-3">+ Добавить поставщика</button></div>';
-        if (!list || list.length === 0) {
-            box.insertAdjacentHTML('beforeend', '<p class="text-slate-500">Поставщиков пока нет. Добавьте первого — потребуется пара ключей API Росско.</p>');
-            return;
-        }
+    .then(function (r) { return r.json(); })
+    .then(function (list) {
+        box.innerHTML = '';
         for (var i = 0; i < list.length; i++) {
             var s = list[i];
             var div = document.createElement('div');
-            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-4';
-            div.innerHTML = '<div><div class="font-bold">' + esc(s.name) + '</div>' +
-                '<div class="text-xs text-slate-500 font-mono">KEY1: ' + esc(s.key1 || '—') + '</div>' +
-                '<div class="text-xs text-slate-500 font-mono">KEY2: ' + esc(s.key2 || '—') + '</div>' +
-                '<div class="text-xs text-slate-500 mt-1">Доп. дней: ' + (s.extra_days != null ? s.extra_days : 0) + ' • ' +
-                (s.is_active ? '<span class="text-green-600 font-bold">Активен</span>' : '<span class="text-red-500 font-bold">Отключён</span>') + '</div></div>' +
-                '<div class="flex gap-2"><button type="button" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">Изменить</button>' +
-                '<button type="button" class="bg-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold">' + (s.is_active ? 'Выключить' : 'Включить') + '</button>' +
-                '<button type="button" class="bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold">Удалить</button></div>';
-            (function(sid, sup) {
+            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-3';
+            div.innerHTML = '<div><div class="font-bold">' + esc(s.name) +
+                (s.is_active ? ' <span class="text-green-600 text-xs font-semibold">● активен</span>' : ' <span class="text-slate-400 text-xs font-semibold">○ выключен</span>') + '</div>' +
+                '<div class="text-xs text-slate-500 font-mono break-all">KEY1: ' + esc(s.key1 || '—') + ' • KEY2: ' + esc(s.key2 || '—') + '</div>' +
+                '<div class="text-xs text-slate-500">Доп. дней к сроку: ' + esc(s.extra_days || 0) + '</div></div>' +
+                '<div class="flex flex-wrap gap-2">' +
+                '<button type="button" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-semibold">Ключи</button>' +
+                '<button type="button" class="px-3 py-1.5 rounded-lg bg-slate-200 text-sm font-semibold">Срок</button>' +
+                '<button type="button" class="px-3 py-1.5 rounded-lg text-sm font-semibold ' + (s.is_active ? 'bg-amber-500 text-white' : 'bg-green-600 text-white') + '">' +
+                (s.is_active ? 'Выключить' : 'Включить') + '</button></div>';
+            (function (sup) {
                 var btns = div.querySelectorAll('button');
-                btns[0].onclick = function() {
-                    var name = prompt('Название:', sup.name); if (name === null) return;
-                    var k1 = prompt('KEY1:', sup.key1 || ''); if (k1 === null) return;
-                    var k2 = prompt('KEY2:', sup.key2 || ''); if (k2 === null) return;
-                    var days = prompt('Доп. дней к сроку:', sup.extra_days != null ? sup.extra_days : 0); if (days === null) return;
-                    fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sid, {
+                btns[0].onclick = function () {
+                    var k1 = prompt('KEY1 для ' + sup.name + ':', sup.key1 || '');
+                    if (k1 === null) return;
+                    var k2 = prompt('KEY2 для ' + sup.name + ':', sup.key2 || '');
+                    if (k2 === null) return;
+                    fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sup.id, {
                         method: 'PATCH',
                         headers: sbHeaders(currentUser.token),
-                        body: JSON.stringify({ name: name, key1: k1.trim(), key2: k2.trim(), extra_days: parseInt(days) || 0 })
-                    }).then(function() { loadAdminSuppliers(); });
+                        body: JSON.stringify({ key1: k1.trim(), key2: k2.trim() })
+                    }).then(loadAdminSuppliers);
                 };
-                btns[1].onclick = function() {
-                    fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sid, {
+                btns[1].onclick = function () {
+                    var d = prompt('Сколько дней добавить к сроку поставщика?', sup.extra_days || 1);
+                    if (d === null) return;
+                    fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sup.id, {
+                        method: 'PATCH',
+                        headers: sbHeaders(currentUser.token),
+                        body: JSON.stringify({ extra_days: parseInt(d, 10) || 0 })
+                    }).then(loadAdminSuppliers);
+                };
+                btns[2].onclick = function () {
+                    fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sup.id, {
                         method: 'PATCH',
                         headers: sbHeaders(currentUser.token),
                         body: JSON.stringify({ is_active: !sup.is_active })
-                    }).then(function() { loadAdminSuppliers(); });
+                    }).then(loadAdminSuppliers);
                 };
-                btns[2].onclick = function() {
-                    if (!confirm('Удалить поставщика «' + sup.name + '»?')) return;
-                    fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sid, {
-                        method: 'DELETE',
-                        headers: sbHeaders(currentUser.token)
-                    }).then(function() { loadAdminSuppliers(); });
-                };
-            })(s.id, s);
+            })(s);
             box.appendChild(div);
         }
-    })
-    .catch(function(e) { box.innerHTML = '<div class="text-red-600">Ошибка: ' + esc(e.message) + '</div>'; });
-}
-
-function addSupplier() {
-    if (!currentUser) return;
-    var name = prompt('Название поставщика:'); if (!name) return;
-    var k1 = prompt('KEY1 (Росско):'); if (k1 === null) return;
-    var k2 = prompt('KEY2 (Росско):'); if (k2 === null) return;
-    var days = prompt('Доп. дней к сроку поставки:', '1');
-    fetch(SUPABASE_URL + '/rest/v1/suppliers', {
-        method: 'POST',
-        headers: sbHeaders(currentUser.token),
-        body: JSON.stringify({ name: name, key1: (k1 || '').trim(), key2: (k2 || '').trim(), extra_days: parseInt(days) || 0, is_active: true })
-    }).then(function() { loadAdminSuppliers(); });
+    });
 }
 
 function loadAdminMarkups() {
-    if (!currentUser) return;
-    var box = document.getElementById('admin-tab-markups');
+    var box = document.getElementById('admin-markups-list');
     box.innerHTML = 'Загрузка...';
     fetch(SUPABASE_URL + '/rest/v1/markups?order=price_from.asc', { headers: sbHeaders(currentUser.token) })
-    .then(function(r) { return r.json(); })
-    .then(function(list) {
-        box.innerHTML = '<div><button type="button" onclick="addMarkup()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold mb-3">+ Добавить наценку</button></div>';
-        if (!list || list.length === 0) {
-            box.insertAdjacentHTML('beforeend', '<p class="text-slate-500">Наценок нет — по умолчанию применяется 15%.</p>');
-            return;
-        }
+    .then(function (r) { return r.json(); })
+    .then(function (list) {
+        box.innerHTML = '';
+        var add = document.createElement('button');
+        add.textContent = '+ Добавить наценку';
+        add.className = 'mb-4 px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold';
+        add.onclick = function () {
+            var pf = prompt('Цена ОТ (руб.):'); if (pf === null) return;
+            var pt = prompt('Цена ДО (руб.):'); if (pt === null) return;
+            var p = prompt('Наценка, %:'); if (p === null) return;
+            fetch(SUPABASE_URL + '/rest/v1/markups', {
+                method: 'POST',
+                headers: sbHeaders(currentUser.token),
+                body: JSON.stringify({ price_from: parseFloat(pf) || 0, price_to: parseFloat(pt) || 0, percent: parseFloat(p) || 0 })
+            }).then(loadAdminMarkups);
+        };
+        box.appendChild(add);
         for (var i = 0; i < list.length; i++) {
             var m = list[i];
             var div = document.createElement('div');
-            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-4';
-            div.innerHTML = '<div class="font-bold">От ' + m.price_from + ' ₽ до ' + m.price_to + ' ₽ — <span class="text-blue-700">+' + m.percent + '%</span></div>' +
-                '<div class="flex gap-2"><button type="button" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">Изменить</button>' +
-                '<button type="button" class="bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold">Удалить</button></div>';
-            (function(mid, mk) {
+            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-3';
+            div.innerHTML = '<div class="font-semibold">От ' + esc(m.price_from) + ' ₽ до ' + esc(m.price_to) +
+                ' ₽ → <span class="text-blue-700">+' + esc(m.percent) + '%</span></div>' +
+                '<div class="flex gap-2">' +
+                '<button type="button" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-semibold">Изменить</button>' +
+                '<button type="button" class="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 text-sm font-semibold">Удалить</button></div>';
+            (function (row) {
                 var btns = div.querySelectorAll('button');
-                btns[0].onclick = function() {
-                    var from = prompt('Цена от:', mk.price_from); if (from === null) return;
-                    var to = prompt('Цена до:', mk.price_to); if (to === null) return;
-                    var pct = prompt('Наценка, %:', mk.percent); if (pct === null) return;
-                    fetch(SUPABASE_URL + '/rest/v1/markups?id=eq.' + mid, {
+                btns[0].onclick = function () {
+                    var pf = prompt('Цена ОТ:', row.price_from); if (pf === null) return;
+                    var pt = prompt('Цена ДО:', row.price_to); if (pt === null) return;
+                    var p = prompt('Наценка, %:', row.percent); if (p === null) return;
+                    fetch(SUPABASE_URL + '/rest/v1/markups?id=eq.' + row.id, {
                         method: 'PATCH',
                         headers: sbHeaders(currentUser.token),
-                        body: JSON.stringify({ price_from: parseFloat(from) || 0, price_to: parseFloat(to) || 0, percent: parseFloat(pct) || 0 })
-                    }).then(function() { loadAdminMarkups(); });
+                        body: JSON.stringify({ price_from: parseFloat(pf) || 0, price_to: parseFloat(pt) || 0, percent: parseFloat(p) || 0 })
+                    }).then(loadAdminMarkups);
                 };
-                btns[1].onclick = function() {
-                    if (!confirm('Удалить наценку ' + mk.price_from + '–' + mk.price_to + ' ₽?')) return;
-                    fetch(SUPABASE_URL + '/rest/v1/markups?id=eq.' + mid, {
+                btns[1].onclick = function () {
+                    if (!confirm('Удалить наценку ' + row.price_from + '–' + row.price_to + ' ₽?')) return;
+                    fetch(SUPABASE_URL + '/rest/v1/markups?id=eq.' + row.id, {
                         method: 'DELETE',
                         headers: sbHeaders(currentUser.token)
-                    }).then(function() { loadAdminMarkups(); });
+                    }).then(loadAdminMarkups);
                 };
-            })(m.id, m);
+            })(m);
             box.appendChild(div);
         }
-    })
-    .catch(function(e) { box.innerHTML = '<div class="text-red-600">Ошибка: ' + esc(e.message) + '</div>'; });
+    });
 }
 
-function addMarkup() {
-    if (!currentUser) return;
-    var from = prompt('Цена от, ₽:'); if (from === null) return;
-    var to = prompt('Цена до, ₽:'); if (to === null) return;
-    var pct = prompt('Наценка, %:'); if (pct === null) return;
-    fetch(SUPABASE_URL + '/rest/v1/markups', {
-        method: 'POST',
-        headers: sbHeaders(currentUser.token),
-        body: JSON.stringify({ price_from: parseFloat(from) || 0, price_to: parseFloat(to) || 0, percent: parseFloat(pct) || 0 })
-    }).then(function() { loadAdminMarkups(); });
-}
-
-/* ============ КАТАЛОГ: РУЧНОЙ ПОДБОР ============ */
-
+/* ---------- КАТАЛОГ: СПРАВОЧНИК ---------- */
 var CAR_CATALOG = {
-    'Kia': ['Rio III (2011–2017)', 'Rio IV (2017–2024)', 'Ceed (2007–2012)', 'Ceed (2012–2018)', 'Ceed (2018+)', 'Sportage III (2010–2015)', 'Sportage IV (2016–2021)', 'Cerato (2013–2018)', 'Soul (2014–2019)', 'Sorento (2013–2020)'],
-    'Hyundai': ['Solaris I (2011–2017)', 'Solaris II (2017–2022)', 'Creta (2016–2021)', 'Elantra (2016–2020)', 'i30 (2012–2016)', 'Tucson (2015–2020)', 'Getz (2005–2011)'],
-    'Toyota': ['Camry (2011–2017)', 'Camry (2018–2023)', 'Corolla (2013–2019)', 'RAV4 (2013–2018)', 'RAV4 (2019–2024)', 'Land Cruiser 200 (2007–2021)', 'C-HR (2016–2022)', 'Auris (2012–2018)'],
-    'Volkswagen': ['Polo седан (2011–2020)', 'Polo (2020+)', 'Golf VII (2012–2019)', 'Passat B7 (2010–2014)', 'Passat B8 (2015–2021)', 'Tiguan (2017–2023)', 'Touareg (2010–2018)', 'Jetta (2011–2018)'],
-    'Skoda': ['Octavia A7 (2013–2019)', 'Octavia A8 (2020+)', 'Rapid (2014–2020)', 'Kodiaq (2017–2023)', 'Fabia (2014–2021)', 'Superb (2015–2022)'],
-    'Renault': ['Logan (2014–2020)', 'Sandero (2014–2020)', 'Duster (2015–2021)', 'Captur (2016–2021)', 'Megane III (2008–2015)', 'Fluence (2010–2016)', 'Arkana (2019–2022)'],
-    'Lada': ['Granta (2011+)', 'Vesta (2015–2022)', 'Largus (2012+)', 'Kalina II (2013–2018)', 'Niva Legend', 'XRAY (2016–2022)'],
-    'Nissan': ['Qashqai J10 (2007–2013)', 'Qashqai J11 (2014–2021)', 'X-Trail T31 (2007–2013)', 'X-Trail T32 (2014–2021)', 'Almera G15 (2013–2018)', 'Juke (2011–2019)', 'Note (2008–2013)'],
-    'Ford': ['Focus II (2008–2011)', 'Focus III (2011–2019)', 'Fiesta (2008–2015)', 'Kuga I (2008–2012)', 'Kuga II (2013–2019)', 'Mondeo IV (2007–2014)', 'Explorer (2011–2019)'],
-    'Mazda': ['3 (2013–2018)', '6 (2012–2017)', 'CX-5 (2012–2016)', 'CX-5 (2017–2021)', 'CX-30 (2019+)'],
-    'Chevrolet': ['Cruze (2009–2015)', 'Cobalt (2012–2016)', 'Aveo (2011–2015)', 'Niva (2002+)', 'Lacetti (2004–2013)'],
-    'Opel': ['Astra J (2009–2015)', 'Mokka (2012–2019)', 'Insignia A (2008–2017)', 'Zafira B (2005–2014)'],
-    'Audi': ['A4 B8 (2008–2015)', 'A6 C7 (2011–2018)', 'Q5 (2008–2017)', 'Q7 (2015+)', 'A3 8V (2012–2019)'],
-    'BMW': ['3 серия F30 (2012–2018)', '5 серия F10 (2010–2016)', 'X3 F25 (2010–2017)', 'X5 E70 (2006–2013)', 'X5 F15 (2013–2018)'],
-    'Mercedes-Benz': ['C-класс W204 (2007–2014)', 'C-класс W205 (2014–2021)', 'E-класс W212 (2009–2016)', 'GLK X204 (2008–2015)', 'ML W166 (2011–2019)'],
-    'Mitsubishi': ['Lancer X (2007–2017)', 'Outlander XL (2007–2012)', 'Outlander III (2012–2021)', 'ASX (2010–2019)', 'Pajero Sport II (2008–2016)'],
-    'Suzuki': ['Grand Vitara (2005–2014)', 'SX4 (2006–2013)', 'Swift (2010–2016)'],
-    'Great Wall': ['Hover H3 (2005–2010)', 'Hover H5 (2010–2020)', 'Hover H6 (2011–2020)'],
-    'Chery': ['Tiggo (2006–2014)', 'Tiggo 4 (2018+)', 'QQ6 (2011–2015)'],
-    'UAZ': ['Patriot (2005+)', 'Hunter', 'Buhanka (УАЗ-452)']
+    'Kia': [
+        { k: 'rio', n: 'Rio', y: '2011-2024' },
+        { k: 'ceed', n: 'Ceed', y: '2012-2024' },
+        { k: 'sportage', n: 'Sportage', y: '2010-2024' },
+        { k: 'cerato', n: 'Cerato', y: '2013-2024' },
+        { k: 'sorento', n: 'Sorento', y: '2012-2024' }
+    ],
+    'Hyundai': [
+        { k: 'solaris', n: 'Solaris', y: '2011-2022' },
+        { k: 'creta', n: 'Creta', y: '2016-2024' },
+        { k: 'tucson', n: 'Tucson', y: '2010-2024' },
+        { k: 'elantra', n: 'Elantra', y: '2012-2024' },
+        { k: 'i30', n: 'i30', y: '2012-2024' }
+    ],
+    'Toyota': [
+        { k: 'camry', n: 'Camry', y: '2011-2024' },
+        { k: 'corolla', n: 'Corolla', y: '2013-2024' },
+        { k: 'rav4', n: 'RAV4', y: '2013-2024' },
+        { k: 'land cruiser', n: 'Land Cruiser', y: '2008-2024' }
+    ],
+    'Volkswagen': [
+        { k: 'polo', n: 'Polo', y: '2010-2024' },
+        { k: 'passat', n: 'Passat', y: '2011-2024' },
+        { k: 'tiguan', n: 'Tiguan', y: '2011-2024' },
+        { k: 'golf', n: 'Golf', y: '2012-2024' }
+    ],
+    'Skoda': [
+        { k: 'rapid', n: 'Rapid', y: '2014-2024' },
+        { k: 'octavia', n: 'Octavia', y: '2013-2024' },
+        { k: 'kodiaq', n: 'Kodiaq', y: '2017-2024' }
+    ],
+    'Renault': [
+        { k: 'duster', n: 'Duster', y: '2012-2024' },
+        { k: 'logan', n: 'Logan', y: '2014-2024' },
+        { k: 'sandero', n: 'Sandero', y: '2014-2024' }
+    ],
+    'Lada': [
+        { k: 'granta', n: 'Granta', y: '2011-2024' },
+        { k: 'vesta', n: 'Vesta', y: '2015-2024' },
+        { k: 'largus', n: 'Largus', y: '2012-2024' },
+        { k: 'niva', n: 'Niva', y: '2018-2024' }
+    ],
+    'Nissan': [
+        { k: 'qashqai', n: 'Qashqai', y: '2014-2024' },
+        { k: 'x-trail', n: 'X-Trail', y: '2014-2024' },
+        { k: 'almera', n: 'Almera', y: '2013-2018' },
+        { k: 'juke', n: 'Juke', y: '2014-2024' }
+    ],
+    'Mazda': [
+        { k: '3', n: '3', y: '2013-2024' },
+        { k: '6', n: '6', y: '2012-2024' },
+        { k: 'cx-5', n: 'CX-5', y: '2012-2024' }
+    ],
+    'Ford': [
+        { k: 'focus', n: 'Focus', y: '2011-2024' },
+        { k: 'fiesta', n: 'Fiesta', y: '2015-2024' },
+        { k: 'kuga', n: 'Kuga', y: '2013-2024' }
+    ],
+    'Chevrolet': [
+        { k: 'cruze', n: 'Cruze', y: '2012-2016' },
+        { k: 'aveo', n: 'Aveo', y: '2012-2020' },
+        { k: 'niva', n: 'Niva', y: '2009-2024' }
+    ],
+    'Daewoo': [
+        { k: 'nexia', n: 'Nexia', y: '2012-2024' },
+        { k: 'matiz', n: 'Matiz', y: '2005-2024' }
+    ],
+    'Audi': [
+        { k: 'a4', n: 'A4', y: '2012-2024' },
+        { k: 'a6', n: 'A6', y: '2011-2024' },
+        { k: 'q5', n: 'Q5', y: '2012-2024' }
+    ],
+    'BMW': [
+        { k: '3', n: '3 (F30)', y: '2012-2019' },
+        { k: '5', n: '5 (F10)', y: '2010-2017' },
+        { k: 'x5', n: 'X5', y: '2013-2024' }
+    ],
+    'Mercedes': [
+        { k: 'c', n: 'C-Class (W205)', y: '2014-2021' },
+        { k: 'e', n: 'E-Class (W212)', y: '2009-2016' },
+        { k: 'sprinter', n: 'Sprinter', y: '2018-2024' }
+    ],
+    'Opel': [
+        { k: 'astra', n: 'Astra J', y: '2010-2021' },
+        { k: 'mokka', n: 'Mokka', y: '2012-2024' }
+    ],
+    'Mitsubishi': [
+        { k: 'lancer', n: 'Lancer', y: '2007-2024' },
+        { k: 'outlander', n: 'Outlander', y: '2012-2024' },
+        { k: 'asx', n: 'ASX', y: '2010-2024' }
+    ],
+    'Honda': [
+        { k: 'civic', n: 'Civic', y: '2012-2024' },
+        { k: 'cr-v', n: 'CR-V', y: '2012-2024' },
+        { k: 'accord', n: 'Accord', y: '2012-2024' }
+    ],
+    'SsangYong': [
+        { k: 'actyon', n: 'Actyon', y: '2011-2024' },
+        { k: 'kyron', n: 'Kyron', y: '2005-2016' }
+    ],
+    'UAZ': [
+        { k: 'patriot', n: 'Patriot', y: '2014-2024' },
+        { k: 'hunter', n: 'Hunter', y: '2011-2024' }
+    ]
 };
 
-var PART_CATEGORIES = [
-    { id: 'oil', name: 'Моторное масло', q: 'моторное масло', kw: ['моторное масло', 'масло для двигателя', 'заменить масло', 'масло'], rel: ['oil_filter', 'air_filter'] },
-    { id: 'oil_filter', name: 'Масляный фильтр', q: 'масляный фильтр', kw: ['масляный фильтр', 'маслянный фильтр', 'фильтр масла', 'масл фильтр'], rel: ['oil'] },
-    { id: 'air_filter', name: 'Воздушный фильтр', q: 'воздушный фильтр', kw: ['воздушный фильтр', 'воздушник'], rel: ['cabin_filter'] },
-    { id: 'cabin_filter', name: 'Салонный фильтр', q: 'салонный фильтр', kw: ['салонный фильтр', 'фильтр салона'], rel: ['air_filter'] },
-    { id: 'fuel_filter', name: 'Топливный фильтр', q: 'топливный фильтр', kw: ['топливный фильтр', 'фильтр топлива'], rel: [] },
-    { id: 'spark', name: 'Свечи зажигания', q: 'свечи зажигания', kw: ['свечи зажигания', 'свечей', 'свечи', 'свеча'], rel: [] },
-    { id: 'pads_front', name: 'Колодки передние', q: 'колодки передние тормозные', kw: ['колодки передние', 'передние колодки', 'передние тормозные колодки'], rel: ['discs_front'] },
-    { id: 'pads_rear', name: 'Колодки задние', q: 'колодки задние тормозные', kw: ['колодки задние', 'задние колодки', 'задние тормозные колодки'], rel: ['discs_rear'] },
-    { id: 'discs_front', name: 'Диски тормозные передние', q: 'диски тормозные передние', kw: ['диски тормозные передние', 'тормозные диски передние', 'диски передние', 'передние диски'], rel: ['pads_front'] },
-    { id: 'discs_rear', name: 'Диски тормозные задние', q: 'диски тормозные задние', kw: ['диски тормозные задние', 'тормозные диски задние', 'диски задние', 'задние диски'], rel: ['pads_rear'] },
-    { id: 'shock_front', name: 'Амортизаторы передние', q: 'амортизаторы передние', kw: ['амортизаторы передние', 'амортизатор передний', 'стойки передние', 'стойка передняя'], rel: ['shock_rear'] },
-    { id: 'shock_rear', name: 'Амортизаторы задние', q: 'амортизаторы задние', kw: ['амортизаторы задние', 'амортизатор задний', 'стойки задние', 'стойка задняя'], rel: ['shock_front'] },
-    { id: 'ball', name: 'Шаровые опоры', q: 'шаровая опора', kw: ['шаровые опоры', 'шаровая опора', 'шаровые', 'шаровая'], rel: ['levers'] },
-    { id: 'levers', name: 'Рычаги подвески', q: 'рычаг передней подвески', kw: ['рычаг подвески', 'рычаг передней', 'рычаги подвески', 'рычаг', 'рычаги'], rel: ['ball', 'stabil'] },
-    { id: 'stabil', name: 'Стойки стабилизатора', q: 'стойка стабилизатора', kw: ['стойки стабилизатора', 'стойка стабилизатора', 'стабилизатор'], rel: ['levers'] },
-    { id: 'wheel_bear', name: 'Ступичные подшипники', q: 'ступичный подшипник', kw: ['ступичный подшипник', 'подшипник ступицы', 'ступица'], rel: [] },
-    { id: 'cv', name: 'ШРУСы и приводы', q: 'шрус', kw: ['шрус', 'граната'], rel: [] },
-    { id: 'timing', name: 'Ремень ГРМ и комплект', q: 'ремень грм', kw: ['ремень грм', 'цепь грм', 'грм'], rel: ['pump'] },
-    { id: 'pump', name: 'Водяной насос (помпа)', q: 'водяной насос', kw: ['водяной насос', 'помпа'], rel: ['thermostat', 'timing'] },
-    { id: 'thermostat', name: 'Термостат', q: 'термостат', kw: ['термостат'], rel: ['pump'] },
-    { id: 'radiator', name: 'Радиатор охлаждения', q: 'радиатор охлаждения', kw: ['радиатор охлаждения', 'радиатор'], rel: [] },
-    { id: 'clutch', name: 'Комплект сцепления', q: 'комплект сцепления', kw: ['комплект сцепления', 'диск сцепления', 'корзина сцепления', 'сцепление'], rel: [] },
-    { id: 'battery', name: 'Аккумулятор', q: 'аккумулятор автомобильный', kw: ['аккумулятор', 'акб'], rel: [] },
-    { id: 'lamp', name: 'Лампы фар', q: 'лампа фары', kw: ['лампы фар', 'лампа фары', 'лампочки', 'лампы', 'лампа', 'лампочка'], rel: [] },
-    { id: 'wipers', name: 'Щётки стеклоочистителя', q: 'щётки стеклоочистителя', kw: ['щётки стеклоочистителя', 'щетки стеклоочистителя', 'дворники', 'щётки', 'щетки'], rel: [] },
-    { id: 'antifreeze', name: 'Антифриз', q: 'антифриз', kw: ['антифриз', 'охлаждающая жидкость', 'тосол'], rel: [] },
-    { id: 'brake_fluid', name: 'Тормозная жидкость', q: 'тормозная жидкость', kw: ['тормозная жидкость'], rel: [] }
-];
+var PARTS = new Array(
+    { name: 'Масляный фильтр', syn: ['масляный фильтр', 'фильтр масла', 'масляный'] },
+    { name: 'Воздушный фильтр', syn: ['воздушный фильтр', 'воздушный'] },
+    { name: 'Салонный фильтр', syn: ['салонный фильтр', 'фильтр салона', 'салонный'] },
+    { name: 'Топливный фильтр', syn: ['топливный фильтр', 'топливный'] },
+    { name: 'Масло моторное', syn: ['моторное масло', 'масло моторное', 'масло'] },
+    { name: 'Передние тормозные колодки', syn: ['передние тормозные колодки', 'передние колодки', 'колодки передние', 'передние торм колодки'] },
+    { name: 'Задние тормозные колодки', syn: ['задние тормозные колодки', 'задние колодки', 'колодки задние'] },
+    { name: 'Тормозные диски передние', syn: ['тормозные диски передние', 'передние диски', 'диски передние'] },
+    { name: 'Тормозные диски задние', syn: ['тормозные диски задние', 'задние диски', 'диски задние'] },
+    { name: 'Тормозной шланг', syn: ['тормозной шланг', 'шланг тормозной'] },
+    { name: 'Тормозная жидкость', syn: ['тормозная жидкость', 'тормозуха', 'тормозная'] },
+    { name: 'Амортизатор передний', syn: ['амортизатор передний', 'передние амортизаторы', 'стойка передняя', 'стойки передние'] },
+    { name: 'Амортизатор задний', syn: ['амортизатор задний', 'задние амортизаторы', 'стойки задние'] },
+    { name: 'Пружины подвески', syn: ['пружины подвески', 'пружина', 'пружины'] },
+    { name: 'Стойка стабилизатора', syn: ['стойка стабилизатора', 'стойки стабилизатора', 'стойка стаб', 'линк'] },
+    { name: 'Рычаг подвески', syn: ['рычаг подвески', 'рычаг', 'рычаги'] },
+    { name: 'Шаровая опора', syn: ['шаровая опора', 'шаровая', 'шаровые'] },
+    { name: 'Сайлентблок', syn: ['сайлентблок', 'сайлентблоки', 'резинка подвески'] },
+    { name: 'Рулевой наконечник', syn: ['рулевой наконечник', 'наконечник рулевой', 'наконечники'] },
+    { name: 'Рулевая рейка', syn: ['рулевая рейка', 'рейка рулевая', 'рейка'] },
+    { name: 'ШРУС', syn: ['шрус', 'граната', 'шрус наружный'] },
+    { name: 'Подшипник ступицы', syn: ['подшипник ступицы', 'ступичный подшипник', 'ступица'] },
+    { name: 'Свечи зажигания', syn: ['свечи зажигания', 'свечи', 'свеча'] },
+    { name: 'Ремень ГРМ', syn: ['ремень грм', 'грм', 'ремень'] },
+    { name: 'Ролики ГРМ', syn: ['ролики грм', 'ролик грм', 'ролики', 'ролик'] },
+    { name: 'Комплект сцепления', syn: ['комплект сцепления', 'сцепление', 'корзина сцепления'] },
+    { name: 'Аккумулятор', syn: ['аккумулятор', 'акб', 'аккум'] }
+);
 
-var AI_FAQ = [
-    { kw: ['график', 'работаете', 'часы работы', 'режим работы', 'открыт'], text: 'Мы работаем ежедневно с 09:00 до 17:00 по адресу г. Димитровград. Телефон: +7 (927) 834-39-93.' },
-    { kw: ['адрес', 'где вы', 'как добраться', 'находитесь', 'куда ехать'], text: 'Адрес: г. Димитровград. Работаем ежедневно с 09:00 до 17:00. Телефон: +7 (927) 834-39-93.' },
-    { kw: ['доставк', 'срок постав', 'когда приед', 'сколько ждать', 'когда будет'], text: 'Срок поставки указан у каждого предложения — обычно от 1 до 7 дней (зависит от склада поставщика). В Ульяновске и Димитровграде возможна выдача в магазине.' },
-    { kw: ['оплат', 'картой', 'налич'], text: 'Оплата при получении в магазине или переводом по согласованию с менеджером.' },
-    { kw: ['корзин', 'оформить заказ', 'как купить', 'как заказать'], text: 'Добавьте товар кнопкой «В корзину» в результатах поиска, откройте корзину и заполните имя и телефон — данные подтянутся из вашего профиля.' },
-    { kw: ['vin', 'вин'], text: 'Нажмите «Запрос по VIN» в шапке сайта, заполните форму — и менеджер подберёт запчасти по вашему автомобилю.' }
-];
-
-var TRANSLIT = {
-    'киа': 'kia', 'хёндай': 'hyundai', 'хендай': 'hyundai', 'хюндай': 'hyundai', 'тойота': 'toyota',
-    'фольксваген': 'volkswagen', 'шкода': 'skoda', 'рено': 'renault', 'лада': 'lada', 'ваз': 'lada',
-    'ниссан': 'nissan', 'форд': 'ford', 'мазда': 'mazda', 'шевроле': 'chevrolet', 'опель': 'opel',
-    'ауди': 'audi', 'бмв': 'bmw', 'мерседес': 'mercedes', 'митсубиси': 'mitsubishi', 'сузуки': 'suzuki',
-    'черри': 'chery', 'уаз': 'uaz', 'грейт вол': 'great wall',
-    'рио': 'rio', 'солярис': 'solaris', 'крета': 'creta', 'гетц': 'getz', 'элантра': 'elantra',
-    'тусан': 'tucson', 'сид': 'ceed', 'спортейдж': 'sportage', 'церато': 'cerato', 'соул': 'soul',
-    'логан': 'logan', 'сандеро': 'sandero', 'дастер': 'duster', 'каптур': 'captur',
-    'меган': 'megane', 'флюенс': 'fluence', 'аркана': 'arkana', 'гранта': 'granta', 'веста': 'vesta',
-    'ларгус': 'largus', 'калина': 'kalina', 'нива': 'niva', 'иксрей': 'xray', 'х-рей': 'xray',
-    'кашкай': 'qashqai', 'икс-трейл': 'x-trail', 'икс трейл': 'x-trail', 'альмера': 'almera',
-    'джук': 'juke', 'ноут': 'note', 'фокус': 'focus', 'фиеста': 'fiesta', 'куга': 'kuga',
-    'мондо': 'mondeo', 'эксплорер': 'explorer', 'камри': 'camry', 'королла': 'corolla',
-    'рав4': 'rav4', 'рав 4': 'rav4', 'аурис': 'auris', 'к-эйч': 'c-hr', 'лэндкрузер': 'land cruiser',
-    'лэнд круизер': 'land cruiser', 'поло': 'polo', 'гольф': 'golf', 'пассат': 'passat',
-    'тигуан': 'tiguan', 'туарег': 'touareg', 'джетта': 'jetta', 'октавия': 'octavia', 'рапид': 'rapid',
-    'кодиак': 'kodiaq', 'фабия': 'fabia', 'суперб': 'superb', 'круз': 'cruze', 'кобальт': 'cobalt',
-    'авео': 'aveo', 'лачетти': 'lacetti', 'астр': 'astra', 'мокка': 'mokka', 'инсигния': 'insignia',
-    'зафира': 'zafira', 'а3': 'a3', 'а4': 'a4', 'а6': 'a6', 'ку5': 'q5', 'ку7': 'q7',
-    'лансер': 'lancer', 'аутлендер': 'outlander', 'асх': 'asx', 'паджеро': 'pajero',
-    'гранд витара': 'grand vitara', 'свифт': 'swift', 'ховер': 'hover', 'тиго': 'tiggo',
-    'патриот': 'patriot', 'хантер': 'hunter', 'буханка': 'buhanka'
+var RELATED = {
+    'Передние тормозные колодки': ['Тормозные диски передние'],
+    'Задние тормозные колодки': ['Тормозные диски задние'],
+    'Масло моторное': ['Масляный фильтр'],
+    'Ремень ГРМ': ['Ролики ГРМ'],
+    'Комплект сцепления': ['Масло моторное'],
+    'Амортизатор передний': ['Пружины подвески'],
+    'Амортизатор задний': ['Пружины подвески']
 };
 
-var aiState = { brand: null, model: null, year: null };
+var TRANSLIT = { 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya' };
 
-function getCat(id) {
-    for (var i = 0; i < PART_CATEGORIES.length; i++) {
-        if (PART_CATEGORIES[i].id === id) return PART_CATEGORIES[i];
+function translit(s) {
+    var out = '';
+    s = String(s).toLowerCase();
+    for (var i = 0; i < s.length; i++) {
+        var ch = s[i];
+        out += (TRANSLIT[ch] !== undefined) ? TRANSLIT[ch] : ch;
     }
-    return null;
+    return out;
 }
 
-function shortName(model) {
-    return model.split(' (')[0];
+var BRAND_SYNONYMS = {
+    'Kia': ['kia', 'киа'],
+    'Hyundai': ['hyundai', 'хендай', 'хёндай', 'гендай'],
+    'Toyota': ['toyota', 'тойота'],
+    'Volkswagen': ['volkswagen', 'vw', 'фольксваген', 'фольксваген', 'фолькс'],
+    'Skoda': ['skoda', 'шкода'],
+    'Renault': ['renault', 'рено'],
+    'Lada': ['lada', 'лада', 'ваз', 'vaz'],
+    'Nissan': ['nissan', 'ниссан'],
+    'Mazda': ['mazda', 'мазда'],
+    'Ford': ['ford', 'форд'],
+    'Chevrolet': ['chevrolet', 'шевроле'],
+    'Daewoo': ['daewoo', 'дэу'],
+    'Audi': ['audi', 'ауди'],
+    'BMW': ['bmw', 'бмв'],
+    'Mercedes': ['mercedes', 'мерседес', 'бенц', 'мерс'],
+    'Opel': ['opel', 'опель'],
+    'Mitsubishi': ['mitsubishi', 'митсубиси'],
+    'Honda': ['honda', 'хонда'],
+    'SsangYong': ['ssangyong', 'сангйонг', 'саненг'],
+    'UAZ': ['uaz', 'уаз']
+};
+
+/* ---------- КАТАЛОГ: РУЧНОЙ ПОДБОР ---------- */
+function switchCatTab(tab) {
+    document.getElementById('cat-panel-manual').classList.toggle('hidden', tab !== 'manual');
+    document.getElementById('cat-panel-ai').classList.toggle('hidden', tab !== 'ai');
+    document.getElementById('cat-tabbtn-manual').className = (tab === 'manual')
+        ? 'px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white'
+        : 'px-4 py-2 rounded-lg text-sm font-bold bg-white border';
+    document.getElementById('cat-tabbtn-ai').className = (tab === 'ai')
+        ? 'px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white'
+        : 'px-4 py-2 rounded-lg text-sm font-bold bg-white border';
 }
 
-function catQuery(brand, model, partQ, year) {
-    var b = brand.replace(/\s*\([^)]*\)/, '');
-    return (b + ' ' + shortName(model) + ' ' + partQ + (year ? ' ' + year : '')).toLowerCase();
-}
-
-function populateCatalogBrands() {
+function catInitBrands() {
     var sel = document.getElementById('cat-brand');
-    var keys = Object.keys(CAR_CATALOG);
-    for (var i = 0; i < keys.length; i++) {
+    var brands = Object.keys(CAR_CATALOG).sort();
+    for (var i = 0; i < brands.length; i++) {
         var opt = document.createElement('option');
-        opt.value = keys[i];
-        opt.textContent = keys[i];
+        opt.value = brands[i];
+        opt.textContent = brands[i];
         sel.appendChild(opt);
     }
 }
 
-function catBrandChanged() {
+function catOnBrandChange() {
+    var brand = document.getElementById('cat-brand').value;
     var sel = document.getElementById('cat-model');
-    sel.innerHTML = '<option value="">— выберите модель —</option>';
-    var brand = document.getElementById('cat-brand').value;
-    var grid = document.getElementById('cat-grid');
+    sel.innerHTML = '<option value="">— любая модель —</option>';
+    sel.disabled = !brand;
+    if (brand) {
+        var models = CAR_CATALOG[brand];
+        for (var i = 0; i < models.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = models[i].k;
+            opt.textContent = models[i].n + ' (' + models[i].y + ')';
+            sel.appendChild(opt);
+        }
+    }
+}
+
+function catRenderParts() {
+    var grid = document.getElementById('cat-parts-grid');
     grid.innerHTML = '';
-    document.getElementById('cat-hint').textContent = '';
-    if (!brand) { sel.disabled = true; return; }
-    sel.disabled = false;
-    var models = CAR_CATALOG[brand];
-    for (var i = 0; i < models.length; i++) {
-        var opt = document.createElement('option');
-        opt.value = models[i];
-        opt.textContent = models[i];
-        sel.appendChild(opt);
+    for (var i = 0; i < PARTS.length; i++) {
+        (function (part) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = part.name;
+            btn.className = 'text-left text-sm px-4 py-3 rounded-xl border bg-white hover:bg-blue-50 hover:border-blue-400 font-semibold transition';
+            btn.onclick = function () { catPick(part.name); };
+            grid.appendChild(btn);
+        })(PARTS[i]);
     }
 }
 
-function showCatParts() {
+function catPick(partName) {
     var brand = document.getElementById('cat-brand').value;
-    var model = document.getElementById('cat-model').value;
-    var grid = document.getElementById('cat-grid');
-    if (!brand || !model) { grid.innerHTML = ''; return; }
-    document.getElementById('cat-hint').textContent = 'Вы выбрали: ' + brand + ' ' + model + ' — выберите группу запчастей для поиска:';
-    grid.innerHTML = '';
-    for (var i = 0; i < PART_CATEGORIES.length; i++) {
-        (function(cat) {
-            var b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'bg-white border rounded-xl p-3 text-left text-sm font-semibold hover:border-blue-500 hover:bg-blue-50';
-            b.textContent = cat.name;
-            b.onclick = function() { catRunSearch(cat); };
-            grid.appendChild(b);
-        })(PART_CATEGORIES[i]);
-    }
-}
-
-function catRunSearch(cat) {
-    var brand = document.getElementById('cat-brand').value;
-    var model = document.getElementById('cat-model').value;
+    if (!brand) { alert('Сначала выберите марку автомобиля'); return; }
+    var modelKey = document.getElementById('cat-model').value;
     var year = document.getElementById('cat-year').value.trim();
-    if (!brand || !model) return;
-    var q = catQuery(brand, model, cat.q, year);
-    document.getElementById('search-input').value = q;
-    showPage('shop');
-    performSearch(q);
+    var q = translit(brand);
+    if (modelKey) q += ' ' + translit(modelKey);
+    q += ' ' + translit(partName);
+    if (year) q += ' ' + year;
+    aiRunSearch(q, 'Подобрано: ' + brand + (modelKey ? ' ' + modelKey : '') + ' — ' + partName + (year ? ', ' + year : ''));
 }
 
-function catRequest() {
-    var brand = document.getElementById('cat-brand').value;
-    var model = document.getElementById('cat-model').value;
-    var year = document.getElementById('cat-year').value.trim();
-    var label = 'ПОДБОР ПО КАТАЛОГУ: ' + (brand && model ? brand + ' ' + model : 'автомобиль уточню') + (year ? ' (' + year + ' г.)' : '');
-    document.getElementById('vin-parts').value = label;
-    openVinModal();
-}
-
-function catalogTab(tab) {
-    var tabs = ['manual', 'ai'];
-    for (var i = 0; i < tabs.length; i++) {
-        var t = tabs[i];
-        document.getElementById('cat-tab-' + t).classList.toggle('hidden', t !== tab);
-        document.getElementById('cat-btn-' + t).className = (t === tab)
-            ? 'px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white'
-            : 'px-4 py-2 rounded-lg text-sm font-bold bg-white border';
-    }
-}
-
-/* ============ КАТАЛОГ: ИИ-ПОДБОР ============ */
-
-function aiAddMsg(html, who) {
+/* ---------- ИИ-ПОДБОР ---------- */
+function aiPush(cls, html) {
     var chat = document.getElementById('ai-chat');
     var div = document.createElement('div');
-    div.className = who === 'user' ? 'ai-msg-user' : 'ai-msg-bot';
-    div.innerHTML = html;
+    if (cls === 'user') {
+        div.className = 'flex justify-end';
+        div.innerHTML = '<div class="bg-blue-600 text-white rounded-2xl rounded-br-md px-4 py-2 max-w-[80%] text-sm">' + html + '</div>';
+    } else {
+        div.className = 'flex justify-start';
+        div.innerHTML = '<div class="bg-white border rounded-2xl rounded-bl-md px-4 py-3 max-w-[85%] text-sm leading-relaxed">' + html + '</div>';
+    }
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
 }
 
-function aiSend(e) {
-    e.preventDefault();
-    var input = document.getElementById('ai-input');
-    var t = input.value.trim();
+function aiWelcome() {
+    aiPush('bot', 'Здравствуйте! Я помогу подобрать запчасти. Напишите, например: <b>«передние колодки на Kia Rio 2015»</b> или <b>«хочу Академия Volkswagen Polo»</b>. Также отвечу на вопросы о магазине.');
+}
+
+function aiSend() {
+    var inp = document.getElementById('ai-input');
+    var t = inp.value.trim();
     if (!t) return;
-    aiAddMsg(esc(t), 'user');
-    input.value = '';
-    setTimeout(function() { aiReply(t); }, 250);
+    aiPush('user', esc(t));
+    inp.value = '';
+    setTimeout(function () { aiProcess(t.toLowerCase()); }, 300);
 }
 
-function aiDetect(text) {
-    var lower = ' ' + text.toLowerCase() + ' ';
-    var trans = lower;
-    var keys = Object.keys(TRANSLIT).sort(function(a, b) { return b.length - a.length; });
-    for (var i = 0; i < keys.length; i++) {
-        if (trans.indexOf(keys[i]) !== -1) {
-            trans = trans.split(keys[i]).join(' ' + TRANSLIT[keys[i]] + ' ');
-        }
+function aiAnswerFaq(t) {
+    if (/(привет|здравств|добрый день|добрый вечер)/.test(t)) {
+        return 'Здравствуйте! Опишите авто и деталь — например: «масляный фильтр Toyota Camry 2016». Или спросите про график, адрес, оплату.';
     }
-    var brand = null;
-    var brandKeys = Object.keys(CAR_CATALOG);
-    for (var i = 0; i < brandKeys.length; i++) {
-        if (trans.indexOf(' ' + brandKeys[i].toLowerCase() + ' ') !== -1 ||
-            trans.indexOf(brandKeys[i].toLowerCase()) !== -1) {
-            brand = brandKeys[i];
-            break;
-        }
+    if (/(график|работает|часы|режим|открывает)/.test(t)) {
+        return 'Мы работаем <b>ежедневно с 09:00 до 17:00</b>. Телефон: +7 (927) 834-39-93.';
     }
-    var model = null;
-    if (brand) {
-        var models = CAR_CATALOG[brand];
-        for (var i = 0; i < models.length; i++) {
-            var base = shortName(models[i]).toLowerCase().replace(/\s+(i{1,3}|iv|vi{1,3}|ix|xi{1,2})$/, '');
-            if (trans.indexOf(base) !== -1) { model = models[i]; break; }
-        }
+    if (/(адрес|где вы|где находит|как доехать)/.test(t)) {
+        return 'Мы в г. Димитровград. Уточнить адрес и маршрут можно по телефону <b>+7 (927) 834-39-93</b>.';
     }
-    var part = null, best = 0;
-    for (var i = 0; i < PART_CATEGORIES.length; i++) {
-        var c = PART_CATEGORIES[i];
-        for (var j = 0; j < c.kw.length; j++) {
-            if (lower.indexOf(c.kw[j]) !== -1 && c.kw[j].length > best) {
-                best = c.kw[j].length;
-                part = c;
-            }
-        }
+    if (/(оплат|карт|наличн|как заплатить)/.test(t)) {
+        return 'Оплатить можно наличными или картой при получении заказа в магазине.';
     }
-    var ym = lower.match(/\b(19[89]\d|20[012]\d)\b/);
-    return { brand: brand, model: model, part: part, year: ym ? ym[1] : null };
+    if (/(доставк|срок|когда приде|сколько ждать|почта)/.test(t)) {
+        return 'Сроки поставки указаны в каждой карточке товара. Возможна доставка до пункта выдачи или самовывоз из магазина.';
+    }
+    if (/(гарант|возврат|поменять|вернуть)/.test(t)) {
+        return 'На запчасти действует гарантия. По вопросам возврата обращайтесь по телефону +7 (927) 834-39-93.';
+    }
+    if (/(заказ|оформить|купить|как купить)/.test(t)) {
+        return 'Найдите деталь через поиск или каталог, добавьте в корзину 🛒 и оформите заказ — достаточно имени и телефона.';
+    }
+    return null;
 }
 
-function faqMatch(lowerText) {
-    for (var i = 0; i < AI_FAQ.length; i++) {
-        var f = AI_FAQ[i];
-        for (var j = 0; j < f.kw.length; j++) {
-            if (lowerText.indexOf(f.kw[j]) !== -1) return f.text;
+function aiFindBrand(t) {
+    for (var brand in BRAND_SYNONYMS) {
+        var syns = BRAND_SYNONYMS[brand];
+        for (var i = 0; i < syns.length; i++) {
+            if (t.indexOf(syns[i]) !== -1) return brand;
         }
     }
     return null;
 }
 
-function aiBtn(label, fn) {
-    return '<button type="button" class="ai-btn" onclick="' + fn + '">' + esc(label) + '</button>';
+function aiFindModel(t, brand) {
+    if (!brand || !CAR_CATALOG[brand]) return null;
+    var models = CAR_CATALOG[brand];
+    for (var i = 0; i < models.length; i++) {
+        if (t.indexOf(translit(models[i].k)) !== -1 || t.indexOf(models[i].k.toLowerCase()) !== -1) return models[i];
+    }
+    return null;
 }
 
-function aiReply(text) {
-    var d = aiDetect(text);
-    var html = '';
-    if (d.brand && d.model) {
-        aiState = { brand: d.brand, model: d.model, year: d.year };
-        html += '<div class="font-bold mb-2">Распознал: ' + esc(d.brand) + ' ' + esc(shortName(d.model)) +
-            (d.part ? ' — ' + esc(d.part.name) : '') + (d.year ? ', ' + d.year + ' год' : '') + '</div>';
-        if (d.part) {
-            html += aiBtn('🔍 Найти: ' + d.part.name, "aiSearchCat('" + d.part.id + "')");
-            var rel = d.part.rel || [];
-            if (rel.length) {
-                html += '<div class="text-xs text-slate-500 mt-2">С этим обычно меняют вместе:</div>';
-                for (var i = 0; i < rel.length; i++) {
-                    var c2 = getCat(rel[i]);
-                    if (c2) html += aiBtn(c2.name, "aiSearchCat('" + c2.id + "')");
-                }
-            }
-        } else {
-            html += '<div class="text-sm mb-2">Модель распознана. Какую группу запчастей подобрать? Популярное:</div>';
-            var pop = ['oil_filter', 'air_filter', 'cabin_filter', 'pads_front', 'pads_rear', 'spark', 'shock_front', 'stabil', 'timing'];
-            for (var i = 0; i < pop.length; i++) {
-                html += aiBtn(getCat(pop[i]).name, "aiSearchCat('" + pop[i] + "')");
-            }
-        }
-    } else if (d.brand) {
-        html += '<div class="font-bold mb-2">Марка распознана: ' + esc(d.brand) + '. Выберите модель:</div>';
-        var ms = CAR_CATALOG[d.brand];
-        for (var i = 0; i < Math.min(ms.length, 8); i++) {
-            html += aiBtn(ms[i], "aiPickModel('" + d.brand + "', '" + ms[i].replace(/'/g, '') + "')");
-        }
-        if (ms.length > 8) html += '<div class="text-xs text-slate-500 mt-2">Остальные модели — на вкладке «Ручной подбор».</div>';
-    } else if (d.part) {
-        html = '<div class="mb-2">Деталь распознана: <b>' + esc(d.part.name) + '</b>. Уточните автомобиль — например: <span class="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded">Kia Rio колодки передние</span></div>';
-    } else if (/фильтр/i.test(text)) {
-        html = '<div class="mb-2">Какой фильтр нужен?</div>';
-        var ids = ['oil_filter', 'air_filter', 'cabin_filter', 'fuel_filter'];
-        for (var i = 0; i < ids.length; i++) {
-            html += aiBtn(getCat(ids[i]).name, "aiAskFor('" + ids[i] + "')");
-        }
-    } else {
-        var faq = faqMatch(text.toLowerCase());
-        if (faq) {
-            html = '<div>' + esc(faq) + '</div><div class="mt-2">Могу также подобрать запчасти — напишите марку, модель и деталь, например «свечи на Kia Rio 2015».</div>';
-        } else {
-            html = '<div>Опишите автомобиль и деталь — например: <span class="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded">передние колодки на Hyundai Solaris 2018</span>. Распознаю марку, модель и предложу варианты со складов поставщиков. Также отвечу на вопросы о графике работы, доставке и оплате.</div>';
+function aiFindPart(t) {
+    for (var i = 0; i < PARTS.length; i++) {
+        var syns = PARTS[i].syn;
+        for (var j = 0; j < syns.length; j++) {
+            if (t.indexOf(syns[j]) !== -1) return PARTS[i].name;
         }
     }
-    aiAddMsg(html, 'bot');
+    return null;
 }
 
-function aiSearchCat(id) {
-    var c = getCat(id);
-    if (!c) return;
-    if (!aiState.brand || !aiState.model) {
-        aiAddMsg('Сначала укажите автомобиль — марку и модель. Например: «Kia Rio масляный фильтр».', 'bot');
+function aiBuildQuery(brand, model, part, year) {
+    var q = translit(brand);
+    if (model) q += ' ' + translit(model.k);
+    q += ' ' + translit(part);
+    if (year) q += ' ' + year;
+    return q;
+}
+
+function aiProcess(t) {
+    var faq = aiAnswerFaq(t);
+    if (faq) { aiPush('bot', faq); return; }
+
+    var brand = aiFindBrand(t);
+    var model = aiFindModel(t, brand);
+    var part = aiFindPart(t);
+    var yearMatch = t.match(/\b(19|20)\d{2}\b/);
+    var year = yearMatch ? yearMatch[0] : '';
+
+    if (brand && part) {
+        var q = aiBuildQuery(brand, model, part, year);
+        var extra = RELATED[part]
+            ? '<br><br>💡 Совет: к этой детали обычно берут ещё «<b>' + RELATED[part].join('</b>» или «<b>') + '</b>».'
+            : '';
+        aiPush('bot', 'Понял: <b>' + esc(brand) + (model ? ' ' + esc(model.n) : '') + '</b>, деталь — <b>' + esc(part) + '</b>' + (year ? ', ' + esc(year) + ' год' : '') + '. Запускаю поиск по складам:' + extra);
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'mt-2 w-full bg-blue-600 text-white rounded-lg py-2 font-bold text-sm hover:bg-blue-700';
+        btn.textContent = '🔍 Искать: ' + q;
+        btn.onclick = function () { aiRunSearch(q); };
+        document.getElementById('ai-chat').lastChild.firstChild.appendChild(btn);
+        document.getElementById('ai-chat').scrollTop = 999999;
         return;
     }
-    var q = catQuery(aiState.brand, aiState.model, c.q, aiState.year);
-    document.getElementById('search-input').value = q;
-    showPage('shop');
-    performSearch(q);
+
+    if (part && !brand) {
+        var popular = ['Kia', 'Hyundai', 'Toyota', 'Volkswagen', 'Renault', 'Lada'];
+        var html = 'Выбрали деталь: <b>' + esc(part) + '</b>. А какой у вас автомобиль?';
+        for (var i = 0; i < popular.length; i++) {
+            (function (b) {
+                var b2 = document.createElement('button');
+                b2.type = 'button';
+                b2.className = 'mt-1 mr-1 px-3 py-1.5 rounded-lg border bg-white text-sm font-semibold hover:bg-blue-50';
+                b2.textContent = b;
+                b2.onclick = function () { aiRunSearch(aiBuildQuery(b, null, part, '')); };
+                document.getElementById('ai-chat').lastChild.firstChild.appendChild(b2);
+            })(popular[i]);
+        }
+        aiPush('bot', html);
+        document.getElementById('ai-chat').scrollTop = 999999;
+        return;
+    }
+
+    if (brand && !part) {
+        var names = PARTS.slice(0, 12).map(function (p) { return p.name; });
+        var html2 = 'Автомобиль: <b>' + esc(brand) + '</b> — принято. Какую деталь ищем? Выберите или напишите текстом:';
+        aiPush('bot', html2);
+        for (var j = 0; j < names.length; j++) {
+            (function (pName) {
+                var b3 = document.createElement('button');
+                b3.type = 'button';
+                b3.className = 'mt-1 mr-1 px-3 py-1.5 rounded-lg border bg-white text-sm hover:bg-blue-50';
+                b3.textContent = pName;
+                b3.onclick = function () { aiRunSearch(aiBuildQuery(brand, null, pName, '')); };
+                document.getElementById('ai-chat').lastChild.firstChild.appendChild(b3);
+            })(names[j]);
+        }
+        document.getElementById('ai-chat').scrollTop = 999999;
+        return;
+    }
+
+    aiPush('bot', 'Не совсем понял запрос 🙂 Опишите так: <b>марка + модель + деталь</b>, например «передние колодки Kia Rio 2015». Или откройте вкладку «Ручной подбор» и выберите из списка.');
 }
 
-function aiPickModel(brand, model) {
-    aiState = { brand: brand, model: model, year: null };
-    showPage('catalog');
-    catalogTab('manual');
-    document.getElementById('cat-brand').value = brand;
-    catBrandChanged();
-    document.getElementById('cat-model').value = model;
-    showCatParts();
-    aiAddMsg('<div class="font-bold">' + esc(brand) + ' ' + esc(model) + '</div><div class="text-sm mt-1">Выберите группу запчастей в списке ниже — поиск запустится сразу.</div>', 'bot');
+function aiRunSearch(q, note) {
+    if (note) aiPush('bot', esc(note));
+    runSearch(q);
 }
 
-function aiAskFor(id) {
-    var c = getCat(id);
-    aiAddMsg('<div class="mb-1"><b>' + esc(c.name) + '</b> — на какой автомобиль? Напишите марку, модель и год выпуска.</div>', 'bot');
-}
-
-/* ============ ИНИЦИАЛИЗАЦИЯ ============ */
-
-(function restoreSession() {
+/* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
+(function init() {
+    catInitBrands();
+    catRenderParts();
+    aiWelcome();
     try {
-        var s = JSON.parse(localStorage.getItem('ad_user'));
-        if (s && s.token) {
-            currentUser = s;
+        var saved = localStorage.getItem('ad_user');
+        if (saved) {
+            currentUser = JSON.parse(saved);
             loadProfile();
         }
     } catch (e) {}
+    updateNavUI();
 })();
-
-populateCatalogBrands();
-aiAddMsg('Привет! Я ИИ-помощник подбора AutoBrand73. Опишите автомобиль и нужную деталь — например: <b>«свечи на Kia Rio 2015»</b>. Найду предложения со складов поставщиков и предложу, что обычно меняют вместе. Также отвечу на вопросы о графике работы, доставке и оплате.', 'bot');
 </script>
 </body>
 </html>
