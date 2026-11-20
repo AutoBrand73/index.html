@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoBrand73 — Магазин автозапчастей</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    .modal-overlay { display: flex; }
+</style>
+</head>
+<body class="bg-slate-100 min-h-screen font-sans">
+
+<!-- ВЕРХНЯЯ ПОЛОСА -->
+<div class="bg-slate-800 text-white text-sm">
+    <div class="max-w-6xl mx-auto px-4 py-2 flex flex-wrap justify-between items-center gap-2">
+        <span>📍 г. Димитровград • 🕒 Ежедневно 09:00 – 17:00</span>
+        <div class="flex items-center gap-4">
+            <a href="tel:+79278343993" class="font-bold hover:text-blue-300">+7 (927) 834-39-93</a>
+            <button type="button" onclick="openVinModal()" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg font-semibold">Запрос по VIN</button>
+        </div>
+    </div>
+</div>
+
+<!-- ШАПКА -->
+<header class="bg-white border-b shadow-sm sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black text-lg">AB73</div>
+            <div>
+                <div class="font-black text-xl text-slate-900">AutoBrand73</div>
+                <div class="text-xs text-slate-500">Запчасти для иномарок</div>
+            </div>
+        </div>
+        <nav class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="showPage('shop')" class="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 hover:bg-slate-200">Каталог</button>
+            <button type="button" id="nav-cabinet" onclick="showPage('cabinet')" class="hidden px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 hover:bg-slate-200">Мои заказы</button>
+            <button type="button" id="nav-admin" onclick="showPage('admin')" class="hidden px-4 py-2 rounded-lg text-sm font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200">⚙️ Админ-панель</button>
+            <button type="button" id="nav-auth" onclick="openAuthModal()" class="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700">Войти</button>
+            <button type="button" id="nav-logout" onclick="logoutUser()" class="hidden px-4 py-2 rounded-lg text-sm font-semibold bg-slate-200 hover:bg-slate-300">Выйти</button>
+            <button type="button" onclick="toggleCart()" class="px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700">🛒<span id="cart-badge">0</span></button>
+        </nav>
+    </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- ГЛАВНАЯ: ПОИСК -->
+    <section id="page-shop">
+        <div class="bg-white rounded-2xl p-8 shadow-sm border">
+            <h1 class="text-3xl font-black text-slate-900 mb-2">Поиск автозапчастей по артикулу</h1>
+            <p class="text-slate-600 mb-6">Актуальные цены и сроки со складов поставщиков</p>
+            <form id="search-form" onsubmit="handleSearch(event)" class="flex flex-wrap gap-3">
+                <input id="search-input" type="text" placeholder="Например: 81129NG или масло Toyota 5W-30"
+                       class="flex-1 min-w-[240px] border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700">Найти</button>
+            </form>
+            <div class="mt-4 text-sm text-slate-600">
+                Не знаете артикул?
+                <button type="button" onclick="openVinModal()" class="text-blue-600 font-semibold hover:underline">Отправьте запрос по VIN-коду</button>
+            </div>
+        </div>
+
+        <div id="loader" class="hidden mt-6 bg-white border rounded-xl p-6 text-center text-slate-600 font-semibold">⏳ Опрашиваем склады поставщиков...</div>
+        <div id="offers-list" class="mt-6 space-y-3"></div>
+    </section>
+
+    <!-- ЛИЧНЫЙ КАБИНЕТ -->
+    <section id="page-cabinet" class="hidden">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border mb-6">
+            <h2 class="text-2xl font-black mb-1">Мои заказы</h2>
+            <div id="cabinet-user-info" class="text-sm text-slate-500"></div>
+        </div>
+        <div id="user-orders-list" class="space-y-3"></div>
+    </section>
+
+    <!-- АДМИН-ПАНЕЛЬ -->
+    <section id="page-admin" class="hidden">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <h2 class="text-2xl font-black mb-4">Админ-панель</h2>
+            <div class="flex gap-2 mb-6 flex-wrap">
+                <button type="button" id="tab-btn-orders" onclick="switchAdminTab('orders')" class="px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">Заказы</button>
+                <button type="button" id="tab-btn-suppliers" onclick="switchAdminTab('suppliers')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Поставщики</button>
+                <button type="button" id="tab-btn-markups" onclick="switchAdminTab('markups')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Наценки</button>
+            </div>
+
+            <div id="admin-tab-orders" class="space-y-3"></div>
+
+            <div id="admin-tab-suppliers" class="hidden">
+                <form id="supplier-add-form" onsubmit="addSupplier(event)" class="grid grid-cols-1 sm:grid-cols-5 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border">
+                    <input id="supplier-name" type="text" placeholder="Название" class="border rounded-lg px-3 py-2 text-sm" required>
+                    <input id="supplier-key1" type="text" placeholder="KEY1 (логин)" class="border rounded-lg px-3 py-2 text-sm" required>
+                    <input id="supplier-key2" type="text" placeholder="KEY2 (пароль)" class="border rounded-lg px-3 py-2 text-sm" required>
+                    <input id="supplier-days" type="number" placeholder="Доп. дней" class="border rounded-lg px-3 py-2 text-sm" value="1" min="0">
+                    <button type="submit" class="bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700">Добавить</button>
+                </form>
+                <div id="admin-suppliers-list" class="space-y-3"></div>
+            </div>
+
+            <div id="admin-tab-markups" class="hidden">
+                <form id="markup-add-form" onsubmit="addMarkup(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border">
+                    <input id="markup-from" type="number" placeholder="Цена от, ₽" class="border rounded-lg px-3 py-2 text-sm" required>
+                    <input id="markup-to" type="number" placeholder="Цена до, ₽" class="border rounded-lg px-3 py-2 text-sm" required>
+                    <input id="markup-percent" type="number" placeholder="Наценка, %" class="border rounded-lg px-3 py-2 text-sm" required>
+                    <button type="submit" class="bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700">Добавить</button>
+                </form>
+                <div id="admin-markups-list" class="space-y-3"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- КОРЗИНА -->
+<div id="cart-drawer" class="hidden fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-2xl z-50 p-6 overflow-y-auto flex-col">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-black">Корзина</h3>
+        <button type="button" onclick="toggleCart()" class="text-slate-500 text-2xl font-bold">✕</button>
+    </div>
+    <div id="cart-items" class="space-y-2 mb-4"></div>
+    <div class="border-t pt-4 mb-4">
+        <div class="flex justify-between text-lg font-black"><span>Итого:</span><span id="cart-total">0 ₽</span></div>
+    </div>
+    <form id="checkout-form" onsubmit="submitCartOrder(event)" class="hidden space-y-3">
+        <p class="text-sm font-bold text-slate-700">Данные для заказа:</p>
+        <input id="ord-name" type="text" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2 text-sm" required>
+        <input id="ord-phone" type="tel" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2 text-sm" required>
+        <input id="ord-vin" type="text" placeholder="VIN автомобиля" class="w-full border rounded-lg px-3 py-2 text-sm">
+        <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-700">Оформить заказ</button>
+    </form>
+</div>
+
+<!-- МОДАЛКА АВТОРИЗАЦИИ -->
+<div id="auth-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="auth-title" class="text-xl font-black">Вход в личный кабинет</h3>
+            <button type="button" onclick="closeAuthModal()" class="text-slate-500 text-2xl font-bold">✕</button>
+        </div>
+        <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-3">
+            <div id="reg-fields" class="hidden space-y-3">
+                <input id="auth-name" type="text" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2">
+                <input id="auth-phone" type="tel" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2">
+                <input id="auth-vin" type="text" placeholder="VIN автомобиля" class="w-full border rounded-lg px-3 py-2">
+            </div>
+            <input id="auth-email" type="email" placeholder="Email" class="w-full border rounded-lg px-3 py-2" required>
+            <input id="auth-pass" type="password" placeholder="Пароль (мин. 6 символов)" class="w-full border rounded-lg px-3 py-2" required minlength="6">
+            <button id="auth-submit-btn" type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700">Войти</button>
+        </form>
+        <button id="auth-switch-btn" type="button" onclick="toggleAuthMode()" class="w-full mt-3 text-sm text-blue-600 hover:underline">Нет аккаунта? Зарегистрироваться</button>
+    </div>
+</div>
+
+<!-- МОДАЛКА ЗАПРОСА ПО VIN -->
+<div id="vin-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-black">Запрос по VIN-коду</h3>
+            <button type="button" onclick="closeVinModal()" class="text-slate-500 text-2xl font-bold">✕</button>
+        </div>
+        <form id="vin-form" onsubmit="submitVinOrder(event)" class="space-y-3">
+            <input id="vin-name" type="text" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2" required>
+            <input id="vin-phone" type="tel" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2" required>
+            <input id="vin-code" type="text" placeholder="VIN-код автомобиля" class="w-full border rounded-lg px-3 py-2 uppercase" required>
+            <textarea id="vin-parts" placeholder="Какие детали нужны?" class="w-full border rounded-lg px-3 py-2 h-24" required></textarea>
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700">Отправить запрос</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// ============================================================
+//  НАСТРОЙКИ (Supabase)
+// ============================================================
+var SUPABASE_URL = 'https://fnlupijomjpopqtnyodv.supabase.co/rest/v1/';
+var SUPABASE_KEY = 'sb_publishable_l1pVfFfga-1Tu9Yr1ms2Lw_PrY1CoZw';
+
+var currentUser = null;
+var currentProfile = null;
+var isRegisterMode = false;
+var cart = new Array();
+
+function sbHeaders(token) {
+    return {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + (token || SUPABASE_KEY),
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+    };
+}
+
+function escapeHtml(s) {
+    return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ============================================================
+//  АВТОРИЗАЦИЯ
+// ============================================================
+function openAuthModal() {
+    var m = document.getElementById('auth-modal');
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+}
+function closeAuthModal() {
+    var m = document.getElementById('auth-modal');
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+}
+function toggleAuthMode() {
+    isRegisterMode = !isRegisterMode;
+    document.getElementById('auth-title').textContent = isRegisterMode ? 'Регистрация покупателя' : 'Вход в личный кабинет';
+    document.getElementById('auth-submit-btn').textContent = isRegisterMode ? 'Зарегистрироваться' : 'Войти';
+    document.getElementById('auth-switch-btn').textContent = isRegisterMode ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться';
+    document.getElementById('reg-fields').className = isRegisterMode ? 'space-y-3' : 'hidden';
+}
+
+function handleAuth(e) {
+    e.preventDefault();
+    var emailVal = document.getElementById('auth-email').value.trim();
+    var passVal = document.getElementById('auth-pass').value;
+    var endpoint = isRegisterMode ? '/auth/v1/signup' : '/auth/v1/token?grant_type=password';
+
+    fetch(SUPABASE_URL.replace(/\/rest\/v1\/$/, '') + endpoint, {
+        method: 'POST',
+        headers: sbHeaders(),
+        body: JSON.stringify({ email: emailVal, password: passVal })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.error || data.error_description || data.msg) {
+            alert('Ошибка: ' + (data.error_description || data.msg || data.error));
+            return;
+        }
+        var u = data.user || (data.session && data.session.user);
+        var tok = data.access_token || (data.session && data.session.access_token);
+        if (!u) {
+            alert('Проверьте почту: подтвердите регистрацию и войдите снова.');
+            return;
+        }
+        currentUser = { uid: u.id, mail: u.email, token: tok };
+        localStorage.setItem('ad_user', JSON.stringify(currentUser));
+
+        if (isRegisterMode) {
+            var nameVal = document.getElementById('auth-name').value || emailVal;
+            var phoneVal = document.getElementById('auth-phone').value || '';
+            var vinVal = document.getElementById('auth-vin').value.toUpperCase() || '';
+            fetch(SUPABASE_URL + 'profiles', {
+                method: 'POST',
+                headers: sbHeaders(tok),
+                body: JSON.stringify({ id: u.id, email: emailVal, full_name: nameVal, phone: phoneVal, vin: vinVal, role: 'user' })
+            }).then(function() {
+                loadProfile();
+                closeAuthModal();
+            }).catch(function(err) { alert('Профиль не сохранён: ' + err.message); });
+        } else {
+            loadProfile();
+            closeAuthModal();
+        }
+    })
+    .catch(function(err) { alert('Ошибка сети: ' + err.message); });
+}
+
+function loadProfile() {
+    if (!currentUser) return;
+    fetch(SUPABASE_URL + 'profiles?id=eq.' + currentUser.uid + '&select=*', {
+        headers: sbHeaders(currentUser.token)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(rows) {
+        currentProfile = (rows && rows.length > 0) ? rows[0] : { email: currentUser.mail, role: 'user' };
+        updateNavUI();
+    })
+    .catch(function() { updateNavUI(); });
+}
+
+function updateNavUI() {
+    var loggedIn = Boolean(currentUser);
+    document.getElementById('nav-auth').classList.toggle('hidden', loggedIn);
+    document.getElementById('nav-logout').classList.toggle('hidden', !loggedIn);
+    document.getElementById('nav-cabinet').classList.toggle('hidden', !loggedIn);
+    var isAdmin = currentProfile && currentProfile.role === 'admin';
+    document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
+
+    if (currentProfile) {
+        if (currentProfile.full_name) document.getElementById('ord-name').value = currentProfile.full_name;
+        if (currentProfile.phone) document.getElementById('ord-phone').value = currentProfile.phone;
+        if (currentProfile.vin) document.getElementById('ord-vin').value = currentProfile.vin;
+    }
+}
+
+function logoutUser() {
+    currentUser = null;
+    currentProfile = null;
+    localStorage.removeItem('ad_user');
+    updateNavUI();
+    showPage('shop');
+}
+
+// ============================================================
+//  НАВИГАЦИЯ
+// ============================================================
+function showPage(page) {
+    document.getElementById('page-shop').classList.toggle('hidden', page !== 'shop');
+    document.getElementById('page-cabinet').classList.toggle('hidden', page !== 'cabinet');
+    document.getElementById('page-admin').classList.toggle('hidden', page !== 'admin');
+    if (page === 'cabinet') loadUserOrders();
+    if (page === 'admin') switchAdminTab('orders');
+}
+
+// ============================================================
+//  ПОИСК: сначала серверный /api/search, если его нет — поиск прямо из браузера
+// ============================================================
+function getTag(xml, tag) {
+    var m = xml.match(new RegExp('<' + tag + '[^>]*>([\\s\\S]*?)<\\/' + tag + '>', 'i'));
+    return m ? m[1].trim() : '';
+}
+
+function applyMarkupRule(buyPrice, rules) {
+    var pct = 15;
+    for (var i = 0; i < rules.length; i++) {
+        if (buyPrice >= Number(rules[i].price_from) && buyPrice <= Number(rules[i].price_to)) {
+            pct = Number(rules[i].percent);
+            break;
+        }
+    }
+    return Math.ceil(buyPrice * (1 + pct / 100));
+}
+
+function parseRossko(xmlText, sup, rules) {
+    var offers = [];
+    if (!xmlText || /<\s*success[^>]*>\s*false/i.test(xmlText)) return offers;
+    var partRe = /<part>([\s\S]*?)<\/part>/gi, m;
+    while ((m = partRe.exec(xmlText)) !== null) {
+        var block = m[1];
+        var brand = getTag(block, 'brand');
+        var art = getTag(block, 'partnumber');
+        var name = getTag(block, 'name');
+        var stockRe = /<stock>([\s\S]*?)<\/stock>/gi, sm;
+        while ((sm = stockRe.exec(block)) !== null) {
+            var sBlock = sm[1];
+            var priceRaw = parseFloat(getTag(sBlock, 'price')) || 0;
+            var count = parseInt(getTag(sBlock, 'count')) || 0;
+            var delivery = parseInt(getTag(sBlock, 'delivery')) || 1;
+            if (priceRaw > 0 && count > 0) {
+                offers.push({
+                    supplier: sup.name,
+                    brand: escapeHtml(brand),
+                    art: escapeHtml(art),
+                    name: escapeHtml(name),
+                    days: (delivery + (Number(sup.extra_days) || 1)) + ' дн.',
+                    stock: count,
+                    price: applyMarkupRule(priceRaw, rules)
+                });
+            }
+        }
+    }
+    return offers;
+}
+
+function renderOffers(items, q) {
+    var box = document.getElementById('offers-list');
+    document.getElementById('loader').classList.add('hidden');
+    if (!items || items.length === 0) {
+        box.innerHTML = '<div class="bg-white p-6 rounded-xl border text-center">По артикулу <b>' + escapeHtml(q) + '</b> ничего не найдено.</div>';
+        return;
+    }
+    box.innerHTML = '';
+    for (var i = 0; i < items.length; i++) {
+        var p = items[i];
+        var div = document.createElement('div');
+        div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-4';
+        div.innerHTML = '<div><div class="font-bold">' + p.brand + ' <span class="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded">' + p.art + '</span></div>' +
+            '<div class="text-sm text-slate-700">' + p.name + '</div>' +
+            '<div class="text-xs text-slate-500 mt-1">Срок: <b>' + p.days + '</b> • Остаток: <b>' + p.stock + ' шт.</b>' +
+            (p.supplier ? ' • Поставщик: <b>' + escapeHtml(p.supplier) + '</b>' : '') + '</div></div>' +
+            '<div class="flex items-center gap-4"><div class="text-xl font-bold">' + p.price + ' ₽</div>' +
+            '<button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">В корзину</button></div>';
+        (function(item) {
+            div.querySelector('button').onclick = function() { addToCart(item); };
+        })(p);
+        box.appendChild(div);
+    }
+}
+
+function clientSearch(q) {
+    var box = document.getElementById('offers-list');
+    var loader = document.getElementById('loader');
+    loader.classList.remove('hidden');
+    var headers = sbHeaders(currentUser && currentUser.token);
+
+    var mReq = fetch(SUPABASE_URL + 'markups?select=*&order=price_from.asc', { headers: headers })
+        .then(function(r) { return r.ok ? r.json() : []; }).catch(function() { return []; });
+    var sReq = fetch(SUPABASE_URL + 'suppliers?is_active=eq.true&select=*', { headers: headers })
+        .then(function(r) { return r.ok ? r.json() : []; });
+
+    Promise.all([mReq, sReq]).then(function(res) {
+        var rules = res[0] || [];
+        var suppliers = res[1] || [];
+        if (!suppliers.length) {
+            loader.classList.add('hidden');
+            box.innerHTML = '<div class="bg-amber-50 text-amber-800 p-4 rounded-xl border border-amber-200">Нет активных поставщиков. Добавьте ключи в Админ-панели.</div>';
+            return;
+        }
+        var ns = 'http://rossko.ru';
+        var promises = [];
+        for (var s = 0; s < suppliers.length; s++) {
+            var sup = suppliers[s];
+            if (!sup.key1 || !sup.key2) continue;
+            var clean = q.replace(/[<>&'"]/g, '');
+            var xmlBody = '<?xml version="1.0" encoding="utf-8"?>' +
+                '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" ' +
+                'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">' +
+                '<soap:Body><GetSearch xmlns="' + ns + '">' +
+                '<KEY1>' + sup.key1.trim() + '</KEY1><KEY2>' + sup.key2.trim() + '</KEY2>' +
+                '<text>' + clean + '</text>' +
+                '<delivery_id>000000001</delivery_id>' +
+                '</GetSearch></soap:Body></soap:Envelope>';
+            promises.push(
+                fetch('https://api.rossko.ru/service/v2.1/GetSearch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/xml; charset=utf-8', 'SOAPAction': ns + '/GetSearch' },
+                    body: xmlBody
+                })
+                .then(function(r) { return r.text(); })
+                .then(function(xmlText) { return parseRossko(xmlText, sup, rules); })
+                .catch(function() { return []; })
+            );
+        }
+        return Promise.all(promises);
+    }).then(function(batches) {
+        if (!batches) return;
+        var all = [];
+        for (var i = 0; i < batches.length; i++) all = all.concat(batches[i]);
+        all.sort(function(a, b) { return a.price - b.price; });
+        renderOffers(all, q);
+    }).catch(function(err) {
+        loader.classList.add('hidden');
+        box.innerHTML = '<div class="bg-red-50 text-red-700 p-4 rounded-xl">Не удалось выполнить поиск. Возможная причина: поставщик блокирует запросы из браузера (CORS). В этом случае нужен серверный посредник /api/search. Текст ошибки: ' + escapeHtml(err.message) + '</div>';
+    });
+}
+
+function handleSearch(e) {
+    e.preventDefault();
+    var q = document.getElementById('search-input').value.trim();
+    if (!q) return;
+    var box = document.getElementById('offers-list');
+    var loader = document.getElementById('loader');
+    box.innerHTML = '';
+    loader.classList.remove('hidden');
+
+    // Пробуем серверную функцию (если деплой на Vercel с api-папкой),
+    // при её отсутствии считаем данные прямо из браузера.
+    fetch('/api/search?q=' + encodeURIComponent(q))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            loader.classList.add('hidden');
+            if (!data.ok) {
+                box.innerHTML = '<div class="bg-red-50 text-red-700 p-4 rounded-xl">' + escapeHtml(data.error || 'Ошибка поиска') + '</div>';
+                return;
+            }
+            renderOffers(data.items, q);
+        })
+        .catch(function() { clientSearch(q); });
+}
+
+// ============================================================
+//  КОРЗИНА И ЗАКАЗЫ
+// ============================================================
+function addToCart(item) {
+    var found = cart.find(function(c) { return c.art === item.art && c.price === item.price; });
+    if (found) found.qty += 1;
+    else cart.push({ brand: item.brand, art: item.art, name: item.name, price: item.price, qty: 1 });
+    updateCartUI();
+    alert('Добавлено в корзину: ' + item.brand + ' ' + item.art);
+}
+
+function updateCartUI() {
+    var qty = 0, sum = 0;
+    var box = document.getElementById('cart-items');
+    box.innerHTML = '';
+    for (var i = 0; i < cart.length; i++) {
+        qty += cart[i].qty;
+        sum += cart[i].price * cart[i].qty;
+        var row = document.createElement('div');
+        row.className = 'border rounded-lg p-3 flex justify-between items-center text-sm';
+        row.innerHTML = '<div><b>' + escapeHtml(cart[i].brand) + ' ' + escapeHtml(cart[i].art) + '</b><br>' + cart[i].qty + ' шт. × ' + cart[i].price + ' ₽</div>' +
+            '<button type="button" class="text-red-500 font-bold px-2">✕</button>';
+        (function(idx) {
+            row.querySelector('button').onclick = function() { cart.splice(idx, 1); updateCartUI(); };
+        })(i);
+        box.appendChild(row);
+    }
+    document.getElementById('cart-badge').textContent = qty;
+    document.getElementById('cart-total').textContent = sum + ' ₽';
+    document.getElementById('checkout-form').classList.toggle('hidden', cart.length === 0);
+}
+
+function toggleCart() {
+    var d = document.getElementById('cart-drawer');
+    d.classList.toggle('hidden');
+    d.classList.toggle('flex');
+}
+
+function submitCartOrder(e) {
+    e.preventDefault();
+    var sum = 0, lines = new Array();
+    for (var i = 0; i < cart.length; i++) {
+        sum += cart[i].price * cart[i].qty;
+        lines.push(cart[i].brand + ' ' + cart[i].art + ' (' + cart[i].qty + ' шт. × ' + cart[i].price + ' ₽)');
+    }
+    var payload = {
+        user_id: currentUser ? currentUser.uid : null,
+        customer_name: document.getElementById('ord-name').value,
+        customer_phone: document.getElementById('ord-phone').value,
+        vin: document.getElementById('ord-vin').value.toUpperCase(),
+        items: lines.join('; '),
+        total_price: sum,
+        status: 'Новый'
+    };
+    fetch(SUPABASE_URL + 'orders', {
+        method: 'POST',
+        headers: sbHeaders(currentUser && currentUser.token),
+        body: JSON.stringify(payload)
+    }).then(function(r) {
+        if (r.ok) {
+            cart = new Array();
+            updateCartUI();
+            toggleCart();
+            alert('Заказ оформлен!');
+        } else {
+            return r.text().then(function(t) { alert('Не удалось оформить заказ: ' + t); });
+        }
+    }).catch(function(err) { alert('Ошибка сети: ' + err.message); });
+}
+
+// ============================================================
+//  ЗАПРОС ПО VIN
+// ============================================================
+function openVinModal() { var m = document.getElementById('vin-modal'); m.classList.remove('hidden'); m.classList.add('flex'); }
+function closeVinModal() { var m = document.getElementById('vin-modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
+
+function submitVinOrder(e) {
+    e.preventDefault();
+    var payload = {
+        user_id: currentUser ? currentUser.uid : null,
+        customer_name: document.getElementById('vin-name').value,
+        customer_phone: document.getElementById('vin-phone').value,
+        vin: document.getElementById('vin-code').value.toUpperCase(),
+        items: 'ПОДБОР ПО VIN: ' + document.getElementById('vin-parts').value,
+        total_price: 0,
+        status: 'Запрос по VIN'
+    };
+    fetch(SUPABASE_URL + 'orders', {
+        method: 'POST',
+        headers: sbHeaders(currentUser && currentUser.token),
+        body: JSON.stringify(payload)
+    }).then(function(r) {
+        if (r.ok) {
+            closeVinModal();
+            e.target.reset();
+            alert('Запрос по VIN отправлен!');
+        } else {
+            return r.text().then(function(t) { alert('Не удалось отправить запрос: ' + t); });
+        }
+    }).catch(function(err) { alert('Ошибка сети: ' + err.message); });
+}
+
+// ============================================================
+//  ЛИЧНЫЙ КАБИНЕТ
+// ============================================================
+function loadUserOrders() {
+    if (!currentUser) return;
+    document.getElementById('cabinet-user-info').textContent = 'Аккаунт: ' + currentUser.mail;
+    var box = document.getElementById('user-orders-list');
+    box.innerHTML = 'Загрузка...';
+    fetch(SUPABASE_URL + 'orders?user_id=eq.' + currentUser.uid + '&order=id.desc', {
+        headers: sbHeaders(currentUser.token)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(orders) {
+        if (!orders || orders.length === 0) { box.innerHTML = '<p class="text-slate-500">У вас пока нет заказов.</p>'; return; }
+        box.innerHTML = '';
+        for (var i = 0; i < orders.length; i++) {
+            var o = orders[i];
+            var div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded-xl border';
+            div.innerHTML = '<div class="flex justify-between font-bold mb-1"><span>Заказ №' + o['id'] + '</span><span class="text-blue-600">' + escapeHtml(o['status']) + '</span></div>' +
+                '<div class="text-sm text-slate-700">' + escapeHtml(o['items']) + '</div>' +
+                '<div class="text-sm font-bold mt-2">Сумма: ' + o['total_price'] + ' ₽</div>';
+            box.appendChild(div);
+        }
+    })
+    .catch(function(err) { box.innerHTML = '<p class="text-red-600">Ошибка загрузки: ' + escapeHtml(err.message) + '</p>'; });
+}
+
+// ============================================================
+//  АДМИН-ПАНЕЛЬ
+// ============================================================
+function switchAdminTab(tab) {
+    var tabs = new Array('orders', 'suppliers', 'markups');
+    for (var i = 0; i < tabs.length; i++) {
+        var t = tabs[i];
+        document.getElementById('admin-tab-' + t).classList.toggle('hidden', t !== tab);
+        document.getElementById('tab-btn-' + t).className = (t === tab)
+            ? 'px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white'
+            : 'px-4 py-2 rounded-lg text-sm font-bold bg-white border';
+    }
+    if (tab === 'orders') loadAdminOrders();
+    if (tab === 'suppliers') loadAdminSuppliers();
+    if (tab === 'markups') loadAdminMarkups();
+}
+
+function loadAdminOrders() {
+    var box = document.getElementById('admin-tab-orders');
+    box.innerHTML = 'Загрузка заказов...';
+    fetch(SUPABASE_URL + 'orders?order=id.desc', { headers: sbHeaders(currentUser.token) })
+    .then(function(r) { return r.json(); })
+    .then(function(orders) {
+        box.innerHTML = '';
+        for (var i = 0; i < orders.length; i++) {
+            var o = orders[i];
+            var div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-4';
+            div.innerHTML = '<div><div class="font-bold">Заказ №' + o['id'] + ' • ' + escapeHtml(o['customer_name']) + ' (' + escapeHtml(o['customer_phone']) + ')</div>' +
+                '<div class="text-xs text-slate-500">VIN: ' + escapeHtml(o['vin'] || 'не указан') + '</div>' +
+                '<div class="text-sm mt-1">' + escapeHtml(o['items']) + '</div>' +
+                '<div class="font-bold text-blue-700 mt-1">Итого: ' + o['total_price'] + ' ₽</div></div>' +
+                '<select class="border rounded-lg px-3 py-2 text-sm font-semibold">' +
+                '<option ' + (o['status'] === 'Новый' ? 'selected' : '') + '>Новый</option>' +
+                '<option ' + (o['status'] === 'Запрос по VIN' ? 'selected' : '') + '>Запрос по VIN</option>' +
+                '<option ' + (o['status'] === 'Заказано у поставщика' ? 'selected' : '') + '>Заказано у поставщика</option>' +
+                '<option ' + (o['status'] === 'Готов к выдаче' ? 'selected' : '') + '>Готов к выдаче</option>' +
+                '<option ' + (o['status'] === 'Выдан' ? 'selected' : '') + '>Выдан</option></select>';
+            (function(orderId) {
+                div.querySelector('select').onchange = function(ev) {
+                    fetch(SUPABASE_URL + 'orders?id=eq.' + orderId, {
+                        method: 'PATCH',
+                        headers: sbHeaders(currentUser.token),
+                        body: JSON.stringify({ status: ev.target.value })
+                    }).then(function(r) { if (!r.ok) alert('Не удалось сохранить статус'); });
+                };
+            })(o['id']);
+            box.appendChild(div);
+        }
+    })
+    .catch(function(err) { box.innerHTML = '<p class="text-red-600">Ошибка загрузки: ' + escapeHtml(err.message) + '</p>'; });
+}
+
+function loadAdminSuppliers() {
+    var box = document.getElementById('admin-suppliers-list');
+    fetch(SUPABASE_URL + 'suppliers?order=id.asc', { headers: sbHeaders(currentUser.token) })
+    .then(function(r) { return r.json(); })
+    .then(function(list) {
+        box.innerHTML = '';
+        for (var i = 0; i < list.length; i++) {
+            var s = list[i];
+            var div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-3';
+            div.innerHTML = '<div><div class="font-bold">' + escapeHtml(s['name']) +
+                ' <span class="text-xs px-2 py-0.5 rounded ' + (s['is_active'] ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600') + '">' +
+                (s['is_active'] ? 'активен' : 'выключен') + '</span></div>' +
+                '<div class="text-xs text-slate-500 font-mono">KEY1: ' + escapeHtml(s['key1']) + ' • KEY2: ' + escapeHtml(s['key2']) + ' • доп. дней: ' + escapeHtml(s['extra_days']) + '</div></div>' +
+                '<div class="flex gap-2">' +
+                '<button type="button" class="act-keys bg-slate-100 border px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200">Изменить ключи</button>' +
+                '<button type="button" class="act-toggle bg-slate-100 border px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200">' + (s['is_active'] ? 'Выключить' : 'Включить') + '</button>' +
+                '<button type="button" class="act-del bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-100">Удалить</button></div>';
+            (function(id) {
+                div.querySelector('.act-keys').onclick = function() {
+                    var k1 = prompt('Новый KEY1 (логин):'); if (k1 === null) return;
+                    var k2 = prompt('Новый KEY2 (пароль):'); if (k2 === null) return;
+                    fetch(SUPABASE_URL + 'suppliers?id=eq.' + id, {
+                        method: 'PATCH',
+                        headers: sbHeaders(currentUser.token),
+                        body: JSON.stringify({ key1: k1.trim(), key2: k2.trim() })
+                    }).then(loadAdminSuppliers);
+                };
+                div.querySelector('.act-toggle').onclick = function() {
+                    fetch(SUPABASE_URL + 'suppliers?id=eq.' + id, {
+                        method: 'PATCH',
+                        headers: sbHeaders(currentUser.token),
+                        body: JSON.stringify({ is_active: !s['is_active'] })
+                    }).then(loadAdminSuppliers);
+                };
+                div.querySelector('.act-del').onclick = function() {
+                    if (!confirm('Удалить поставщика?')) return;
+                    fetch(SUPABASE_URL + 'suppliers?id=eq.' + id, {
+                        method: 'DELETE',
+                        headers: sbHeaders(currentUser.token)
+                    }).then(loadAdminSuppliers);
+                };
+            })(s['id']);
+            box.appendChild(div);
+        }
+    })
+    .catch(function(err) { box.innerHTML = '<p class="text-red-600">Ошибка загрузки: ' + escapeHtml(err.message) + '</p>'; });
+}
+
+function addSupplier(e) {
+    e.preventDefault();
+    var payload = {
+        name: document.getElementById('supplier-name').value,
+        key1: document.getElementById('supplier-key1').value.trim(),
+        key2: document.getElementById('supplier-key2').value.trim(),
+        extra_days: parseInt(document.getElementById('supplier-days').value) || 1,
+        is_active: true
+    };
+    fetch(SUPABASE_URL + 'suppliers', {
+        method: 'POST',
+        headers: sbHeaders(currentUser.token),
+        body: JSON.stringify(payload)
+    }).then(function(r) {
+        if (r.ok) { e.target.reset(); loadAdminSuppliers(); }
+        else return r.text().then(function(t) { alert('Ошибка добавления: ' + t); });
+    });
+}
+
+function loadAdminMarkups() {
+    var box = document.getElementById('admin-markups-list');
+    fetch(SUPABASE_URL + 'markups?order=price_from.asc', { headers: sbHeaders(currentUser.token) })
+    .then(function(r) { return r.json(); })
+    .then(function(list) {
+        if (!list || list.length === 0) { box.innerHTML = '<p class="text-slate-500">Наценок пока нет — будет применяться базовая 15%.</p>'; return; }
+        box.innerHTML = '';
+        for (var i = 0; i < list.length; i++) {
+            var m = list[i];
+            var div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-3';
+            div.innerHTML = '<div class="font-semibold">от ' + m['price_from'] + ' до ' + m['price_to'] + ' ₽ — наценка <b class="text-blue-700">' + m['percent'] + '%</b></div>' +
+                '<div class="flex gap-2">' +
+                '<button type="button" class="act-edit bg-slate-100 border px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200">Изменить</button>' +
+                '<button type="button" class="act-del bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-100">Удалить</button></div>';
+            (function(id) {
+                div.querySelector('.act-edit').onclick = function() {
+                    var pf = prompt('Цена от (₽):'); if (pf === null) return;
+                    var pt = prompt('Цена до (₽):'); if (pt === null) return;
+                    var pc = prompt('Наценка (%):'); if (pc === null) return;
+                    fetch(SUPABASE_URL + 'markups?id=eq.' + id, {
+                        method: 'PATCH',
+                        headers: sbHeaders(currentUser.token),
+                        body: JSON.stringify({ price_from: Number(pf), price_to: Number(pt), percent: Number(pc) })
+                    }).then(loadAdminMarkups);
+                };
+                div.querySelector('.act-del').onclick = function() {
+                    if (!confirm('Удалить диапазон наценки?')) return;
+                    fetch(SUPABASE_URL + 'markups?id=eq.' + id, {
+                        method: 'DELETE',
+                        headers: sbHeaders(currentUser.token)
+                    }).then(loadAdminMarkups);
+                };
+            })(m['id']);
+            box.appendChild(div);
+        }
+    })
+    .catch(function(err) { box.innerHTML = '<p class="text-red-600">Ошибка загрузки: ' + escapeHtml(err.message) + '</p>'; });
+}
+
+function addMarkup(e) {
+    e.preventDefault();
+    var payload = {
+        price_from: Number(document.getElementById('markup-from').value),
+        price_to: Number(document.getElementById('markup-to').value),
+        percent: Number(document.getElementById('markup-percent').value)
+    };
+    fetch(SUPABASE_URL + 'markups', {
+        method: 'POST',
+        headers: sbHeaders(currentUser.token),
+        body: JSON.stringify(payload)
+    }).then(function(r) {
+        if (r.ok) { e.target.reset(); loadAdminMarkups(); }
+        else return r.text().then(function(t) { alert('Ошибка добавления: ' + t); });
+    });
+}
+
+// ============================================================
+//  СТАРТ: восстанавливаем сессию из localStorage
+// ============================================================
+(function init() {
+    try {
+        var saved = localStorage.getItem('ad_user');
+        if (saved) {
+            currentUser = JSON.parse(saved);
+            loadProfile();
+            updateNavUI();
+        }
+    } catch (e) {}
+})();
+</script>
+</body>
+</html>
