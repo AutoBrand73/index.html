@@ -5,183 +5,279 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AutoBrand73 — Магазин автозапчастей</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+.msg-btn{display:inline-block;margin:4px 4px 0 0;padding:6px 12px;border:1px solid #3b82f6;color:#2563eb;border-radius:8px;font-size:13px;cursor:pointer;background:#fff}
+.msg-btn:hover{background:#eff6ff}
+.chip{padding:10px 14px;border:1px solid #cbd5e1;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:#fff}
+.chip:hover{border-color:#3b82f6;background:#eff6ff}
+.chip-on{background:#2563eb;color:#fff;border-color:#2563eb}
+.chat-user{background:#2563eb;color:#fff;padding:10px 14px;border-radius:14px 14px 4px 14px;max-width:80%;margin-left:auto}
+.chat-bot{background:#f1f5f9;color:#0f172a;padding:10px 14px;border-radius:14px 14px 14px 4px;max-width:85%}
+</style>
 </head>
 <body class="bg-slate-100 min-h-screen">
 
-<!-- Верхняя панель -->
-<div class="bg-slate-900 text-white text-sm">
-  <div class="max-w-6xl mx-auto px-4 py-2 flex flex-wrap gap-3 justify-between items-center">
-    <div>📍 г. Димитровград • 🕒 Ежедневно 09:00 – 17:00</div>
-    <div class="flex items-center gap-4">
-      <a href="tel:+79278343993" class="font-bold">+7 (927) 834-39-93</a>
-      <button onclick="openVinModal()" class="bg-blue-600 px-3 py-1.5 rounded-lg font-semibold">Запрос по VIN</button>
-    </div>
-  </div>
-</div>
-
-<!-- Шапка -->
-<header class="bg-white border-b sticky top-0 z-40">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-4 justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black">AB</div>
+<header class="bg-white shadow-sm sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3 flex-wrap">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('shop')">
+      <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black text-sm">AB73</div>
       <div>
-        <div class="font-black text-xl leading-tight">AutoBrand73</div>
-        <div class="text-xs text-slate-500">Запчасти для иномарок</div>
+        <div class="font-black text-lg leading-tight">AutoBrand73</div>
+        <div class="text-xs text-slate-500">Запчасти для иномарок и грузовиков</div>
       </div>
     </div>
-    <nav class="flex flex-wrap items-center gap-2">
-      <button onclick="showPage('catalog')" class="px-4 py-2 rounded-lg bg-white border font-semibold text-sm">Каталог</button>
-      <button id="nav-cabinet" onclick="showPage('cabinet')" class="hidden px-4 py-2 rounded-lg bg-white border font-semibold text-sm">Мои заказы</button>
-      <button id="nav-admin" onclick="showPage('admin')" class="hidden px-4 py-2 rounded-lg bg-slate-800 text-white font-semibold text-sm">⚙️ Админ-панель</button>
-      <button id="nav-auth" onclick="openAuthModal()" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm">Войти</button>
-      <button id="nav-logout" onclick="logoutUser()" class="hidden px-4 py-2 rounded-lg bg-white border font-semibold text-sm">Выйти</button>
-      <button onclick="toggleCart()" class="relative px-4 py-2 rounded-lg bg-slate-900 text-white font-semibold text-sm">🛒 <span id="cart-badge">0</span></button>
+    <div class="hidden lg:block text-xs text-slate-500 ml-4">📍 г. Димитровград • 🕒 Ежедневно 09:00–17:00 • <a href="tel:+79278343993" class="text-blue-600 font-bold">+7 (927) 834-39-93</a></div>
+    <nav class="ml-auto flex items-center gap-2 flex-wrap">
+      <button id="nav-shop" type="button" onclick="showPage('shop')" class="hidden px-3 py-2 rounded-lg text-sm font-semibold border bg-white">Поиск</button>
+      <button id="nav-catalog" type="button" onclick="showPage('catalog')" class="hidden px-3 py-2 rounded-lg text-sm font-semibold border bg-white">Каталог</button>
+      <button id="nav-ai" type="button" onclick="showPage('ai')" class="hidden px-3 py-2 rounded-lg text-sm font-semibold border bg-white">🤖 ИИ-подбор</button>
+      <button id="nav-cabinet" type="button" onclick="showPage('cabinet')" class="hidden px-3 py-2 rounded-lg text-sm font-semibold border bg-white">Кабинет</button>
+      <button id="nav-admin" type="button" onclick="showPage('admin')" class="hidden px-3 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-white">⚙️ Админ</button>
+      <button id="nav-cart" type="button" onclick="toggleCart()" class="px-3 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white">🛒<span id="cart-badge">0</span></button>
+      <button id="nav-auth" type="button" onclick="openAuthModal()" class="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white">Войти</button>
+      <button id="nav-logout" type="button" onclick="logoutUser()" class="hidden px-3 py-2 rounded-lg text-sm font-semibold border bg-white text-red-600">Выйти</button>
     </nav>
   </div>
 </header>
 
-<!-- ГЛАВНАЯ: ПОИСК -->
-<section id="page-shop" class="max-w-6xl mx-auto px-4 py-8">
-  <h1 class="text-2xl font-black mb-1">Поиск автозапчастей по артикулу</h1>
-  <p class="text-slate-500 mb-6">Актуальные цены и сроки со складов поставщиков</p>
-  <form onsubmit="return handleSearch(event)" class="flex flex-wrap gap-2 mb-4">
-    <input id="search-input" placeholder="Артикул или название, например: фильтр масляный Rio" class="flex-1 border rounded-lg px-4 py-3 min-w-[220px]">
-    <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold">Найти</button>
+<main class="max-w-6xl mx-auto px-4 py-6">
+
+<!-- ЭКРАН ДЛЯ ГОСТЯ -->
+<div id="page-guest" class="text-center py-14">
+  <div class="w-20 h-20 bg-blue-600 text-white rounded-3xl flex items-center justify-center text-2xl font-black mx-auto mb-6">AB73</div>
+  <h1 class="text-3xl font-black mb-3">Добро пожаловать в AutoBrand73!</h1>
+  <p class="text-slate-600 max-w-xl mx-auto mb-2">Цены, каталоги и подбор автозапчастей доступны зарегистрированным пользователям. Регистрация занимает меньше минуты — и вы сразу увидите актуальные цены и сроки со складов поставщиков.</p>
+  <p class="text-slate-500 text-sm mb-8 max-w-xl mx-auto">📍 г. Димитровград • 🕒 Ежедневно 09:00–17:00 • +7 (927) 834-39-93</p>
+  <div class="flex gap-3 justify-center flex-wrap">
+    <button type="button" onclick="openAuthModal()" class="px-6 py-3 rounded-xl bg-blue-600 text-white font-bold">Войти / Зарегистрироваться</button>
+    <button type="button" onclick="openVinModal()" class="px-6 py-3 rounded-xl border bg-white font-bold">Запрос по VIN</button>
+  </div>
+</div>
+
+<!-- ПОИСК -->
+<div id="page-shop" class="hidden">
+  <h1 class="text-2xl font-black mb-2">Поиск автозапчастей по артикулу</h1>
+  <p class="text-slate-500 text-sm mb-4">Актуальные цены и сроки со складов поставщиков</p>
+  <form id="search-form" onsubmit="handleSearch(event)" class="bg-white rounded-xl border p-4 mb-4">
+    <div class="flex gap-2 flex-wrap">
+      <input id="search-input" type="text" placeholder="Артикул или название, например: 26300-35505" class="flex-1 min-w-56 border rounded-lg px-4 py-2.5">
+      <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold">Найти</button>
+    </div>
   </form>
-  <p class="text-sm text-slate-500 mb-6">Не знаете артикул? <button onclick="openVinModal()" class="text-blue-600 font-semibold underline">Отправьте запрос по VIN-коду</button></p>
-  <div id="loader" class="hidden bg-white p-6 rounded-xl border text-center">⏳ Ищем запчасть...</div>
+  <div class="text-sm text-slate-500 mb-4">Не знаете артикул? <button type="button" onclick="openVinModal()" class="text-blue-600 font-bold underline">Отправьте запрос по VIN-коду</button></div>
+  <div id="loader" class="hidden bg-white p-6 rounded-xl border text-center text-slate-500">⏳ Ищем запчасть...</div>
   <div id="offers-list" class="space-y-3"></div>
-</section>
+</div>
 
 <!-- КАТАЛОГ -->
-<section id="page-catalog" class="hidden max-w-6xl mx-auto px-4 py-8">
-  <div class="flex gap-2 mb-6">
-    <button id="cat-tabbtn-manual" onclick="switchCatTab('manual')" class="px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">🔧 Ручной подбор</button>
-    <button id="cat-tabbtn-ai" onclick="switchCatTab('ai')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">🤖 ИИ-подбор</button>
-  </div>
-
-  <div id="cat-panel-manual" class="bg-white rounded-2xl border p-6">
-    <h2 class="text-xl font-black mb-4">Подбор запчастей по автомобилю</h2>
-    <div class="grid md:grid-cols-3 gap-4 mb-6">
-      <div>
-        <label class="text-xs text-slate-500 font-semibold">Марка</label>
-        <select id="cat-brand" onchange="catOnBrandChange()" class="w-full border rounded-lg px-3 py-2"><option value="">— выберите марку —</option></select>
-      </div>
-      <div>
-        <label class="text-xs text-slate-500 font-semibold">Модель</label>
-        <select id="cat-model" disabled class="w-full border rounded-lg px-3 py-2"><option value="">— сначала марка —</option></select>
-      </div>
-      <div>
-        <label class="text-xs text-slate-500 font-semibold">Год выпуска (необязательно)</label>
-        <input id="cat-year" type="number" min="1980" max="2030" placeholder="например, 2015" class="w-full border rounded-lg px-3 py-2">
-      </div>
+<div id="page-catalog" class="hidden">
+  <h1 class="text-2xl font-black mb-2">Каталог запчастей</h1>
+  <p class="text-slate-500 text-sm mb-4">Ручной подбор: группа → марка → модель → год → деталь</p>
+  <div id="cat-breadcrumb" class="text-sm text-slate-500 mb-4"></div>
+  <div id="cat-groups" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+  <div id="cat-brands" class="hidden flex flex-wrap gap-2"></div>
+  <div id="cat-models" class="hidden flex flex-wrap gap-2"></div>
+  <div id="cat-parts" class="hidden">
+    <div class="bg-white rounded-xl border p-4 mb-4">
+      <label class="text-sm font-semibold block mb-2">Год выпуска (необязательно)</label>
+      <input id="cat-year" type="number" placeholder="например, 2015" class="border rounded-lg px-4 py-2 w-40">
     </div>
-    <h3 class="font-bold mb-3">Выберите группу запчастей:</h3>
-    <div id="cat-parts-grid" class="grid grid-cols-2 md:grid-cols-4 gap-2"></div>
+    <div id="cat-parts-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2"></div>
   </div>
+</div>
 
-  <div id="cat-panel-ai" class="hidden bg-white rounded-2xl border p-6">
-    <h2 class="text-xl font-black mb-1">🤖 ИИ-помощник по подбору</h2>
-    <p class="text-sm text-slate-500 mb-4">Опишите автомобиль и нужную деталь обычными словами — например: «передние колодки на Kia Rio 2015». Помощник сам распознает марку, модель и деталь и запустит поиск.</p>
-    <div id="ai-chat" class="border rounded-xl p-4 h-96 overflow-y-auto space-y-3 mb-4 bg-slate-50"></div>
-    <div class="flex gap-2">
-      <input id="ai-input" placeholder="Напишите запрос..." class="flex-1 border rounded-lg px-4 py-2" onkeydown="if(event.key==='Enter'){event.preventDefault();aiSend();}">
-      <button onclick="aiSend()" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold">Отправить</button>
-    </div>
-  </div>
-</section>
+<!-- ИИ-ПОДБОР -->
+<div id="page-ai" class="hidden">
+  <h1 class="text-2xl font-black mb-2">🤖 ИИ-подбор запчастей</h1>
+  <p class="text-slate-500 text-sm mb-4">Опишите своими словами: «передние колодки на Хавал Джолион 2022»</p>
+  <div id="ai-chat" class="bg-white rounded-xl border p-4 h-96 overflow-y-auto space-y-3"></div>
+  <form id="ai-form" onsubmit="aiSend(event)" class="flex gap-2 mt-3">
+    <input id="ai-input" type="text" placeholder="Что нужно найти?" class="flex-1 border rounded-lg px-4 py-2.5">
+    <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold">Отправить</button>
+  </form>
+</div>
 
 <!-- КАБИНЕТ -->
-<section id="page-cabinet" class="hidden max-w-6xl mx-auto px-4 py-8">
+<div id="page-cabinet" class="hidden">
   <h1 class="text-2xl font-black mb-4">Личный кабинет</h1>
-  <div class="bg-white rounded-2xl border p-6 mb-6">
-    <div id="cabinet-user-info" class="text-sm text-slate-600">Загрузка...</div>
+  <div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-white rounded-xl border p-5">
+      <div class="text-sm text-slate-500">ID пользователя</div>
+      <div class="flex items-start gap-2">
+        <div id="cabinet-uid" class="font-mono text-xs bg-slate-100 px-2 py-1 rounded break-all"></div>
+        <button type="button" onclick="copyUid()" class="text-xs text-blue-600 font-bold whitespace-nowrap">копировать</button>
+      </div>
+      <div class="text-sm text-slate-500 mt-3">Почта</div>
+      <div id="cabinet-email" class="font-semibold break-all"></div>
+      <div class="text-sm text-slate-500 mt-3">Имя</div>
+      <div id="cabinet-name" class="font-semibold"></div>
+      <div class="text-sm text-slate-500 mt-3">VIN</div>
+      <div id="cabinet-vin" class="font-semibold"></div>
+    </div>
+    <div class="bg-white rounded-xl border p-5">
+      <div class="text-sm text-slate-500">Баланс</div>
+      <div id="cabinet-balance" class="text-3xl font-black text-green-600 mb-3">0 ₽</div>
+      <button type="button" onclick="openTopup()" class="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-bold">＋ Пополнить баланс</button>
+      <div id="autopay-note" class="hidden mt-3 text-sm bg-green-50 text-green-700 p-3 rounded-lg"></div>
+    </div>
   </div>
-  <h2 class="font-bold text-lg mb-3">Мои заказы</h2>
+  <h2 class="text-xl font-black mb-3">Мои заказы</h2>
   <div id="user-orders-list" class="space-y-3"></div>
-</section>
+</div>
 
-<!-- АДМИН-ПАНЕЛЬ -->
-<section id="page-admin" class="hidden max-w-6xl mx-auto px-4 py-8">
+<!-- АДМИН -->
+<div id="page-admin" class="hidden">
   <h1 class="text-2xl font-black mb-4">Админ-панель</h1>
-  <div class="flex flex-wrap gap-2 mb-6">
-    <button id="tab-btn-orders" onclick="switchAdminTab('orders')" class="px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">Заказы</button>
-    <button id="tab-btn-suppliers" onclick="switchAdminTab('suppliers')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Поставщики</button>
-    <button id="tab-btn-markups" onclick="switchAdminTab('markups')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Наценки</button>
+  <div class="flex gap-2 flex-wrap mb-4">
+    <button id="tab-btn-orders" type="button" onclick="switchAdminTab('orders')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Заказы</button>
+    <button id="tab-btn-suppliers" type="button" onclick="switchAdminTab('suppliers')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Поставщики</button>
+    <button id="tab-btn-markups" type="button" onclick="switchAdminTab('markups')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Наценки</button>
+    <button id="tab-btn-balances" type="button" onclick="switchAdminTab('balances')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Балансы</button>
+    <button id="tab-btn-settings" type="button" onclick="switchAdminTab('settings')" class="px-4 py-2 rounded-lg text-sm font-bold bg-white border">Оплата QR</button>
   </div>
   <div id="admin-tab-orders" class="space-y-3"></div>
-  <div id="admin-tab-suppliers" class="hidden space-y-3"><div id="admin-suppliers-list"></div></div>
-  <div id="admin-tab-markups" class="hidden space-y-3"><div id="admin-markups-list"></div></div>
-</section>
+  <div id="admin-tab-suppliers" class="hidden">
+    <button type="button" onclick="addSupplier()" class="mb-3 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-bold">＋ Добавить поставщика</button>
+    <div id="admin-suppliers-list" class="space-y-3"></div>
+  </div>
+  <div id="admin-tab-markups" class="hidden">
+    <button type="button" onclick="addMarkup()" class="mb-3 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-bold">＋ Добавить наценку</button>
+    <div id="admin-markups-list" class="space-y-3"></div>
+  </div>
+  <div id="admin-tab-balances" class="hidden space-y-6">
+    <div>
+      <h2 class="font-black mb-2">Заявки на пополнение</h2>
+      <div id="admin-pending" class="space-y-3"></div>
+    </div>
+    <div>
+      <h2 class="font-black mb-2">Начислить вручную</h2>
+      <div class="bg-white rounded-xl border p-4 flex gap-2 flex-wrap items-end">
+        <div><label class="text-xs text-slate-500 block">ID пользователя</label><input id="admin-uid" class="border rounded-lg px-3 py-2 text-sm w-72"></div>
+        <div><label class="text-xs text-slate-500 block">Сумма, ₽</label><input id="admin-amount" type="number" class="border rounded-lg px-3 py-2 text-sm w-32"></div>
+        <button type="button" onclick="adminCredit()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Начислить</button>
+      </div>
+    </div>
+    <div>
+      <h2 class="font-black mb-2">Все балансы</h2>
+      <div id="admin-balances" class="space-y-2"></div>
+    </div>
+    <div>
+      <h2 class="font-black mb-2">История операций</h2>
+      <div id="admin-history" class="space-y-2"></div>
+    </div>
+  </div>
+  <div id="admin-tab-settings" class="hidden">
+    <div class="bg-white rounded-xl border p-5 max-w-xl space-y-3">
+      <div>
+        <label class="text-sm font-semibold block mb-1">Ссылка СБП (QR)</label>
+        <input id="set-sbp" placeholder="https://qr.nspk.ru/..." class="w-full border rounded-lg px-3 py-2 text-sm">
+      </div>
+      <div>
+        <label class="text-sm font-semibold block mb-1">Реквизиты (если СБП нет)</label>
+        <input id="set-details" placeholder="Карта 0000 0000 0000 0000, ИП Иванов..." class="w-full border rounded-lg px-3 py-2 text-sm">
+      </div>
+      <button type="button" onclick="saveSettings()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Сохранить</button>
+      <div id="set-note" class="text-sm text-slate-500"></div>
+    </div>
+  </div>
+</div>
 
-<footer class="max-w-6xl mx-auto px-4 py-10 text-center text-sm text-slate-500">
-  AutoBrand73 • Димитровград • Ежедневно 09:00–17:00 • +7 (927) 834-39-93
-</footer>
+</main>
 
 <!-- КОРЗИНА -->
-<div id="cart-drawer" class="hidden fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex-col">
-  <div class="flex justify-between items-center p-4 border-b">
-    <div class="font-black text-lg">Корзина</div>
-    <button onclick="toggleCart()" class="text-slate-400 text-2xl px-2">✕</button>
-  </div>
-  <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
-  <div class="border-t p-4">
-    <div class="flex justify-between font-black text-lg mb-3"><span>Итого:</span><span id="cart-total">0 ₽</span></div>
-    <form id="checkout-form" class="hidden space-y-2" onsubmit="return submitCartOrder(event)">
-      <input id="ord-name" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2">
-      <input id="ord-phone" placeholder="Телефон" required class="w-full border rounded-lg px-3 py-2">
-      <input id="ord-vin" placeholder="VIN (необязательно)" class="w-full border rounded-lg px-3 py-2 uppercase">
-      <button class="w-full bg-green-600 text-white py-3 rounded-lg font-bold">Оформить заказ</button>
+<div id="cart-drawer" class="hidden fixed inset-0 z-40">
+  <div class="absolute inset-0 bg-black/40" onclick="toggleCart()"></div>
+  <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl p-4 overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-black">Корзина</h2>
+      <button type="button" onclick="toggleCart()" class="text-slate-400 text-2xl font-bold px-2">✕</button>
+    </div>
+    <div id="cart-items" class="space-y-2 mb-4"></div>
+    <div class="flex justify-between font-black text-lg border-t pt-3 mb-4"><span>Итого:</span><span id="cart-total">0 ₽</span></div>
+    <form id="checkout-form" class="hidden space-y-3" onsubmit="submitCartOrder(event)">
+      <input id="ord-name" placeholder="Имя" class="w-full border rounded-lg px-3 py-2 text-sm">
+      <input id="ord-phone" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2 text-sm">
+      <input id="ord-vin" placeholder="VIN (необязательно)" class="w-full border rounded-lg px-3 py-2 text-sm">
+      <label id="pay-balance-row" class="hidden flex items-center gap-2 text-sm"><input id="pay-balance" type="checkbox"> Оплатить с баланса (остаток: <span id="balance-hint">0 ₽</span>)</label>
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Оформить заказ</button>
     </form>
   </div>
 </div>
 
-<!-- МОДАЛКА ВХОДА -->
-<div id="auth-modal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center p-4">
-  <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
-    <div class="flex justify-between items-center mb-4">
-      <div id="auth-title" class="font-black text-lg">Вход в личный кабинет</div>
-      <button onclick="closeAuthModal()" class="text-slate-400 text-2xl px-1">✕</button>
-    </div>
-    <form onsubmit="return handleAuth(event)" class="space-y-3">
+<!-- МОДАЛКА АВТОРИЗАЦИИ -->
+<div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/50 items-center justify-center p-4">
+  <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+    <h3 id="auth-title" class="font-black text-lg mb-4">Вход в личный кабинет</h3>
+    <form onsubmit="handleAuth(event)" class="space-y-3">
+      <input id="auth-email" type="email" required placeholder="Электронная почта" class="w-full border rounded-lg px-3 py-2 text-sm">
+      <input id="auth-pass" type="password" required placeholder="Пароль" class="w-full border rounded-lg px-3 py-2 text-sm">
       <div id="reg-fields" class="hidden space-y-3">
-        <input id="auth-name" placeholder="Ваше имя" class="w-full border rounded-lg px-3 py-2">
-        <input id="auth-phone" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2">
-        <input id="auth-vin" placeholder="VIN автомобиля (необязательно)" class="w-full border rounded-lg px-3 py-2 uppercase">
+        <input id="auth-name" placeholder="Имя" class="w-full border rounded-lg px-3 py-2 text-sm">
+        <input id="auth-phone" placeholder="Телефон" class="w-full border rounded-lg px-3 py-2 text-sm">
+        <input id="auth-vin" placeholder="VIN (необязательно)" class="w-full border rounded-lg px-3 py-2 text-sm">
       </div>
-      <input id="auth-email" type="email" placeholder="E-mail" required class="w-full border rounded-lg px-3 py-2">
-      <input id="auth-pass" type="password" placeholder="Пароль (мин. 6 символов)" required minlength="6" class="w-full border rounded-lg px-3 py-2">
-      <button id="auth-submit-btn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Войти</button>
+      <button id="auth-submit-btn" type="submit" class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold">Войти</button>
     </form>
-    <button id="auth-switch-btn" onclick="toggleAuthMode()" class="w-full text-center text-sm text-blue-600 mt-3">Нет аккаунта? Зарегистрироваться</button>
+    <button id="auth-switch-btn" type="button" onclick="toggleAuthMode()" class="mt-3 text-sm text-blue-600 font-semibold">Нет аккаунта? Зарегистрироваться</button>
+    <button type="button" onclick="closeAuthModal()" class="mt-2 w-full text-sm text-slate-400">Закрыть</button>
   </div>
 </div>
 
 <!-- МОДАЛКА VIN -->
-<div id="vin-modal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center p-4">
-  <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
-    <div class="flex justify-between items-center mb-4">
-      <div class="font-black text-lg">Запрос по VIN-коду</div>
-      <button onclick="closeVinModal()" class="text-slate-400 text-2xl px-1">✕</button>
-    </div>
-    <form onsubmit="return submitVinOrder(event)" class="space-y-3">
-      <input id="vin-name" placeholder="Ваше имя" required class="w-full border rounded-lg px-3 py-2">
-      <input id="vin-phone" placeholder="Телефон" required class="w-full border rounded-lg px-3 py-2">
-      <input id="vin-code" placeholder="VIN-код" required class="w-full border rounded-lg px-3 py-2 uppercase">
-      <textarea id="vin-parts" rows="3" placeholder="Какие детали нужны?" class="w-full border rounded-lg px-3 py-2"></textarea>
-      <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Отправить запрос</button>
+<div id="vin-modal" class="hidden fixed inset-0 z-50 bg-black/50 items-center justify-center p-4">
+  <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+    <h3 class="font-black text-lg mb-4">Запрос по VIN-коду</h3>
+    <form onsubmit="submitVinOrder(event)" class="space-y-3">
+      <input id="vin-name" required placeholder="Имя" class="w-full border rounded-lg px-3 py-2 text-sm">
+      <input id="vin-phone" required placeholder="Телефон" class="w-full border rounded-lg px-3 py-2 text-sm">
+      <input id="vin-code" required placeholder="VIN" class="w-full border rounded-lg px-3 py-2 text-sm">
+      <textarea id="vin-parts" required placeholder="Какие запчасти нужны?" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold">Отправить запрос</button>
     </form>
+    <button type="button" onclick="closeVinModal()" class="mt-2 w-full text-sm text-slate-400">Закрыть</button>
   </div>
 </div>
 
-<script>
-var SUPABASE_URL = 'https://fnlupijomjpopqtnyodv.supabase.co/rest/v1/';
-var SUPABASE_KEY = 'sb_publishable_l1pVfFfga-1Tu9Yr1ms2Lw_PrY1CoZw';
+<!-- МОДАЛКА QR -->
+<div id="qr-modal" class="hidden fixed inset-0 z-50 bg-black/50 items-center justify-center p-4">
+  <div class="bg-white rounded-2xl p-6 max-w-sm w-full text-center">
+    <h3 class="font-black text-lg mb-1">Оплата по QR</h3>
+    <div id="qr-amount" class="text-2xl font-black text-blue-700 mb-3"></div>
+    <img id="qr-img" alt="QR-код" class="mx-auto rounded-lg border p-2 bg-white">
+    <div id="qr-details" class="text-xs text-slate-600 mt-3 break-all"></div>
+    <div class="flex flex-col gap-2 mt-4">
+      <button id="qr-paid-btn" type="button" onclick="qrPaid()" class="bg-green-600 text-white py-2 rounded-lg font-bold">Я оплатил</button>
+      <button type="button" onclick="closeQrModal()" class="border py-2 rounded-lg font-semibold text-slate-600">Оплатить позже</button>
+    </div>
+  </div>
+</div>
 
+<footer class="bg-slate-800 text-slate-300 mt-10">
+  <div class="max-w-6xl mx-auto px-4 py-6 text-sm flex flex-wrap gap-6 justify-between">
+    <div>
+      <div class="font-black text-white mb-1">AutoBrand73</div>
+      <div>Запчасти для иномарок и грузовиков</div>
+    </div>
+    <div>
+      <div>📍 г. Димитровград</div>
+      <div>🕒 Ежедневно 09:00–17:00</div>
+      <div><a href="tel:+79278343993" class="text-blue-300 font-bold">+7 (927) 834-39-93</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+var SUPABASE_URL = 'https://fnlupijomjpopqtnyodv.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_l1pVfFfga-1Tu9Yr1ms2Lw_PrY1CoZw';
 var currentUser = null;
 var currentProfile = null;
 var isRegisterMode = false;
 var cart = new Array();
+var qrCtx = null;
+
+function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 
 function sbHeaders(token) {
     return {
@@ -192,23 +288,18 @@ function sbHeaders(token) {
     };
 }
 
-function esc(s) {
-    return String(s === null || s === undefined ? '' : s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-
-/* ---------- АВТОРИЗАЦИЯ ---------- */
 function openAuthModal() {
     var m = document.getElementById('auth-modal');
     m.classList.remove('hidden');
     m.classList.add('flex');
 }
+
 function closeAuthModal() {
     var m = document.getElementById('auth-modal');
     m.classList.add('hidden');
     m.classList.remove('flex');
 }
+
 function toggleAuthMode() {
     isRegisterMode = !isRegisterMode;
     document.getElementById('auth-title').textContent = isRegisterMode ? 'Регистрация покупателя' : 'Вход в личный кабинет';
@@ -216,6 +307,7 @@ function toggleAuthMode() {
     document.getElementById('auth-switch-btn').textContent = isRegisterMode ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться';
     document.getElementById('reg-fields').className = isRegisterMode ? 'space-y-3' : 'hidden';
 }
+
 function handleAuth(e) {
     e.preventDefault();
     var emailVal = document.getElementById('auth-email').value.trim();
@@ -227,16 +319,21 @@ function handleAuth(e) {
         headers: sbHeaders(),
         body: JSON.stringify({ email: emailVal, password: passVal })
     })
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
         if (data.error || data.error_description || data.msg) {
             alert('Ошибка: ' + (data.error_description || data.msg || data.error));
             return;
         }
         var u = data.user || (data.session && data.session.user);
         var tok = data.access_token || (data.session && data.session.access_token);
-        if (!u || !tok) {
-            alert('Проверьте почту: подтвердите регистрацию по письму и войдите заново.');
+        if (!u) {
+            alert('Проверьте почту для подтверждения!');
+            return;
+        }
+        if (!tok) {
+            alert('Аккаунт создан. Подтвердите почту по письму, затем войдите.');
+            closeAuthModal();
             return;
         }
         currentUser = { uid: u.id, mail: u.email, token: tok };
@@ -245,21 +342,22 @@ function handleAuth(e) {
         if (isRegisterMode) {
             var nameVal = document.getElementById('auth-name').value || emailVal;
             var phoneVal = document.getElementById('auth-phone').value || '';
-            var vinVal = document.getElementById('auth-vin').value.toUpperCase() || '';
+            var vinVal = (document.getElementById('auth-vin').value || '').toUpperCase();
             fetch(SUPABASE_URL + '/rest/v1/profiles', {
                 method: 'POST',
                 headers: sbHeaders(tok),
-                body: JSON.stringify({ id: u.id, email: emailVal, full_name: nameVal, phone: phoneVal, vin: vinVal, role: 'user' })
-            }).then(function () {
+                body: JSON.stringify({ id: u.id, email: emailVal, full_name: nameVal, phone: phoneVal, vin: vinVal, role: 'user', balance: 0 })
+            }).then(function() {
                 loadProfile();
                 closeAuthModal();
+                showPage('shop');
             });
         } else {
             loadProfile();
             closeAuthModal();
+            showPage('shop');
         }
-    })
-    .catch(function (err) { alert('Ошибка сети: ' + err.message); });
+    });
 }
 
 function loadProfile() {
@@ -267,20 +365,29 @@ function loadProfile() {
     fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + currentUser.uid + '&select=*', {
         headers: sbHeaders(currentUser.token)
     })
-    .then(function (r) { return r.json(); })
-    .then(function (rows) {
-        currentProfile = (rows && rows.length > 0) ? rows[0] : { email: currentUser.mail, role: 'user' };
+    .then(function(r) { return r.json(); })
+    .then(function(rows) {
+        currentProfile = (rows && rows.length > 0) ? rows[0] : { email: currentUser.mail, role: 'user', balance: 0 };
         updateNavUI();
+        processAutoPay();
     });
 }
 
 function updateNavUI() {
     var loggedIn = Boolean(currentUser);
-    document.getElementById('nav-auth').classList.toggle('hidden', loggedIn);
-    document.getElementById('nav-logout').classList.toggle('hidden', !loggedIn);
+    document.getElementById('nav-shop').classList.toggle('hidden', !loggedIn);
+    document.getElementById('nav-catalog').classList.toggle('hidden', !loggedIn);
+    document.getElementById('nav-ai').classList.toggle('hidden', !loggedIn);
     document.getElementById('nav-cabinet').classList.toggle('hidden', !loggedIn);
+    document.getElementById('nav-logout').classList.toggle('hidden', !loggedIn);
+    document.getElementById('nav-auth').classList.toggle('hidden', loggedIn);
     var isAdmin = currentProfile && currentProfile.role === 'admin';
     document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
+
+    var bal = currentProfile && currentProfile.balance != null ? Number(currentProfile.balance) : 0;
+    document.getElementById('balance-hint').textContent = bal.toLocaleString('ru-RU') + ' ₽';
+    var row = document.getElementById('pay-balance-row');
+    if (row) row.classList.toggle('hidden', !loggedIn || bal <= 0);
 
     if (currentProfile) {
         if (currentProfile.full_name) document.getElementById('ord-name').value = currentProfile.full_name;
@@ -294,51 +401,94 @@ function logoutUser() {
     currentProfile = null;
     localStorage.removeItem('ad_user');
     updateNavUI();
-    showPage('shop');
+    showPage('guest');
 }
 
 function showPage(page) {
-    document.getElementById('page-shop').classList.toggle('hidden', page !== 'shop');
-    document.getElementById('page-catalog').classList.toggle('hidden', page !== 'catalog');
-    document.getElementById('page-cabinet').classList.toggle('hidden', page !== 'cabinet');
-    document.getElementById('page-admin').classList.toggle('hidden', page !== 'admin');
+    if (!currentUser) page = 'guest';
+    var ids = ['guest', 'shop', 'catalog', 'ai', 'cabinet', 'admin'];
+    for (var i = 0; i < ids.length; i++) {
+        document.getElementById('page-' + ids[i]).classList.toggle('hidden', ids[i] !== page);
+    }
     if (page === 'cabinet') loadUserOrders();
     if (page === 'admin') switchAdminTab('orders');
+    if (page === 'catalog' && !catState.group) renderCatalogGroups();
     window.scrollTo(0, 0);
 }
 
-/* ---------- ПОИСК (через серверную функцию, ключи не утекают) ---------- */
-function handleSearch(e) {
-    e.preventDefault();
-    runSearch(document.getElementById('search-input').value.trim());
-    return false;
+function copyUid() {
+    var t = document.getElementById('cabinet-uid').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(t);
+    alert('ID скопирован: ' + t);
+}
+
+function processAutoPay() {
+    if (!currentUser || !currentProfile) return;
+    fetch(SUPABASE_URL + '/rest/v1/orders?user_id=eq.' + currentUser.uid + '&status=eq.' + encodeURIComponent('Ожидает оплаты') + '&order=id.asc&select=id,total_price', {
+        headers: sbHeaders(currentUser.token)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(orders) {
+        if (!orders || !orders.length) return;
+        var bal = Number(currentProfile.balance || 0);
+        var paid = 0;
+        var chain = Promise.resolve();
+        for (var i = 0; i < orders.length; i++) {
+            var o = orders[i];
+            if (!(Number(o.total_price || 0) > 0) || bal < Number(o.total_price)) continue;
+            bal -= Number(o.total_price);
+            paid++;
+            (function(orderId) {
+                chain = chain.then(function() {
+                    return fetch(SUPABASE_URL + '/rest/v1/orders?id=eq.' + orderId, {
+                        method: 'PATCH',
+                        headers: sbHeaders(currentUser.token),
+                        body: JSON.stringify({ status: 'Оплачен с баланса' })
+                    });
+                });
+            })(o.id);
+        }
+        chain.then(function() {
+            if (paid > 0) {
+                fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + currentUser.uid, {
+                    method: 'PATCH',
+                    headers: sbHeaders(currentUser.token),
+                    body: JSON.stringify({ balance: bal })
+                }).then(function() {
+                    currentProfile.balance = bal;
+                    updateNavUI();
+                    var note = document.getElementById('autopay-note');
+                    note.classList.remove('hidden');
+                    note.textContent = 'Автоматически оплачено заказов: ' + paid + '. Остаток: ' + bal.toLocaleString('ru-RU') + ' ₽';
+                });
+            }
+        });
+    });
 }
 
 function runSearch(q) {
     if (!q) return;
-    showPage('shop');
-    document.getElementById('search-input').value = q;
     var box = document.getElementById('offers-list');
     var loader = document.getElementById('loader');
     box.innerHTML = '';
     loader.classList.remove('hidden');
 
-    fetch('/api/search?q=' + encodeURIComponent(q))
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
+    fetch('/api/search?q=' + encodeURIComponent(q), {
+        headers: { 'X-User-Token': currentUser ? currentUser.token : '' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
         loader.classList.add('hidden');
-        if (data && data.ok === false) {
-            box.innerHTML = '<div class="bg-red-50 text-red-700 p-4 rounded-xl">' + esc(data.error || 'Ошибка поиска') + '</div>';
+        if (data.error) {
+            box.innerHTML = '<div class="bg-red-50 text-red-700 p-4 rounded-xl">' + esc(data.error) + '</div>';
             return;
         }
-        var items = (data && data.items) ? data.items : [];
-        if (items.length === 0) {
-            box.innerHTML = '<div class="bg-white p-6 rounded-xl border text-center">По запросу <b>' + esc(q) + '</b> ничего не найдено.<br>' +
-                '<button onclick="openVinModal(\'Ищу: ' + esc(q).replace(/'/g, '') + '\')" class="mt-3 text-blue-600 font-semibold underline">Отправить запрос менеджеру</button></div>';
+        if (!data.items || data.items.length === 0) {
+            box.innerHTML = '<div class="bg-white p-6 rounded-xl border text-center">По запросу <b>' + esc(q) + '</b> ничего не найдено. <button type="button" onclick="openVinModal()" class="text-blue-600 font-bold underline">Отправьте запрос менеджеру</button></div>';
             return;
         }
-        for (var i = 0; i < items.length; i++) {
-            var p = items[i];
+        for (var i = 0; i < data.items.length; i++) {
+            var p = data.items[i];
             var div = document.createElement('div');
             div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-4';
             div.innerHTML = '<div><div class="font-bold">' + esc(p.brand) + ' <span class="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded">' + esc(p.art) + '</span></div>' +
@@ -346,26 +496,36 @@ function runSearch(q) {
                 '<div class="text-xs text-slate-500 mt-1">Срок: <b>' + esc(p.days) + '</b> • Остаток: <b>' + esc(p.stock) + ' шт.</b></div></div>' +
                 '<div class="flex items-center gap-4"><div class="text-xl font-bold">' + esc(p.price) + ' ₽</div>' +
                 '<button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">В корзину</button></div>';
-            (function (item) {
-                div.querySelector('button').onclick = function () { addToCart(item); };
+            (function(item) {
+                div.querySelector('button').onclick = function() { addToCart(item); };
             })(p);
             box.appendChild(div);
         }
     })
-    .catch(function (err) {
+    .catch(function(err) {
         loader.classList.add('hidden');
-        box.innerHTML = '<div class="bg-red-50 text-red-700 p-4 rounded-xl">Не удалось выполнить поиск: ' + esc(err.message) +
-            '. Убедитесь, что файл api/search.js загружен на Vercel.</div>';
+        box.innerHTML = '<div class="text-red-600">Ошибка сети: ' + esc(err.message) + '</div>';
     });
 }
 
-/* ---------- КОРЗИНА ---------- */
+function handleSearch(e) {
+    e.preventDefault();
+    runSearch(document.getElementById('search-input').value.trim());
+}
+
 function addToCart(item) {
-    var found = cart.find(function (c) { return c.art === item.art && c.price === item.price; });
+    var found = cart.find(function(c) { return c.art === item.art && c.price === item.price; });
     if (found) found.qty += 1;
-    else cart.push({ brand: item.brand, art: item.art, name: item.name, price: item.price, qty: 1 });
+    else cart.push({ brand: item.brand, art: item.art, name: item.name, price: item.price, cost: item.cost || 0, qty: 1 });
+    updateCartUI();
+    alert('Добавлено в корзину: ' + item.brand + ' ' + item.art);
+}
+
+function removeCartItem(idx) {
+    cart.splice(idx, 1);
     updateCartUI();
 }
+
 function updateCartUI() {
     var qty = 0, sum = 0;
     var box = document.getElementById('cart-items');
@@ -375,70 +535,80 @@ function updateCartUI() {
         sum += cart[i].price * cart[i].qty;
         var row = document.createElement('div');
         row.className = 'border rounded-lg p-3 flex justify-between items-center text-sm';
-        row.innerHTML = '<div><b>' + esc(cart[i].brand) + ' ' + esc(cart[i].art) + '</b><br>' +
-            '<span class="text-slate-500">' + esc(cart[i].name) + '</span><br>' +
-            cart[i].qty + ' шт. × ' + cart[i].price + ' ₽</div>' +
+        row.innerHTML = '<div><b>' + esc(cart[i].brand) + ' ' + esc(cart[i].art) + '</b><br>' + esc(cart[i].qty) + ' шт. × ' + esc(cart[i].price) + ' ₽</div>' +
             '<button type="button" class="text-red-500 font-bold px-2">✕</button>';
-        (function (idx) {
-            row.querySelector('button').onclick = function () { cart.splice(idx, 1); updateCartUI(); };
+        (function(idx) {
+            row.querySelector('button').onclick = function() { removeCartItem(idx); };
         })(i);
         box.appendChild(row);
     }
     document.getElementById('cart-badge').textContent = qty;
-    document.getElementById('cart-total').textContent = sum + ' ₽';
+    document.getElementById('cart-total').textContent = sum.toLocaleString('ru-RU') + ' ₽';
     document.getElementById('checkout-form').classList.toggle('hidden', cart.length === 0);
 }
+
 function toggleCart() {
     var d = document.getElementById('cart-drawer');
     d.classList.toggle('hidden');
-    d.classList.toggle('flex');
 }
+
 function submitCartOrder(e) {
     e.preventDefault();
-    if (!currentUser) { openAuthModal(); return false; }
-    var sum = 0, lines = new Array();
+    if (!currentUser) { openAuthModal(); return; }
+    var sum = 0, costSum = 0, lines = new Array();
     for (var i = 0; i < cart.length; i++) {
         sum += cart[i].price * cart[i].qty;
+        costSum += (cart[i].cost || 0) * cart[i].qty;
         lines.push(cart[i].brand + ' ' + cart[i].art + ' (' + cart[i].qty + ' шт. × ' + cart[i].price + ' ₽)');
     }
+    var payFromBalance = document.getElementById('pay-balance').checked;
+    var bal = Number(currentProfile && currentProfile.balance || 0);
+    if (payFromBalance && bal < sum) {
+        alert('На балансе недостаточно средств (' + bal.toLocaleString('ru-RU') + ' ₽). Оплатите по QR.');
+        payFromBalance = false;
+    }
     var payload = {
-        user_id: currentUser ? currentUser.uid : null,
+        user_id: currentUser.uid,
         customer_name: document.getElementById('ord-name').value,
         customer_phone: document.getElementById('ord-phone').value,
         vin: document.getElementById('ord-vin').value.toUpperCase(),
         items: lines.join('; '),
         total_price: sum,
-        status: 'Новый'
+        total_cost: costSum,
+        status: payFromBalance ? 'Оплачен с баланса' : 'Ожидает оплаты'
     };
     fetch(SUPABASE_URL + '/rest/v1/orders', {
         method: 'POST',
-        headers: sbHeaders(currentUser && currentUser.token),
+        headers: sbHeaders(currentUser.token),
         body: JSON.stringify(payload)
-    }).then(function (r) {
-        if (r.ok) {
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+        if (res && res[0] && res[0].id) {
+            var orderId = res[0].id;
             cart = new Array();
             updateCartUI();
             toggleCart();
-            alert('Заказ оформлен!');
+            if (payFromBalance) {
+                var nb = bal - sum;
+                fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + currentUser.uid, {
+                    method: 'PATCH',
+                    headers: sbHeaders(currentUser.token),
+                    body: JSON.stringify({ balance: nb })
+                }).then(function() { loadProfile(); });
+                alert('Заказ №' + orderId + ' оформлен и оплачен с баланса!');
+            } else {
+                showQROrder(orderId, sum);
+            }
         } else {
-            alert('Не удалось сохранить заказ. Проверьте права записи в таблице orders.');
+            alert('Не удалось оформить заказ. Проверьте соединение.');
         }
-    }).catch(function (err) { alert('Ошибка сети: ' + err.message); });
-    return false;
+    });
 }
 
-/* ---------- VIN ---------- */
-function openVinModal(prefText) {
-    var m = document.getElementById('vin-modal');
-    if (prefText) document.getElementById('vin-parts').value = prefText;
-    m.classList.remove('hidden');
-    m.classList.add('flex');
-}
-function closeVinModal() {
-    var m = document.getElementById('vin-modal');
-    m.classList.add('hidden');
-    m.classList.remove('flex');
-}
+function openVinModal() { var m = document.getElementById('vin-modal'); m.classList.remove('hidden'); m.classList.add('flex'); }
+function closeVinModal() { var m = document.getElementById('vin-modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
+
 function submitVinOrder(e) {
     e.preventDefault();
     var payload = {
@@ -454,46 +624,608 @@ function submitVinOrder(e) {
         method: 'POST',
         headers: sbHeaders(currentUser && currentUser.token),
         body: JSON.stringify(payload)
-    }).then(function (r) {
+    }).then(function(r) {
         if (r.ok) {
             closeVinModal();
             e.target.reset();
-            alert('Запрос по VIN отправлен!');
-        } else {
-            alert('Не удалось отправить запрос. Проверьте права записи в таблице orders.');
+            alert('Запрос по VIN отправлен! Менеджер свяжется с вами.');
         }
-    }).catch(function (err) { alert('Ошибка сети: ' + err.message); });
-    return false;
+    });
 }
 
-/* ---------- КАБИНЕТ ---------- */
 function loadUserOrders() {
     if (!currentUser) return;
-    document.getElementById('cabinet-user-info').textContent = 'Аккаунт: ' + currentUser.mail;
+    document.getElementById('cabinet-uid').textContent = currentUser.uid;
+    document.getElementById('cabinet-email').textContent = currentUser.mail;
+    document.getElementById('cabinet-name').textContent = (currentProfile && currentProfile.full_name) || '—';
+    document.getElementById('cabinet-vin').textContent = (currentProfile && currentProfile.vin) || '—';
+    document.getElementById('cabinet-balance').textContent = Number(currentProfile && currentProfile.balance || 0).toLocaleString('ru-RU') + ' ₽';
     var box = document.getElementById('user-orders-list');
     box.innerHTML = 'Загрузка...';
     fetch(SUPABASE_URL + '/rest/v1/orders?user_id=eq.' + currentUser.uid + '&order=id.desc', {
         headers: sbHeaders(currentUser.token)
     })
-    .then(function (r) { return r.json(); })
-    .then(function (orders) {
+    .then(function(r) { return r.json(); })
+    .then(function(orders) {
         if (!orders || orders.length === 0) { box.innerHTML = '<p class="text-slate-500">У вас пока нет заказов.</p>'; return; }
         box.innerHTML = '';
         for (var i = 0; i < orders.length; i++) {
             var o = orders[i];
             var div = document.createElement('div');
             div.className = 'bg-white p-4 rounded-xl border';
-            div.innerHTML = '<div class="flex justify-between font-bold mb-1"><span>Заказ №' + esc(o.id) + '</span><span class="text-blue-600">' + esc(o.status) + '</span></div>' +
+            div.innerHTML = '<div class="flex justify-between font-bold mb-1 flex-wrap gap-2"><span>Заказ №' + esc(o.id) + '</span><span class="text-blue-600">' + esc(o.status) + '</span></div>' +
                 '<div class="text-sm text-slate-700">' + esc(o.items) + '</div>' +
-                '<div class="text-sm font-bold mt-2">Сумма: ' + esc(o.total_price) + ' ₽</div>';
+                '<div class="text-sm font-bold mt-2">Сумма: ' + esc(o.total_price) + ' ₽</div>' +
+                (o.status === 'Ожидает оплаты' ? '<button type="button" onclick="showQROrder(' + o.id + ', ' + Number(o.total_price) + ')" class="mt-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Оплатить по QR</button>' : '');
             box.appendChild(div);
         }
     });
 }
 
-/* ---------- АДМИН-ПАНЕЛЬ ---------- */
+function loadSettingsMap() {
+    return fetch(SUPABASE_URL + '/rest/v1/settings?select=key,value', {
+        headers: sbHeaders(currentUser ? currentUser.token : null)
+    })
+    .then(function(r) { return r.ok ? r.json() : []; })
+    .then(function(rows) {
+        var map = { sbp_link: '', pay_details: 'Карта, перевод по номеру телефона' };
+        for (var i = 0; i < (rows || []).length; i++) {
+            if (rows[i].key === 'sbp_link') map.sbp_link = rows[i].value || '';
+            if (rows[i].key === 'pay_details') map.pay_details = rows[i].value || map.pay_details;
+        }
+        return map;
+    })
+    .catch(function() { return { sbp_link: '', pay_details: 'Карта, перевод по номеру телефона' }; });
+}
+
+function showQROrder(orderId, amount) {
+    qrCtx = { type: 'order', id: orderId, amount: amount };
+    buildQr('Заказ №' + orderId);
+}
+
+function showQRTopup(amount) {
+    qrCtx = { type: 'topup', amount: amount };
+    buildQr('Пополнение баланса');
+}
+
+function buildQr(title) {
+    loadSettingsMap().then(function(set) {
+        var amount = qrCtx.amount;
+        var data;
+        if (set.sbp_link) {
+            data = set.sbp_link + (set.sbp_link.indexOf('?') >= 0 ? '&' : '?') + 'amount=' + amount;
+        } else {
+            data = 'Оплата: ' + title + ', сумма ' + amount + ' руб. Реквизиты: ' + set.pay_details;
+        }
+        document.getElementById('qr-amount').textContent = Number(amount).toLocaleString('ru-RU') + ' ₽';
+        document.getElementById('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(data);
+        document.getElementById('qr-details').textContent = set.sbp_link ? 'Наведите камеру телефона — откроется оплата СБП' : 'Реквизиты: ' + set.pay_details;
+        var m = document.getElementById('qr-modal');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+    });
+}
+
+function closeQrModal() {
+    var m = document.getElementById('qr-modal');
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+}
+
+function qrPaid() {
+    if (!qrCtx) return;
+    if (qrCtx.type === 'order') {
+        fetch(SUPABASE_URL + '/rest/v1/orders?id=eq.' + qrCtx.id, {
+            method: 'PATCH',
+            headers: sbHeaders(currentUser.token),
+            body: JSON.stringify({ status: 'Оплачен — проверка' })
+        }).then(function() {
+            closeQrModal();
+            alert('Спасибо! Заказ переведён в статус «Оплачен — проверка». Мы подтвердим оплату после сверки.');
+            if (!document.getElementById('page-cabinet').classList.contains('hidden')) loadUserOrders();
+        });
+    } else {
+        closeQrModal();
+        alert('Заявка на пополнение отправлена администратору. После подтверждения баланс обновится автоматически.');
+    }
+}
+
+function openTopup() {
+    var s = prompt('Сумма пополнения, ₽:', '5000');
+    if (!s) return;
+    var amount = parseFloat(String(s).replace(',', '.'));
+    if (!(amount > 0)) { alert('Введите корректную сумму'); return; }
+    fetch(SUPABASE_URL + '/rest/v1/transactions', {
+        method: 'POST',
+        headers: sbHeaders(currentUser.token),
+        body: JSON.stringify({ user_id: currentUser.uid, amount: amount, type: 'Пополнение', status: 'Ожидает подтверждения' })
+    }).then(function() {
+        showQRTopup(amount);
+    });
+}
+var CAT_GROUPS = [
+    { id: 'foreign', name: 'Легковые: импортные', icon: '🚗' },
+    { id: 'domestic', name: 'Отечественные', icon: '🇷🇺' },
+    { id: 'china', name: 'Китайские легковые', icon: '🇨🇳' },
+    { id: 'trucks', name: 'Грузовые и коммерческие', icon: '🚚' }
+];
+
+var CATALOG = {
+    foreign: {
+        'Kia': ['Rio', 'Ceed', 'Sportage', 'Sorento', 'Picanto', 'Cerato', 'Optima', 'Stinger', 'Carnival', 'Soul', 'Stonic', 'Mohave'],
+        'Hyundai': ['Solaris', 'Creta', 'Tucson', 'Santa Fe', 'Elantra', 'i30', 'Sonata', 'Accent', 'Getz', 'Porter'],
+        'Toyota': ['Camry', 'Corolla', 'RAV4', 'Land Cruiser', 'Prado', 'Hilux', 'Auris', 'Yaris', 'C-HR', 'Prius'],
+        'Nissan': ['Qashqai', 'X-Trail', 'Juke', 'Almera', 'Note', 'Tiida', 'Murano', 'Pathfinder', 'Terrano'],
+        'Mazda': ['Mazda 3', 'Mazda 6', 'CX-5', 'CX-9', 'CX-30', 'Demio', 'MX-5'],
+        'Mitsubishi': ['Lancer', 'Outlander', 'ASX', 'Pajero', 'L200', 'Galant', 'Eclipse Cross'],
+        'Honda': ['Civic', 'CR-V', 'Accord', 'Fit', 'HR-V', 'Pilot', 'Jazz'],
+        'Subaru': ['Impreza', 'Forester', 'Outback', 'Legacy', 'XV'],
+        'Suzuki': ['Swift', 'SX4', 'Grand Vitara', 'Vitara', 'Jimny', 'Baleno'],
+        'Volkswagen': ['Polo', 'Golf', 'Passat', 'Tiguan', 'Touareg', 'Jetta', 'Caddy', 'Transporter'],
+        'Skoda': ['Octavia', 'Rapid', 'Kodiaq', 'Karoq', 'Fabia', 'Superb', 'Yeti'],
+        'Audi': ['A3', 'A4', 'A6', 'A8', 'Q3', 'Q5', 'Q7', 'TT'],
+        'BMW': ['1 серия', '3 серия', '5 серия', '7 серия', 'X1', 'X3', 'X5', 'X6'],
+        'Mercedes': ['A-класс', 'C-класс', 'E-класс', 'S-класс', 'GLC', 'GLE', 'GLK', 'ML', 'Sprinter'],
+        'Opel': ['Astra', 'Insignia', 'Mokka', 'Corsa', 'Vectra', 'Zafira', 'Antara'],
+        'Ford': ['Focus', 'Fiesta', 'Mondeo', 'Kuga', 'Explorer', 'Transit', 'EcoSport', 'Fusion'],
+        'Renault': ['Logan', 'Duster', 'Sandero', 'Kaptur', 'Megane', 'Clio', 'Fluence', 'Koleos'],
+        'Peugeot': ['206', '207', '208', '308', '408', '3008', '5008', 'Partner'],
+        'Citroen': ['C3', 'C4', 'C5', 'C-Elysee', 'Berlingo', 'Jumpy'],
+        'Volvo': ['XC90', 'XC60', 'S60', 'S80', 'V40', 'V60', 'C30'],
+        'Porsche': ['Cayenne', 'Macan', '911', 'Panamera', 'Cayman'],
+        'Land Rover': ['Defender', 'Discovery', 'Range Rover', 'Range Rover Sport', 'Evoque', 'Freelander'],
+        'Jeep': ['Wrangler', 'Grand Cherokee', 'Cherokee', 'Compass', 'Renegade'],
+        'Chevrolet': ['Lacetti', 'Cruze', 'Aveo', 'Captiva', 'Tahoe', 'Cobalt'],
+        'SsangYong': ['Actyon', 'Kyron', 'Rexton', 'Tivoli'],
+        'Infiniti': ['Q50', 'QX56', 'QX60', 'FX35', 'EX35'],
+        'Lexus': ['RX', 'ES', 'LX', 'GS', 'NX', 'GX'],
+        'Dodge': ['Caliber', 'Durango', 'Nitro', 'Charger']
+    },
+    domestic: {
+        'Lada': ['Granta', 'Vesta', 'Kalina', 'Priora', 'Largus', 'Niva', 'XRAY', '2107', 'Samara'],
+        'УАЗ': ['Патриот', 'Хантер', 'Буханка', 'Пикап', 'Профи'],
+        'ГАЗ': ['Волга', 'ГАЗель Next', 'ГАЗон Next', 'Соболь', 'Валдай']
+    },
+    china: {
+        'Chery': ['QQ6', 'Tiggo 4', 'Tiggo 7 Pro', 'Tiggo 8', 'Amulet', 'Arrizo 8'],
+        'Geely': ['Coolray', 'Atlas', 'Atlas Pro', 'Emgrand', 'Tugella', 'Okavango'],
+        'Haval': ['Jolion', 'Dargo', 'F7', 'F7x', 'H5', 'H9'],
+        'Changan': ['CS35 Plus', 'CS55 Plus', 'CS75 Plus', 'Alsvin', 'Uni-S', 'Luna'],
+        'Exeed': ['TXL', 'VX', 'LX'],
+        'Omoda': ['C5'],
+        'Jetour': ['Dashing', 'X70 Plus', 'X90'],
+        'Great Wall': ['Hover H3', 'Hover H5', 'Wingle 5', 'Wingle 7'],
+        'Tank': ['300', '500'],
+        'Zeekr': ['001', 'X', '7X'],
+        'Voyah': ['Free', 'Dreamer'],
+        'Li Xiang': ['L7', 'L9'],
+        'FAW': ['Bestune T77', 'Bestune B70'],
+        'JAC': ['S3', 'S4', 'T6', 'T9'],
+        'GAC': ['GS8', 'GN8'],
+        'Dongfeng': ['Shine Max', 'Glory 580'],
+        'Brilliance': ['V5', 'H530'],
+        'Lifan': ['Solano', 'X60', 'Murman'],
+        'Kaiyi': ['E5', 'X3']
+    },
+    trucks: {
+        'КАМАЗ': ['4308', '43118', '53215', '5490', '65115', '6520'],
+        'ГАЗ': ['ГАЗель Next', 'ГАЗель Бизнес', 'ГАЗон Next', 'Соболь', 'Валдай'],
+        'МАЗ': ['4370', '5440', '5551', '6422'],
+        'Урал': ['4320', '5557', '6370'],
+        'ЗИЛ': ['130', '4331', 'Бычок'],
+        'ПАЗ': ['3205', 'Вектор'],
+        'Sinotruk Howo': ['Howo A7', 'Howo TX', 'Howo ZZ1047'],
+        'Shacman': ['X3000', 'X6000', 'H3000'],
+        'Foton': ['Auman EST', 'G7', 'Ollin'],
+        'Volvo Trucks': ['FH', 'FM', 'FL', 'F12'],
+        'MAN': ['TGA', 'TGS', 'TGX', 'TGL'],
+        'Scania': ['R-серия', 'G-серия', 'P-серия', '113'],
+        'DAF': ['XF', 'CF', 'LF'],
+        'Iveco': ['Daily', 'EuroCargo', 'Stralis', 'Trakker'],
+        'Mercedes Trucks': ['Actros', 'Atego', 'Axor', 'Sprinter'],
+        'Renault Trucks': ['Premium', 'Magnum', 'Midlum', 'Kerax'],
+        'Isuzu': ['ELF', 'NQR', 'NPR'],
+        'Hyundai HD': ['HD65', 'HD78', 'HD120'],
+        'Sitrak': ['C7H'],
+        'JAC Trucks': ['N-серия', 'Солнечник']
+    }
+};
+
+var CAR_GROUPS = ['Тормозные колодки','Тормозные диски','Тормозные барабаны и цилиндры','Главный тормозной цилиндр','Суппорты и скобы','Тормозные шланги и трубки','Масляный фильтр','Воздушный фильтр','Салонный фильтр','Топливный фильтр','Фильтр АКПП','Масло и жидкости','Свечи зажигания','Свечи накаливания','Генератор','Стартер','Аккумуляторы','Датчики','Ремень ГРМ и ролики','Цепь ГРМ','Помпа (насос охлаждения)','Радиатор охлаждения','Термостат','Патрубки и хомуты','Амортизаторы','Пружины и опоры','Рычаги и сайлентблоки','Шаровые опоры','Стойки стабилизатора','Рулевые тяги и наконечники','Насос ГУР','ШРУСы и приводы','Подшипники ступиц','Сцепление в сборе','Диск сцепления','Корзина сцепления','Выжимной подшипник','Маховик','Сальники и прокладки','Подушки двигателя'];
+
+var TRUCK_GROUPS = ['Тормозная система','Пневмосистема','Двигатель','Гильзы, поршни, вкладыши','Топливная аппаратура (форсунки, ТНВД)','Рессоры и подвеска','Рулевое управление и ГУР','КПП и сцепление','Задний мост и редуктор','Электрика и приборы','Кабина и оптика','Фильтры и расходники','Карданы и крестовины','Ступицы и подшипники','Турбина и система наддува','Кузов и бортовая техника'];
+
+var catState = { group: null, brand: null, model: null };
+
+function renderCatalogGroups() {
+    var box = document.getElementById('cat-groups');
+    box.innerHTML = '';
+    document.getElementById('cat-brands').classList.add('hidden');
+    document.getElementById('cat-models').classList.add('hidden');
+    document.getElementById('cat-parts').classList.add('hidden');
+    document.getElementById('cat-breadcrumb').textContent = 'Выберите группу:';
+    for (var i = 0; i < CAT_GROUPS.length; i++) {
+        (function(g) {
+            var nBrands = Object.keys(CATALOG[g.id] || {}).length;
+            var div = document.createElement('div');
+            div.className = 'bg-white rounded-xl border p-5 cursor-pointer hover:border-blue-500';
+            div.innerHTML = '<div class="text-3xl mb-2">' + g.icon + '</div><div class="font-black">' + g.name + '</div><div class="text-xs text-slate-500 mt-1">' + nBrands + ' марок</div>';
+            div.onclick = function() { openCatalogGroup(g.id); };
+            box.appendChild(div);
+        })(CAT_GROUPS[i]);
+    }
+}
+
+function openCatalogGroup(groupId) {
+    catState = { group: groupId, brand: null, model: null };
+    var box = document.getElementById('cat-brands');
+    box.innerHTML = '';
+    box.classList.remove('hidden');
+    document.getElementById('cat-groups').classList.add('hidden');
+    document.getElementById('cat-models').classList.add('hidden');
+    document.getElementById('cat-parts').classList.add('hidden');
+    var g = CAT_GROUPS.find(function(x) { return x.id === groupId; });
+    document.getElementById('cat-breadcrumb').textContent = g.name + ' → выберите марку';
+    var brands = Object.keys(CATALOG[groupId]);
+    for (var i = 0; i < brands.length; i++) {
+        (function(b) {
+            var el = document.createElement('div');
+            el.className = 'chip';
+            el.textContent = b;
+            el.onclick = function() { selectCatalogBrand(b); };
+            box.appendChild(el);
+        })(brands[i]);
+    }
+}
+
+function selectCatalogBrand(brand) {
+    catState.brand = brand;
+    catState.model = null;
+    var box = document.getElementById('cat-models');
+    box.innerHTML = '';
+    box.classList.remove('hidden');
+    document.getElementById('cat-parts').classList.add('hidden');
+    document.getElementById('cat-breadcrumb').textContent = brand + ' → выберите модель';
+    var models = CATALOG[catState.group][brand];
+    for (var i = 0; i < models.length; i++) {
+        (function(mo) {
+            var el = document.createElement('div');
+            el.className = 'chip';
+            el.textContent = mo;
+            el.onclick = function() { selectCatalogModel(mo); };
+            box.appendChild(el);
+        })(models[i]);
+    }
+}
+
+function selectCatalogModel(model) {
+    catState.model = model;
+    document.getElementById('cat-breadcrumb').textContent = catState.brand + ' ' + model + ' → выберите деталь';
+    document.getElementById('cat-models').classList.add('hidden');
+    document.getElementById('cat-parts').classList.remove('hidden');
+    var groups = catState.group === 'trucks' ? TRUCK_GROUPS : CAR_GROUPS;
+    var grid = document.getElementById('cat-parts-grid');
+    grid.innerHTML = '';
+    for (var i = 0; i < groups.length; i++) {
+        (function(pg) {
+            var el = document.createElement('div');
+            el.className = 'chip';
+            el.textContent = pg;
+            el.onclick = function() { searchCatalogPart(pg); };
+            grid.appendChild(el);
+        })(groups[i]);
+    }
+}
+
+function searchCatalogPart(part) {
+    var year = document.getElementById('cat-year').value.trim();
+    var q = catState.brand + ' ' + catState.model + (year ? ' ' + year : '') + ' ' + part;
+    document.getElementById('search-input').value = q;
+    showPage('shop');
+    runSearch(q);
+}
+var AI_BRANDS = [
+    { aliases: ['киа', 'kia'], name: 'Kia', group: 'foreign' },
+    { aliases: ['хендай', 'хёндай', 'hyundai', 'солярис', 'крета', 'creta', 'санта', 'tucson', 'тусон', 'элантра', 'сонар'], name: 'Hyundai', group: 'foreign' },
+    { aliases: ['тойота', 'toyota', 'камри', 'королла', 'рав', 'крузак', 'прадо', 'хайлюкс'], name: 'Toyota', group: 'foreign' },
+    { aliases: ['ниссан', 'nissan', 'кашкай', 'x-trail', 'икс трайл', 'жук', 'альмера'], name: 'Nissan', group: 'foreign' },
+    { aliases: ['мазда', 'mazda', 'cx-5', 'cx5'], name: 'Mazda', group: 'foreign' },
+    { aliases: ['митсубиси', 'lancer', 'лансер', 'аутлендер', 'outlander', 'паджеро', 'asx'], name: 'Mitsubishi', group: 'foreign' },
+    { aliases: ['хонда', 'honda', 'civic', 'сивик', 'црв', 'cr-v'], name: 'Honda', group: 'foreign' },
+    { aliases: ['фольксваген', 'volkswagen', 'vw', 'поло', 'гольф', 'пассат', 'тигуан', 'туарег'], name: 'Volkswagen', group: 'foreign' },
+    { aliases: ['шкода', 'skoda', 'октавия', 'рапид', 'кодиак'], name: 'Skoda', group: 'foreign' },
+    { aliases: ['ауди', 'audi', 'а4', 'а6', 'q5', 'q7'], name: 'Audi', group: 'foreign' },
+    { aliases: ['бмв', 'bmw', 'x5', 'x3', 'трешка', 'пятерка'], name: 'BMW', group: 'foreign' },
+    { aliases: ['мерседес', 'mercedes', 'актрос', 'actros'], name: 'Mercedes', group: 'foreign' },
+    { aliases: ['опель', 'opel', 'астра', 'astra', 'инсигния'], name: 'Opel', group: 'foreign' },
+    { aliases: ['форд', 'ford', 'фокус', 'focus', 'мондео', 'куга', 'транзит'], name: 'Ford', group: 'foreign' },
+    { aliases: ['рено', 'renault', 'логан', 'дастер', 'сандеро', 'каптюр'], name: 'Renault', group: 'foreign' },
+    { aliases: ['пежо', 'peugeot', '308', '408'], name: 'Peugeot', group: 'foreign' },
+    { aliases: ['ситроен', 'citroen', 'берлинго'], name: 'Citroen', group: 'foreign' },
+    { aliases: ['вольво', 'volvo', 'xc90', 'xc60'], name: 'Volvo', group: 'foreign' },
+    { aliases: ['порше', 'porsche', 'кайен', 'макан'], name: 'Porsche', group: 'foreign' },
+    { aliases: ['ленд ровер', 'land rover', 'рейндж', 'дефендер', 'дискавери', 'фриландер', 'эвок'], name: 'Land Rover', group: 'foreign' },
+    { aliases: ['джип', 'jeep', 'вранглер', 'чероки'], name: 'Jeep', group: 'foreign' },
+    { aliases: ['шевроле', 'chevrolet', 'лацетти', 'круз', 'лав', 'каптива'], name: 'Chevrolet', group: 'foreign' },
+    { aliases: ['санг енг', 'ssangyong', 'актион', 'кирон', 'кирон', 'ректор'], name: 'SsangYong', group: 'foreign' },
+    { aliases: ['инфинити', 'infiniti', 'qx56', 'qx60'], name: 'Infiniti', group: 'foreign' },
+    { aliases: ['лексус', 'lexus', 'rx350', 'lx570'], name: 'Lexus', group: 'foreign' },
+    { aliases: ['субару', 'subaru', 'импреза', 'форестер', 'аутбек'], name: 'Subaru', group: 'foreign' },
+    { aliases: ['сылзуки', 'сузуки', 'suzuki', 'свифт', 'sx4', 'витара', 'джимни'], name: 'Suzuki', group: 'foreign' },
+    { aliases: ['додж', 'dodge', 'калибр'], name: 'Dodge', group: 'foreign' },
+    { aliases: ['лада', 'ваз', 'lada',  'веста', 'гранта', 'нива', 'калина', 'ларгус', 'приора', 'хрей', '2110'], name: 'Lada', group: 'domestic' },
+    { aliases: ['уаз', 'патриот', 'буханка', 'хантер', 'hunter'], name: 'УАЗ', group: 'domestic' },
+    { aliases: ['газель', 'газон', 'соболь', 'валдай', 'газ next'], name: 'ГАЗ', group: 'domestic' },
+    { aliases: ['чери', 'chery', 'тиго', 'tiggo', 'аризо'], name: 'Chery', group: 'china' },
+    { aliases: ['джили', 'geely', 'кулрэй', 'coolray', 'атлас', 'эмгранд', 'тугелла', 'окаванго'], name: 'Geely', group: 'china' },
+    { aliases: ['хавал', 'haval', 'джолион', 'jolion', 'дарго', 'dargo', 'f7', 'х9', 'h9'], name: 'Haval', group: 'china' },
+    { aliases: ['чанган', 'changan', 'cs35', 'cs55', 'cs75', 'альсвин', 'луна'], name: 'Changan', group: 'china' },
+    { aliases: ['эксид', 'exeed', 'txl', 'vx'], name: 'Exeed', group: 'china' },
+    { aliases: ['омода', 'omoda', 'c5'], name: 'Omoda', group: 'china' },
+    { aliases: ['джетур', 'jetour', 'дашинг', 'dashing', 'x70', 'x90'], name: 'Jetour', group: 'china' },
+    { aliases: ['ховер', 'hover', 'вингл', 'wingle', 'грейт вол', 'great wall'], name: 'Great Wall', group: 'china' },
+    { aliases: ['танк', 'tank 300', 'tank 500'], name: 'Tank', group: 'china' },
+    { aliases: ['зикр', 'zeekr', '001'], name: 'Zeekr', group: 'china' },
+    { aliases: ['воях', 'voyah', 'фри', 'dreamer', 'дример'], name: 'Voyah', group: 'china' },
+    { aliases: ['ли сян', 'li xiang', 'l9', 'l7'], name: 'Li Xiang', group: 'china' },
+    { aliases: ['фау', 'faw', 'бестун', 'bestune'], name: 'FAW', group: 'china' },
+    { aliases: ['jac', 'яц'], name: 'JAC', group: 'china' },
+    { aliases: ['гац', 'gac', 'gs8'], name: 'GAC', group: 'china' },
+    { aliases: ['донфенг', 'dongfeng', 'глори', 'glory'], name: 'Dongfeng', group: 'china' },
+    { aliases: ['брилианс', 'brilliance', 'v5', 'h530'], name: 'Brilliance', group: 'china' },
+    { aliases: ['лифан', 'lifan', 'солано', 'мурман'], name: 'Lifan', group: 'china' },
+    { aliases: ['кайи', 'kaiyi', 'e5'], name: 'Kaiyi', group: 'china' },
+    { aliases: ['камаз', 'камаз 65115', 'камаз 5490'], name: 'КАМАЗ', group: 'trucks' },
+    { aliases: ['маз', 'маз 5440', 'маз 6422'], name: 'МАЗ', group: 'trucks' },
+    { aliases: ['урал 4320', 'урал'], name: 'Урал', group: 'trucks' },
+    { aliases: ['зил', 'зил 130', 'бычок'], name: 'ЗИЛ', group: 'trucks' },
+    { aliases: ['паз', 'пазик', 'вектор'], name: 'ПАЗ', group: 'trucks' },
+    { aliases: ['хауво', 'howo', 'sinotruk', 'синотрук'], name: 'Sinotruk Howo', group: 'trucks' },
+    { aliases: ['шакман', 'shacman', 'x3000'], name: 'Shacman', group: 'trucks' },
+    { aliases: ['ауман', 'foton', 'фотон', 'оллин'], name: 'Foton', group: 'trucks' },
+    { aliases: ['скания', 'scania'], name: 'Scania', group: 'trucks' },
+    { aliases: ['даф', 'daf', 'xf', 'cf'], name: 'DAF', group: 'trucks' },
+    { aliases: ['ивеко', 'iveco', 'дейли', 'стриалис', 'юрокарго'], name: 'Iveco', group: 'trucks' },
+    { aliases: ['ман', 'man tgx', 'tga', 'tgs'], name: 'MAN', group: 'trucks' },
+    { aliases: ['исузу', 'isuzu', 'эльф', 'nqr'], name: 'Isuzu', group: 'trucks' },
+    { aliases: ['ситрак', 'sitrak'], name: 'Sitrak', group: 'trucks' }
+];
+
+var AI_MODELS = {
+    'рио': ['Kia', 'Rio'], 'ceed': ['Kia', 'Ceed'], 'сид': ['Kia', 'Ceed'], 'спортейдж': ['Kia', 'Sportage'], 'соренто': ['Kia', 'Sorento'],
+    'солярис': ['Hyundai', 'Solaris'], 'крета': ['Hyundai', 'Creta'], 'tucson': ['Hyundai', 'Tucson'],
+    'камри': ['Toyota', 'Camry'], 'королла': ['Toyota', 'Corolla'], 'рав4': ['Toyota', 'RAV4'], 'прадо': ['Toyota', 'Prado'],
+    'кашкай': ['Nissan', 'Qashqai'], 'x-trail': ['Nissan', 'X-Trail'], 'альмера': ['Nissan', 'Almera'],
+    'лансер': ['Mitsubishi', 'Lancer'], 'аутлендер': ['Mitsubishi', 'Outlander'], 'asx': ['Mitsubishi', 'ASX'],
+    'поло': ['Volkswagen', 'Polo'], 'гольф': ['Volkswagen', 'Golf'], 'пассат': ['Volkswagen', 'Passat'], 'тигуан': ['Volkswagen', 'Tiguan'],
+    'октавия': ['Skoda', 'Octavia'], 'рапид': ['Skoda', 'Rapid'],
+    'а4': ['Audi', 'A4'], 'а6': ['Audi', 'A6'],
+    'фокус': ['Ford', 'Focus'], 'мондео': ['Ford', 'Mondeo'],
+    'логан': ['Renault', 'Logan'], 'дастер': ['Renault', 'Duster'], 'сандеро': ['Renault', 'Sandero'],
+    'веста': ['Lada', 'Vesta'], 'гранта': ['Lada', 'Granta'], 'нива': ['Lada', 'Niva'], 'ларгус': ['Lada', 'Largus'],
+    'патриот': ['УАЗ', 'Патриот'], 'буханка': ['УАЗ', 'Буханка'],
+    'джолион': ['Haval', 'Jolion'], 'дарго': ['Haval', 'Dargo'], 'f7': ['Haval', 'F7'],
+    'тиго': ['Chery', 'Tiggo 4'], 'кулрэй': ['Geely', 'Coolray'], 'атлас': ['Geely', 'Atlas'],
+    'cs35': ['Changan', 'CS35 Plus'], 'cs75': ['Changan', 'CS75 Plus'],
+    'ховер': ['Great Wall', 'Hover H5'], 'вингл': ['Great Wall', 'Wingle 7'],
+    '65115': ['КАМАЗ', '65115'], '5490': ['КАМАЗ', '5490'], '43118': ['КАМАЗ', '43118'],
+    '4308': ['КАМАЗ', '4308'], '4320': ['Урал', '4320'],
+    'газель next': ['ГАЗ', 'ГАЗель Next'], 'газон': ['ГАЗ', 'ГАЗон Next'],
+    'tgx': ['MAN', 'TGX'], 'tga': ['MAN', 'TGA'], 'actros': ['Mercedes Trucks', 'Actros'],
+    'xf': ['DAF', 'XF'], 'daily': ['Iveco', 'Daily'], 'eurocargo': ['Iveco', 'EuroCargo']
+};
+
+var AI_PARTS = [
+    ['колодк', 'Тормозные колодки'],
+    ['тормозной диск', 'Тормозные диски'], ['тормозные диски', 'Тормозные диски'],
+    ['барабан', 'Тормозные барабаны и цилиндры'],
+    ['масляный фильтр', 'Масляный фильтр'], ['фильтр масла', 'Масляный фильтр'], ['масля фильтр', 'Масляный фильтр'],
+    ['воздушный фильтр', 'Воздушный фильтр'],
+    ['салонный фильтр', 'Салонный фильтр'],
+    ['топливный фильтр', 'Топливный фильтр'],
+    ['свеч', 'Свечи зажигания'],
+    ['аккумулятор', 'Аккумуляторы'],
+    ['амортиз', 'Амортизаторы'], ['стойк', 'Амортизаторы'],
+    ['пружин', 'Пружины и опоры'],
+    ['рычаг', 'Рычаги и сайлентблоки'], ['сайтентблок', 'Рычаги и сайлентблоки'], ['сайлентблок', 'Рычаги и сайлентблоки'],
+    ['шаров', 'Шаровые опоры'],
+    ['стабилизатор', 'Стойки стабилизатора'],
+    ['рулев', 'Рулевые тяги и наконечники'],
+    ['гур', 'Насос ГУР'],
+    ['грм', 'Ремень ГРМ и ролики'], ['ремень', 'Ремень ГРМ и ролики'],
+    ['помп', 'Помпа (насос охлаждения)'],
+    ['радиатор', 'Радиатор охлаждения'],
+    ['термостат', 'Термостат'],
+    ['генератор', 'Генератор'],
+    ['стартер', 'Стартер'],
+    ['сцеплен', 'Сцепление в сборе'],
+    ['шрус', 'ШРУСы и приводы'],
+    ['ступиц', 'Подшипники ступиц'], ['подшипник ступицы', 'Подшипники ступиц'],
+    ['турбин', 'Турбина'],
+    ['пневмо', 'Пневмосистема'],
+    ['рессор', 'Рессоры и подвеска'],
+    ['тнвд', 'Топливная аппаратура (форсунки, ТНВД)'], ['форсунк', 'Топливная аппаратура (форсунки, ТНВД)'],
+    ['гильз', 'Гильзы, поршни, вкладыши'], ['вкладыш', 'Гильзы, поршни, вкладыши'],
+    ['редуктор', 'Задний мост и редуктор'], ['задний мост', 'Задний мост и редуктор'],
+    ['крестовин', 'Крестовины и карданы'], ['кардан', 'Крестовины и карданы'],
+    ['диск сцеплен', 'Диск сцепления'],
+    ['датчик', 'Датчики'],
+    ['масло', 'Масло и жидкости']
+];
+
+var AI_REL = {
+    'Тормозные колодки': ['Тормозные диски', 'Тормозные барабаны и цилиндры'],
+    'Тормозные диски': ['Тормозные колодки'],
+    'Масляный фильтр': ['Масло и жидкости', 'Воздушный фильтр'],
+    'Воздушный фильтр': ['Топливный фильтр', 'Салонный фильтр'],
+    'Свечи зажигания': ['Воздушный фильтр', 'Масло и жидкости'],
+    'Амортизаторы': ['Пружины и опоры', 'Стойки стабилизатора'],
+    'Ремень ГРМ и ролики': ['Помпа (насос охлаждения)'],
+    'Сцепление в сборе': ['Выжимной подшипник', 'Маховик']
+};
+
+var aiBrand = null, aiModel = null, aiGroup = null;
+
+function aiAdd(text, who, buttons) {
+    var box = document.getElementById('ai-chat');
+    var div = document.createElement('div');
+    div.className = who === 'user' ? 'chat-user' : 'chat-bot';
+    div.innerHTML = text;
+    if (buttons && buttons.length) {
+        for (var i = 0; i < buttons.length; i++) {
+            (function(b) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'msg-btn';
+                btn.textContent = b.label;
+                if (b.q) btn.setAttribute('data-act', 'search');
+                if (b.q) btn.setAttribute('data-q', b.q);
+                if (b.part) btn.setAttribute('data-act', 'part');
+                if (b.part) btn.setAttribute('data-part', b.part);
+                if (b.model) btn.setAttribute('data-act', 'model');
+                if (b.model) { btn.setAttribute('data-model', b.model); btn.setAttribute('data-brand', b.brand); }
+                if (!b.q && !b.part && !b.model && b.brand) { btn.setAttribute('data-act', 'brand'); btn.setAttribute('data-brand', b.brand); }
+                div.appendChild(document.createElement('br'));
+                div.appendChild(btn);
+            })(buttons[i]);
+        }
+    }
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+}
+
+function aiHello() {
+    if (document.getElementById('ai-chat').children.length === 0) {
+        aiAdd('Здравствуйте! Я помогу подобрать запчасти. Напишите своими словами, что нужно — например: «передние колодки на Хавал Джолион 2022» или «камаз 65115 тормозные накладки». Или выберите популярное:', 'bot', [
+            { label: 'Масляный фильтр', part: 'Масляный фильтр' },
+            { label: 'Тормозные колодки', part: 'Тормозные колодки' },
+            { label: 'Свечи зажигания', part: 'Свечи зажигания' }
+        ]);
+    }
+}
+
+function aiSend(e) {
+    e.preventDefault();
+    var input = document.getElementById('ai-input');
+    var text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    aiAdd(esc(text), 'user', null);
+    aiAnalyze(text);
+}
+
+function aiAnalyze(text) {
+    var low = text.toLowerCase().replace(/[^а-яёa-z0-9\-\s]/g, ' ').replace(/\s+/g, ' ');
+
+    var part = null;
+    for (var i = 0; i < AI_PARTS.length; i++) {
+        if (low.indexOf(AI_PARTS[i][0]) >= 0) { part = AI_PARTS[i][1]; break; }
+    }
+
+    for (var key in AI_MODELS) {
+        if (low.indexOf(key) >= 0) {
+            aiBrand = AI_MODELS[key][0];
+            aiModel = AI_MODELS[key][1];
+            aiGroup = catGroupOfBrand(aiBrand);
+            break;
+        }
+    }
+
+    if (!aiBrand) {
+        for (var j = 0; j < AI_BRANDS.length; j++) {
+            var als = AI_BRANDS[j].aliases;
+            for (var k = 0; k < als.length; k++) {
+                if (low.indexOf(als[k]) >= 0) { aiBrand = AI_BRANDS[j].name; aiGroup = AI_BRANDS[j].group; break; }
+            }
+            if (aiBrand) break;
+        }
+        if (aiBrand) aiModel = null;
+    }
+
+    var q1 = /график|работа|врем|часы/.test(low);
+    var q2 = /адрес|где вы|находитесь/.test(low);
+    var q3 = /оплат|карт|сбп|перевод/.test(low);
+    var q4 = /доставк|срок|когда придет|когда придёт|скольк идет/.test(low);
+    var q5 = /заказ|купить|оформить/.test(low);
+    var q6 = /привет|здравств|добрый/.test(low);
+
+    if (part && aiBrand && aiModel) {
+        var q = aiBrand + ' ' + aiModel + ' ' + part;
+        var btns = [{ label: '🔍 Найти: ' + q, q: q }];
+        var rel = AI_REL[part] || [];
+        if (rel.length) {
+            aiAdd('Отлично! Под ваш запрос подходит: <b>' + esc(part) + '</b> для <b>' + esc(aiBrand) + ' ' + esc(aiModel) + '</b>.', 'bot', null);
+            var relBtns = [];
+            for (var r = 0; r < rel.length; r++) {
+                relBtns.push({ label: '🔍 ' + rel[r], q: aiBrand + ' ' + aiModel + ' ' + rel[r] });
+            }
+            aiAdd('Обычно вместе с этим меняют ещё:', 'bot', relBtns);
+        } else {
+            aiAdd('Нашёл: <b>' + esc(part) + '</b> для <b>' + esc(aiBrand) + ' ' + esc(aiModel) + '</b>. Нажмите кнопку — покажу предложения со складов с вашими ценами.', 'bot', btns);
+        }
+        return;
+    }
+
+    if (part && aiBrand) {
+        var models = (CATALOG[aiGroup] && CATALOG[aiGroup][aiBrand]) ? CATALOG[aiGroup][aiBrand] : null;
+        if (models) {
+            var mb = [];
+            for (var m = 0; m < Math.min(models.length, 8); m++) {
+                mb.push({ label: models[m], brand: aiBrand, model: models[m] });
+            }
+            aiAdd('Понял: <b>' + esc(part) + '</b> на <b>' + esc(aiBrand) + '</b>. Уточните модель:', 'bot', mb);
+        } else {
+            aiAdd('Понял: <b>' + esc(part) + '</b>. Напишите модель автомобиля — например «джолион» или «камаз 65115».', 'bot', null);
+        }
+        return;
+    }
+
+    if (q1) { aiAdd('Мы работаем ежедневно с 09:00 до 17:00. Ждём вас в Димитровграде!', 'bot', null); return; }
+    if (q2) { aiAdd('Мы находимся в городе Димитровград. Позвоните нам: +7 (927) 834-39-93 — подскажем дорогу.', 'bot', null); return; }
+    if (q3) { aiAdd('Оплатить можно картой, переводом или по QR-коду СБП прямо при оформлении заказа. Также есть баланс личного кабинета — пополните его, и заказы будут оплачиваться автоматически.', 'bot', null); return; }
+    if (q4) { aiAdd('Сроки поставки от 1 до 14 дней в зависимости от склада — срок указан у каждого предложения в поиске.', 'bot', null); return; }
+    if (q5) { aiAdd('Оформить заказ просто: найдите запчасть через поиск или каталог, добавьте в корзину и заполните форму. Оплата — по QR или с баланса.', 'bot', null); return; }
+    if (q6) { aiAdd('Здравствуйте! Скажите марку и что нужно — например «свечи на киа рио 2015». Или выберите деталь:', 'bot', [{ label: 'Масляный фильтр', part: 'Масляный фильтр' }, { label: 'Тормозные колодки', part: 'Тормозные колодки' }]); return; }
+
+    if (aiBrand && !aiModel) {
+        var models2 = (CATALOG[aiGroup] && CATALOG[aiGroup][aiBrand]) ? CATALOG[aiGroup][aiBrand] : null;
+        if (models2) {
+            var mb2 = [];
+            for (var m2 = 0; m2 < Math.min(models2.length, 8); m2++) {
+                mb2.push({ label: models2[m2], brand: aiBrand, model: models2[m2] });
+            }
+            aiAdd('Марка <b>' + esc(aiBrand) + '</b>. Выберите модель:', 'bot', mb2);
+            return;
+        }
+    }
+
+    aiAdd('Не совсем понял запрос. Попробуйте так: «масляный фильтр на хёндай солярис 2018» или выберите категорию:', 'bot', [
+        { label: 'Масляный фильтр', part: 'Масляный фильтр' },
+        { label: 'Тормозные колодки', part: 'Тормозные колодки' },
+        { label: 'Свечи зажигания', part: 'Свечи зажигания' },
+        { label: 'Амортизаторы', part: 'Амортизаторы' }
+    ]);
+}
+
+function catGroupOfBrand(brand) {
+    for (var g in CATALOG) {
+        if (CATALOG[g] && CATALOG[g][brand]) return g;
+    }
+    return 'foreign';
+}
+
+function aiDoSearch(q) {
+    document.getElementById('search-input').value = q;
+    showPage('shop');
+    runSearch(q);
+}
+var ADMIN_STATUSES = ['Новый','Запрос по VIN','Ожидает оплаты','Оплачен с баланса','Оплачен — проверка','Заказано у поставщика','Готов к выдаче','Выдан','Отменён'];
+
+function isAdmin() { return currentProfile && currentProfile.role === 'admin'; }
+
 function switchAdminTab(tab) {
-    var tabs = new Array('orders', 'suppliers', 'markups');
+    if (!isAdmin()) return;
+    var tabs = ['orders','suppliers','markups','balances','settings'];
     for (var i = 0; i < tabs.length; i++) {
         var t = tabs[i];
         document.getElementById('admin-tab-' + t).classList.toggle('hidden', t !== tab);
@@ -504,36 +1236,55 @@ function switchAdminTab(tab) {
     if (tab === 'orders') loadAdminOrders();
     if (tab === 'suppliers') loadAdminSuppliers();
     if (tab === 'markups') loadAdminMarkups();
+    if (tab === 'balances') loadAdminBalances();
+    if (tab === 'settings') loadAdminSettings();
 }
 
 function loadAdminOrders() {
     var box = document.getElementById('admin-tab-orders');
     box.innerHTML = 'Загрузка заказов...';
     fetch(SUPABASE_URL + '/rest/v1/orders?order=id.desc', { headers: sbHeaders(currentUser.token) })
-    .then(function (r) { return r.json(); })
-    .then(function (orders) {
+    .then(function(r) { return r.json(); })
+    .then(function(orders) {
         box.innerHTML = '';
+        if (!orders || !orders.length) { box.innerHTML = '<p class="text-slate-500">Заказов пока нет.</p>'; return; }
         for (var i = 0; i < orders.length; i++) {
             var o = orders[i];
+            var opts = '';
+            for (var s = 0; s < ADMIN_STATUSES.length; s++) {
+                opts += '<option ' + (o.status === ADMIN_STATUSES[s] ? 'selected' : '') + '>' + ADMIN_STATUSES[s] + '</option>';
+            }
+            var cost = (o.total_cost != null && o.total_cost !== '' && !isNaN(Number(o.total_cost))) ? Number(o.total_cost) : null;
+            var profit = (cost != null) ? Number(o.total_price) - cost : null;
             var div = document.createElement('div');
             div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-4';
             div.innerHTML = '<div><div class="font-bold">Заказ №' + esc(o.id) + ' • ' + esc(o.customer_name) + ' (' + esc(o.customer_phone) + ')</div>' +
-                '<div class="text-xs text-slate-500">VIN: ' + esc(o.vin || 'не указан') + '</div>' +
+                '<div class="text-xs text-slate-500">ID клиента: <span class="font-mono">' + esc(o.user_id || '—') + '</span> • VIN: ' + esc(o.vin || 'не указан') + '</div>' +
                 '<div class="text-sm mt-1">' + esc(o.items) + '</div>' +
-                '<div class="font-bold text-blue-700 mt-1">Итого: ' + esc(o.total_price) + ' ₽</div></div>' +
-                '<select class="border rounded-lg px-3 py-2 text-sm font-semibold">' +
-                '<option ' + (o.status === 'Новый' ? 'selected' : '') + '>Новый</option>' +
-                '<option ' + (o.status === 'Запрос по VIN' ? 'selected' : '') + '>Запрос по VIN</option>' +
-                '<option ' + (o.status === 'Заказано у поставщика' ? 'selected' : '') + '>Заказано у поставщика</option>' +
-                '<option ' + (o.status === 'Готов к выдаче' ? 'selected' : '') + '>Готов к выдаче</option>' +
-                '<option ' + (o.status === 'Выдан' ? 'selected' : '') + '>Выдан</option></select>';
-            (function (orderId) {
-                div.querySelector('select').onchange = function (ev) {
+                '<div class="font-bold text-blue-700 mt-1">Продажа: ' + esc(o.total_price) + ' ₽' +
+                (cost != null ? ' • Закупка: ' + cost.toLocaleString('ru-RU') + ' ₽ • <span class="text-green-700">Прибыль: ' + profit.toLocaleString('ru-RU') + ' ₽</span>' : ' • Закупка: —') + '</div></div>' +
+                '<div class="flex flex-col gap-2 items-stretch">' +
+                '<select class="border rounded-lg px-3 py-2 text-sm font-semibold">' + opts + '</select>' +
+                '<button type="button" class="border rounded-lg px-3 py-1.5 text-xs font-bold">✎ Закупочная цена</button></div>';
+            (function(orderId) {
+                div.querySelector('select').onchange = function(ev) {
                     fetch(SUPABASE_URL + '/rest/v1/orders?id=eq.' + orderId, {
                         method: 'PATCH',
                         headers: sbHeaders(currentUser.token),
                         body: JSON.stringify({ status: ev.target.value })
                     });
+                };
+                var btns = div.querySelectorAll('button');
+                btns[0].onclick = function() {
+                    var v = prompt('Закупочная цена для заказа №' + orderId + ' (₽):', cost != null ? cost : '');
+                    if (v === null) return;
+                    var num = parseFloat(String(v).replace(',', '.'));
+                    if (!(num >= 0)) { alert('Введите число'); return; }
+                    fetch(SUPABASE_URL + '/rest/v1/orders?id=eq.' + orderId, {
+                        method: 'PATCH',
+                        headers: sbHeaders(currentUser.token),
+                        body: JSON.stringify({ total_cost: num })
+                    }).then(function() { loadAdminOrders(); });
                 };
             })(o.id);
             box.appendChild(div);
@@ -545,50 +1296,46 @@ function loadAdminSuppliers() {
     var box = document.getElementById('admin-suppliers-list');
     box.innerHTML = 'Загрузка...';
     fetch(SUPABASE_URL + '/rest/v1/suppliers?order=id.asc', { headers: sbHeaders(currentUser.token) })
-    .then(function (r) { return r.json(); })
-    .then(function (list) {
+    .then(function(r) { return r.json(); })
+    .then(function(list) {
         box.innerHTML = '';
+        if (!list || !list.length) { box.innerHTML = '<p class="text-slate-500">Поставщиков пока нет. Добавьте Росско с вашими ключами.</p>'; return; }
         for (var i = 0; i < list.length; i++) {
             var s = list[i];
             var div = document.createElement('div');
             div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-3';
-            div.innerHTML = '<div><div class="font-bold">' + esc(s.name) +
-                (s.is_active ? ' <span class="text-green-600 text-xs font-semibold">● активен</span>' : ' <span class="text-slate-400 text-xs font-semibold">○ выключен</span>') + '</div>' +
-                '<div class="text-xs text-slate-500 font-mono break-all">KEY1: ' + esc(s.key1 || '—') + ' • KEY2: ' + esc(s.key2 || '—') + '</div>' +
-                '<div class="text-xs text-slate-500">Доп. дней к сроку: ' + esc(s.extra_days || 0) + '</div></div>' +
-                '<div class="flex flex-wrap gap-2">' +
-                '<button type="button" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-semibold">Ключи</button>' +
-                '<button type="button" class="px-3 py-1.5 rounded-lg bg-slate-200 text-sm font-semibold">Срок</button>' +
-                '<button type="button" class="px-3 py-1.5 rounded-lg text-sm font-semibold ' + (s.is_active ? 'bg-amber-500 text-white' : 'bg-green-600 text-white') + '">' +
-                (s.is_active ? 'Выключить' : 'Включить') + '</button></div>';
-            (function (sup) {
+            div.innerHTML = '<div><div class="font-bold">' + esc(s.name) + (s.is_active ? ' <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">активен</span>' : ' <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded">выключен</span>') + '</div>' +
+                '<div class="text-xs font-mono text-slate-500">К1: ' + esc(s.key1) + ' • К2: ' + esc(s.key2) + '</div>' +
+                '<div class="text-xs text-slate-500">Доп. срок: ' + esc(s.extra_days || 0) + ' дн.</div></div>' +
+                '<div class="flex gap-2"><button type="button" class="border rounded-lg px-3 py-1.5 text-xs font-bold">✎</button>' +
+                '<button type="button" class="border rounded-lg px-3 py-1.5 text-xs font-bold">' + (s.is_active ? 'Выключить' : 'Включить') + '</button>' +
+                '<button type="button" class="text-red-500 font-bold px-2 text-xs">🗑</button></div>';
+            (function(sup) {
                 var btns = div.querySelectorAll('button');
-                btns[0].onclick = function () {
-                    var k1 = prompt('KEY1 для ' + sup.name + ':', sup.key1 || '');
-                    if (k1 === null) return;
-                    var k2 = prompt('KEY2 для ' + sup.name + ':', sup.key2 || '');
-                    if (k2 === null) return;
+                btns[0].onclick = function() {
+                    var name = prompt('Название:', sup.name); if (name === null) return;
+                    var k1 = prompt('Ключ 1:', sup.key1); if (k1 === null) return;
+                    var k2 = prompt('Ключ 2:', sup.key2); if (k2 === null) return;
+                    var ed = prompt('Доп. дней к сроку:', sup.extra_days || 0); if (ed === null) return;
                     fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sup.id, {
                         method: 'PATCH',
                         headers: sbHeaders(currentUser.token),
-                        body: JSON.stringify({ key1: k1.trim(), key2: k2.trim() })
-                    }).then(loadAdminSuppliers);
+                        body: JSON.stringify({ name: name, key1: k1.trim(), key2: k2.trim(), extra_days: parseInt(ed) || 0 })
+                    }).then(function() { loadAdminSuppliers(); });
                 };
-                btns[1].onclick = function () {
-                    var d = prompt('Сколько дней добавить к сроку поставщика?', sup.extra_days || 1);
-                    if (d === null) return;
-                    fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sup.id, {
-                        method: 'PATCH',
-                        headers: sbHeaders(currentUser.token),
-                        body: JSON.stringify({ extra_days: parseInt(d, 10) || 0 })
-                    }).then(loadAdminSuppliers);
-                };
-                btns[2].onclick = function () {
+                btns[1].onclick = function() {
                     fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sup.id, {
                         method: 'PATCH',
                         headers: sbHeaders(currentUser.token),
                         body: JSON.stringify({ is_active: !sup.is_active })
-                    }).then(loadAdminSuppliers);
+                    }).then(function() { loadAdminSuppliers(); });
+                };
+                btns[2].onclick = function() {
+                    if (!confirm('Удалить поставщика ' + sup.name + '?')) return;
+                    fetch(SUPABASE_URL + '/rest/v1/suppliers?id=eq.' + sup.id, {
+                        method: 'DELETE',
+                        headers: sbHeaders(currentUser.token)
+                    }).then(function() { loadAdminSuppliers(); });
                 };
             })(s);
             box.appendChild(div);
@@ -596,54 +1343,50 @@ function loadAdminSuppliers() {
     });
 }
 
+function addSupplier() {
+    var name = prompt('Название поставщика:', 'Росско'); if (!name) return;
+    var k1 = prompt('Ключ 1:'); if (!k1) return;
+    var k2 = prompt('Ключ 2:'); if (!k2) return;
+    fetch(SUPABASE_URL + '/rest/v1/suppliers', {
+        method: 'POST',
+        headers: sbHeaders(currentUser.token),
+        body: JSON.stringify({ name: name, key1: k1.trim(), key2: k2.trim(), extra_days: 1, is_active: true })
+    }).then(function() { loadAdminSuppliers(); });
+}
+
 function loadAdminMarkups() {
     var box = document.getElementById('admin-markups-list');
     box.innerHTML = 'Загрузка...';
     fetch(SUPABASE_URL + '/rest/v1/markups?order=price_from.asc', { headers: sbHeaders(currentUser.token) })
-    .then(function (r) { return r.json(); })
-    .then(function (list) {
+    .then(function(r) { return r.json(); })
+    .then(function(list) {
         box.innerHTML = '';
-        var add = document.createElement('button');
-        add.textContent = '+ Добавить наценку';
-        add.className = 'mb-4 px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold';
-        add.onclick = function () {
-            var pf = prompt('Цена ОТ (руб.):'); if (pf === null) return;
-            var pt = prompt('Цена ДО (руб.):'); if (pt === null) return;
-            var p = prompt('Наценка, %:'); if (p === null) return;
-            fetch(SUPABASE_URL + '/rest/v1/markups', {
-                method: 'POST',
-                headers: sbHeaders(currentUser.token),
-                body: JSON.stringify({ price_from: parseFloat(pf) || 0, price_to: parseFloat(pt) || 0, percent: parseFloat(p) || 0 })
-            }).then(loadAdminMarkups);
-        };
-        box.appendChild(add);
+        if (!list || !list.length) { box.innerHTML = '<p class="text-slate-500">Наценок нет — по умолчанию 15%.</p>'; return; }
         for (var i = 0; i < list.length; i++) {
             var m = list[i];
             var div = document.createElement('div');
-            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-3';
-            div.innerHTML = '<div class="font-semibold">От ' + esc(m.price_from) + ' ₽ до ' + esc(m.price_to) +
-                ' ₽ → <span class="text-blue-700">+' + esc(m.percent) + '%</span></div>' +
-                '<div class="flex gap-2">' +
-                '<button type="button" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-semibold">Изменить</button>' +
-                '<button type="button" class="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 text-sm font-semibold">Удалить</button></div>';
-            (function (row) {
+            div.className = 'bg-white p-3 rounded-xl border flex justify-between items-center gap-3 text-sm';
+            div.innerHTML = '<div>от <b>' + esc(m.price_from) + '</b> до <b>' + esc(m.price_to) + '</b> ₽ — <b class="text-blue-700">' + esc(m.percent) + '%</b></div>' +
+                '<div class="flex gap-2"><button type="button" class="border rounded-lg px-3 py-1 text-xs font-bold">✎</button>' +
+                '<button type="button" class="text-red-500 font-bold px-2 text-xs">🗑</button></div>';
+            (function(mu) {
                 var btns = div.querySelectorAll('button');
-                btns[0].onclick = function () {
-                    var pf = prompt('Цена ОТ:', row.price_from); if (pf === null) return;
-                    var pt = prompt('Цена ДО:', row.price_to); if (pt === null) return;
-                    var p = prompt('Наценка, %:', row.percent); if (p === null) return;
-                    fetch(SUPABASE_URL + '/rest/v1/markups?id=eq.' + row.id, {
+                btns[0].onclick = function() {
+                    var pf = prompt('Цена от:', mu.price_from); if (pf === null) return;
+                    var pt = prompt('Цена до:', mu.price_to); if (pt === null) return;
+                    var pc = prompt('Наценка, %:', mu.percent); if (pc === null) return;
+                    fetch(SUPABASE_URL + '/rest/v1/markups?id=eq.' + mu.id, {
                         method: 'PATCH',
                         headers: sbHeaders(currentUser.token),
-                        body: JSON.stringify({ price_from: parseFloat(pf) || 0, price_to: parseFloat(pt) || 0, percent: parseFloat(p) || 0 })
-                    }).then(loadAdminMarkups);
+                        body: JSON.stringify({ price_from: parseFloat(pf), price_to: parseFloat(pt), percent: parseFloat(pc) })
+                    }).then(function() { loadAdminMarkups(); });
                 };
-                btns[1].onclick = function () {
-                    if (!confirm('Удалить наценку ' + row.price_from + '–' + row.price_to + ' ₽?')) return;
-                    fetch(SUPABASE_URL + '/rest/v1/markups?id=eq.' + row.id, {
+                btns[1].onclick = function() {
+                    if (!confirm('Удалить диапазон?')) return;
+                    fetch(SUPABASE_URL + '/rest/v1/markups?id=eq.' + mu.id, {
                         method: 'DELETE',
                         headers: sbHeaders(currentUser.token)
-                    }).then(loadAdminMarkups);
+                    }).then(function() { loadAdminMarkups(); });
                 };
             })(m);
             box.appendChild(div);
@@ -651,428 +1394,188 @@ function loadAdminMarkups() {
     });
 }
 
-/* ---------- КАТАЛОГ: СПРАВОЧНИК ---------- */
-var CAR_CATALOG = {
-    'Kia': [
-        { k: 'rio', n: 'Rio', y: '2011-2024' },
-        { k: 'ceed', n: 'Ceed', y: '2012-2024' },
-        { k: 'sportage', n: 'Sportage', y: '2010-2024' },
-        { k: 'cerato', n: 'Cerato', y: '2013-2024' },
-        { k: 'sorento', n: 'Sorento', y: '2012-2024' }
-    ],
-    'Hyundai': [
-        { k: 'solaris', n: 'Solaris', y: '2011-2022' },
-        { k: 'creta', n: 'Creta', y: '2016-2024' },
-        { k: 'tucson', n: 'Tucson', y: '2010-2024' },
-        { k: 'elantra', n: 'Elantra', y: '2012-2024' },
-        { k: 'i30', n: 'i30', y: '2012-2024' }
-    ],
-    'Toyota': [
-        { k: 'camry', n: 'Camry', y: '2011-2024' },
-        { k: 'corolla', n: 'Corolla', y: '2013-2024' },
-        { k: 'rav4', n: 'RAV4', y: '2013-2024' },
-        { k: 'land cruiser', n: 'Land Cruiser', y: '2008-2024' }
-    ],
-    'Volkswagen': [
-        { k: 'polo', n: 'Polo', y: '2010-2024' },
-        { k: 'passat', n: 'Passat', y: '2011-2024' },
-        { k: 'tiguan', n: 'Tiguan', y: '2011-2024' },
-        { k: 'golf', n: 'Golf', y: '2012-2024' }
-    ],
-    'Skoda': [
-        { k: 'rapid', n: 'Rapid', y: '2014-2024' },
-        { k: 'octavia', n: 'Octavia', y: '2013-2024' },
-        { k: 'kodiaq', n: 'Kodiaq', y: '2017-2024' }
-    ],
-    'Renault': [
-        { k: 'duster', n: 'Duster', y: '2012-2024' },
-        { k: 'logan', n: 'Logan', y: '2014-2024' },
-        { k: 'sandero', n: 'Sandero', y: '2014-2024' }
-    ],
-    'Lada': [
-        { k: 'granta', n: 'Granta', y: '2011-2024' },
-        { k: 'vesta', n: 'Vesta', y: '2015-2024' },
-        { k: 'largus', n: 'Largus', y: '2012-2024' },
-        { k: 'niva', n: 'Niva', y: '2018-2024' }
-    ],
-    'Nissan': [
-        { k: 'qashqai', n: 'Qashqai', y: '2014-2024' },
-        { k: 'x-trail', n: 'X-Trail', y: '2014-2024' },
-        { k: 'almera', n: 'Almera', y: '2013-2018' },
-        { k: 'juke', n: 'Juke', y: '2014-2024' }
-    ],
-    'Mazda': [
-        { k: '3', n: '3', y: '2013-2024' },
-        { k: '6', n: '6', y: '2012-2024' },
-        { k: 'cx-5', n: 'CX-5', y: '2012-2024' }
-    ],
-    'Ford': [
-        { k: 'focus', n: 'Focus', y: '2011-2024' },
-        { k: 'fiesta', n: 'Fiesta', y: '2015-2024' },
-        { k: 'kuga', n: 'Kuga', y: '2013-2024' }
-    ],
-    'Chevrolet': [
-        { k: 'cruze', n: 'Cruze', y: '2012-2016' },
-        { k: 'aveo', n: 'Aveo', y: '2012-2020' },
-        { k: 'niva', n: 'Niva', y: '2009-2024' }
-    ],
-    'Daewoo': [
-        { k: 'nexia', n: 'Nexia', y: '2012-2024' },
-        { k: 'matiz', n: 'Matiz', y: '2005-2024' }
-    ],
-    'Audi': [
-        { k: 'a4', n: 'A4', y: '2012-2024' },
-        { k: 'a6', n: 'A6', y: '2011-2024' },
-        { k: 'q5', n: 'Q5', y: '2012-2024' }
-    ],
-    'BMW': [
-        { k: '3', n: '3 (F30)', y: '2012-2019' },
-        { k: '5', n: '5 (F10)', y: '2010-2017' },
-        { k: 'x5', n: 'X5', y: '2013-2024' }
-    ],
-    'Mercedes': [
-        { k: 'c', n: 'C-Class (W205)', y: '2014-2021' },
-        { k: 'e', n: 'E-Class (W212)', y: '2009-2016' },
-        { k: 'sprinter', n: 'Sprinter', y: '2018-2024' }
-    ],
-    'Opel': [
-        { k: 'astra', n: 'Astra J', y: '2010-2021' },
-        { k: 'mokka', n: 'Mokka', y: '2012-2024' }
-    ],
-    'Mitsubishi': [
-        { k: 'lancer', n: 'Lancer', y: '2007-2024' },
-        { k: 'outlander', n: 'Outlander', y: '2012-2024' },
-        { k: 'asx', n: 'ASX', y: '2010-2024' }
-    ],
-    'Honda': [
-        { k: 'civic', n: 'Civic', y: '2012-2024' },
-        { k: 'cr-v', n: 'CR-V', y: '2012-2024' },
-        { k: 'accord', n: 'Accord', y: '2012-2024' }
-    ],
-    'SsangYong': [
-        { k: 'actyon', n: 'Actyon', y: '2011-2024' },
-        { k: 'kyron', n: 'Kyron', y: '2005-2016' }
-    ],
-    'UAZ': [
-        { k: 'patriot', n: 'Patriot', y: '2014-2024' },
-        { k: 'hunter', n: 'Hunter', y: '2011-2024' }
-    ]
-};
-
-var PARTS = new Array(
-    { name: 'Масляный фильтр', syn: ['масляный фильтр', 'фильтр масла', 'масляный'] },
-    { name: 'Воздушный фильтр', syn: ['воздушный фильтр', 'воздушный'] },
-    { name: 'Салонный фильтр', syn: ['салонный фильтр', 'фильтр салона', 'салонный'] },
-    { name: 'Топливный фильтр', syn: ['топливный фильтр', 'топливный'] },
-    { name: 'Масло моторное', syn: ['моторное масло', 'масло моторное', 'масло'] },
-    { name: 'Передние тормозные колодки', syn: ['передние тормозные колодки', 'передние колодки', 'колодки передние', 'передние торм колодки'] },
-    { name: 'Задние тормозные колодки', syn: ['задние тормозные колодки', 'задние колодки', 'колодки задние'] },
-    { name: 'Тормозные диски передние', syn: ['тормозные диски передние', 'передние диски', 'диски передние'] },
-    { name: 'Тормозные диски задние', syn: ['тормозные диски задние', 'задние диски', 'диски задние'] },
-    { name: 'Тормозной шланг', syn: ['тормозной шланг', 'шланг тормозной'] },
-    { name: 'Тормозная жидкость', syn: ['тормозная жидкость', 'тормозуха', 'тормозная'] },
-    { name: 'Амортизатор передний', syn: ['амортизатор передний', 'передние амортизаторы', 'стойка передняя', 'стойки передние'] },
-    { name: 'Амортизатор задний', syn: ['амортизатор задний', 'задние амортизаторы', 'стойки задние'] },
-    { name: 'Пружины подвески', syn: ['пружины подвески', 'пружина', 'пружины'] },
-    { name: 'Стойка стабилизатора', syn: ['стойка стабилизатора', 'стойки стабилизатора', 'стойка стаб', 'линк'] },
-    { name: 'Рычаг подвески', syn: ['рычаг подвески', 'рычаг', 'рычаги'] },
-    { name: 'Шаровая опора', syn: ['шаровая опора', 'шаровая', 'шаровые'] },
-    { name: 'Сайлентблок', syn: ['сайлентблок', 'сайлентблоки', 'резинка подвески'] },
-    { name: 'Рулевой наконечник', syn: ['рулевой наконечник', 'наконечник рулевой', 'наконечники'] },
-    { name: 'Рулевая рейка', syn: ['рулевая рейка', 'рейка рулевая', 'рейка'] },
-    { name: 'ШРУС', syn: ['шрус', 'граната', 'шрус наружный'] },
-    { name: 'Подшипник ступицы', syn: ['подшипник ступицы', 'ступичный подшипник', 'ступица'] },
-    { name: 'Свечи зажигания', syn: ['свечи зажигания', 'свечи', 'свеча'] },
-    { name: 'Ремень ГРМ', syn: ['ремень грм', 'грм', 'ремень'] },
-    { name: 'Ролики ГРМ', syn: ['ролики грм', 'ролик грм', 'ролики', 'ролик'] },
-    { name: 'Комплект сцепления', syn: ['комплект сцепления', 'сцепление', 'корзина сцепления'] },
-    { name: 'Аккумулятор', syn: ['аккумулятор', 'акб', 'аккум'] }
-);
-
-var RELATED = {
-    'Передние тормозные колодки': ['Тормозные диски передние'],
-    'Задние тормозные колодки': ['Тормозные диски задние'],
-    'Масло моторное': ['Масляный фильтр'],
-    'Ремень ГРМ': ['Ролики ГРМ'],
-    'Комплект сцепления': ['Масло моторное'],
-    'Амортизатор передний': ['Пружины подвески'],
-    'Амортизатор задний': ['Пружины подвески']
-};
-
-var TRANSLIT = { 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya' };
-
-function translit(s) {
-    var out = '';
-    s = String(s).toLowerCase();
-    for (var i = 0; i < s.length; i++) {
-        var ch = s[i];
-        out += (TRANSLIT[ch] !== undefined) ? TRANSLIT[ch] : ch;
-    }
-    return out;
+function addMarkup() {
+    var pf = prompt('Цена от (₽):'); if (pf === null) return;
+    var pt = prompt('Цена до (₽):'); if (pt === null) return;
+    var pc = prompt('Наценка (%):'); if (pc === null) return;
+    fetch(SUPABASE_URL + '/rest/v1/markups', {
+        method: 'POST',
+        headers: sbHeaders(currentUser.token),
+        body: JSON.stringify({ price_from: parseFloat(pf), price_to: parseFloat(pt), percent: parseFloat(pc) })
+    }).then(function() { loadAdminMarkups(); });
 }
 
-var BRAND_SYNONYMS = {
-    'Kia': ['kia', 'киа'],
-    'Hyundai': ['hyundai', 'хендай', 'хёндай', 'гендай'],
-    'Toyota': ['toyota', 'тойота'],
-    'Volkswagen': ['volkswagen', 'vw', 'фольксваген', 'фольксваген', 'фолькс'],
-    'Skoda': ['skoda', 'шкода'],
-    'Renault': ['renault', 'рено'],
-    'Lada': ['lada', 'лада', 'ваз', 'vaz'],
-    'Nissan': ['nissan', 'ниссан'],
-    'Mazda': ['mazda', 'мазда'],
-    'Ford': ['ford', 'форд'],
-    'Chevrolet': ['chevrolet', 'шевроле'],
-    'Daewoo': ['daewoo', 'дэу'],
-    'Audi': ['audi', 'ауди'],
-    'BMW': ['bmw', 'бмв'],
-    'Mercedes': ['mercedes', 'мерседес', 'бенц', 'мерс'],
-    'Opel': ['opel', 'опель'],
-    'Mitsubishi': ['mitsubishi', 'митсубиси'],
-    'Honda': ['honda', 'хонда'],
-    'SsangYong': ['ssangyong', 'сангйонг', 'саненг'],
-    'UAZ': ['uaz', 'уаз']
-};
-
-/* ---------- КАТАЛОГ: РУЧНОЙ ПОДБОР ---------- */
-function switchCatTab(tab) {
-    document.getElementById('cat-panel-manual').classList.toggle('hidden', tab !== 'manual');
-    document.getElementById('cat-panel-ai').classList.toggle('hidden', tab !== 'ai');
-    document.getElementById('cat-tabbtn-manual').className = (tab === 'manual')
-        ? 'px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white'
-        : 'px-4 py-2 rounded-lg text-sm font-bold bg-white border';
-    document.getElementById('cat-tabbtn-ai').className = (tab === 'ai')
-        ? 'px-4 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white'
-        : 'px-4 py-2 rounded-lg text-sm font-bold bg-white border';
-}
-
-function catInitBrands() {
-    var sel = document.getElementById('cat-brand');
-    var brands = Object.keys(CAR_CATALOG).sort();
-    for (var i = 0; i < brands.length; i++) {
-        var opt = document.createElement('option');
-        opt.value = brands[i];
-        opt.textContent = brands[i];
-        sel.appendChild(opt);
-    }
-}
-
-function catOnBrandChange() {
-    var brand = document.getElementById('cat-brand').value;
-    var sel = document.getElementById('cat-model');
-    sel.innerHTML = '<option value="">— любая модель —</option>';
-    sel.disabled = !brand;
-    if (brand) {
-        var models = CAR_CATALOG[brand];
-        for (var i = 0; i < models.length; i++) {
-            var opt = document.createElement('option');
-            opt.value = models[i].k;
-            opt.textContent = models[i].n + ' (' + models[i].y + ')';
-            sel.appendChild(opt);
+function loadAdminBalances() {
+    var pend = document.getElementById('admin-pending');
+    var hist = document.getElementById('admin-history');
+    var bals = document.getElementById('admin-balances');
+    pend.innerHTML = 'Загрузка...'; hist.innerHTML = ''; bals.innerHTML = '';
+    Promise.all([
+        fetch(SUPABASE_URL + '/rest/v1/transactions?order=created_at.desc&select=*', { headers: sbHeaders(currentUser.token) }).then(function(r) { return r.json(); }),
+        fetch(SUPABASE_URL + '/rest/v1/profiles?select=id,email,full_name,balance', { headers: sbHeaders(currentUser.token) }).then(function(r) { return r.json(); })
+    ]).then(function(res) {
+        var txs = res[0] || [], profs = res[1] || [];
+        var map = {};
+        for (var i = 0; i < profs.length; i++) map[profs[i].id] = profs[i];
+        var pendingList = txs.filter(function(t) { return t.status === 'Ожидает подтверждения'; });
+        pend.innerHTML = '';
+        if (!pendingList.length) pend.innerHTML = '<p class="text-slate-500 text-sm">Новых заявок нет.</p>';
+        for (var p = 0; p < pendingList.length; p++) {
+            var t = pendingList[p];
+            var who = map[t.user_id] ? (map[t.user_id].email || map[t.user_id].full_name || t.user_id) : t.user_id;
+            var div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-3';
+            div.innerHTML = '<div><b>' + esc(who) + '</b> просит пополнить на <b class="text-green-700">' + Number(t.amount).toLocaleString('ru-RU') + ' ₽</b><div class="text-xs text-slate-500 font-mono">' + esc(t.user_id) + '</div></div>' +
+                '<div class="flex gap-2"><button type="button" class="bg-green-600 text-white rounded-lg px-3 py-1.5 text-xs font-bold">✓ Подтвердить</button>' +
+                '<button type="button" class="border rounded-lg px-3 py-1.5 text-xs font-bold">✕ Отклонить</button></div>';
+            (function(tx) {
+                var btns = div.querySelectorAll('button');
+                btns[0].onclick = function() {
+                    fetch(SUPABASE_URL + '/rest/v1/transactions?id=eq.' + tx.id, {
+                        method: 'PATCH', headers: sbHeaders(currentUser.token),
+                        body: JSON.stringify({ status: 'Подтверждено' })
+                    }).then(function() {
+                        var prof = map[tx.user_id];
+                        var nb = Number(prof && prof.balance || 0) + Number(tx.amount);
+                        return fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + tx.user_id, {
+                            method: 'PATCH', headers: sbHeaders(currentUser.token),
+                            body: JSON.stringify({ balance: nb })
+                        });
+                    }).then(function() { loadAdminBalances(); });
+                };
+                btns[1].onclick = function() {
+                    fetch(SUPABASE_URL + '/rest/v1/transactions?id=eq.' + tx.id, {
+                        method: 'PATCH', headers: sbHeaders(currentUser.token),
+                        body: JSON.stringify({ status: 'Отклонено' })
+                    }).then(function() { loadAdminBalances(); });
+                };
+            })(t);
+            pend.appendChild(div);
         }
+        bals.innerHTML = '';
+        for (var b = 0; b < profs.length; b++) {
+            var pr = profs[b];
+            var row = document.createElement('div');
+            row.className = 'bg-white p-3 rounded-lg border flex justify-between items-center text-sm';
+            row.innerHTML = '<div>' + esc(pr.email || '—') + ' <span class="text-xs text-slate-400 font-mono">' + esc(pr.id) + '</span></div><b class="text-green-700">' + Number(pr.balance || 0).toLocaleString('ru-RU') + ' ₽</b>';
+            bals.appendChild(row);
+        }
+        hist.innerHTML = '';
+        var shown = txs.slice(0, 20);
+        if (!shown.length) hist.innerHTML = '<p class="text-slate-500 text-sm">Операций пока нет.</p>';
+        for (var h = 0; h < shown.length; h++) {
+            var t2 = shown[h];
+            var who2 = map[t2.user_id] ? (map[t2.user_id].email || t2.user_id) : t2.user_id;
+            var row2 = document.createElement('div');
+            row2.className = 'bg-white p-3 rounded-lg border text-sm flex justify-between';
+            row2.innerHTML = '<div>' + esc(who2) + ' • ' + esc(t2.type || 'Пополнение') + '</div><div><b>' + Number(t2.amount).toLocaleString('ru-RU') + ' ₽</b> • ' + esc(t2.status) + '</div>';
+            hist.appendChild(row2);
+        }
+    });
+}
+
+function adminCredit() {
+    var uid = document.getElementById('admin-uid').value.trim();
+    var amount = parseFloat(document.getElementById('admin-amount').value);
+    if (!uid || !(amount > 0)) { alert('Укажите ID и сумму'); return; }
+    fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + uid + '&select=balance', { headers: sbHeaders(currentUser.token) })
+    .then(function(r) { return r.json(); })
+    .then(function(rows) {
+        if (!rows || !rows.length) { alert('Профиль не найден'); return; }
+        var nb = Number(rows[0].balance || 0) + amount;
+        return fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + uid, {
+            method: 'PATCH', headers: sbHeaders(currentUser.token),
+            body: JSON.stringify({ balance: nb })
+        });
+    })
+    .then(function() {
+        document.getElementById('admin-amount').value = '';
+        loadAdminBalances();
+        alert('Баланс начислен');
+    });
+}
+
+function loadAdminSettings() {
+    fetch(SUPABASE_URL + '/rest/v1/settings?select=key,value', { headers: sbHeaders(currentUser.token) })
+    .then(function(r) { return r.ok ? r.json() : []; })
+    .then(function(rows) {
+        for (var i = 0; i < (rows || []).length; i++) {
+            if (rows[i].key === 'sbp_link') document.getElementById('set-sbp').value = rows[i].value || '';
+            if (rows[i].key === 'pay_details') document.getElementById('set-details').value = rows[i].value || '';
+        }
+        document.getElementById('set-note').textContent = 'Ссылка СБП выдаётся банком при регистрации мерчанта (вида https://qr.nspk.ru/...). Если ссылки нет — покупатели увидят реквизиты из второго поля.';
+    });
+}
+
+function saveSettings() {
+    fetch(SUPABASE_URL + '/rest/v1/settings', {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + currentUser.token, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify([
+            { key: 'sbp_link', value: document.getElementById('set-sbp').value.trim() },
+            { key: 'pay_details', value: document.getElementById('set-details').value.trim() }
+        ])
+    }).then(function(r) {
+        document.getElementById('set-note').textContent = r.ok ? 'Сохранено ✓' : 'Ошибка сохранения — проверьте RLS таблицы settings';
+    });
+}
+
+document.getElementById('ai-chat').addEventListener('click', function(e) {
+    var b = e.target.closest('.msg-btn');
+    if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === 'search') { aiDoSearch(b.getAttribute('data-q')); return; }
+    if (act === 'part') {
+        var pop = ['Kia', 'Hyundai', 'Toyota', 'Volkswagen', 'Lada', 'Haval', 'КАМАЗ', 'ГАЗ'];
+        var pb = [];
+        for (var i = 0; i < pop.length; i++) pb.push({ label: pop[i], brand: pop[i] });
+        aiAdd('Деталь: <b>' + esc(b.getAttribute('data-part')) + '</b>. Выберите марку:', 'bot', pb);
+        return;
     }
-}
-
-function catRenderParts() {
-    var grid = document.getElementById('cat-parts-grid');
-    grid.innerHTML = '';
-    for (var i = 0; i < PARTS.length; i++) {
-        (function (part) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.textContent = part.name;
-            btn.className = 'text-left text-sm px-4 py-3 rounded-xl border bg-white hover:bg-blue-50 hover:border-blue-400 font-semibold transition';
-            btn.onclick = function () { catPick(part.name); };
-            grid.appendChild(btn);
-        })(PARTS[i]);
+    if (act === 'model') {
+        aiModel = b.getAttribute('data-model');
+        var mb = [];
+        var picks = ['Масляный фильтр', 'Тормозные колодки', 'Свечи зажигания', 'Воздушный фильтр', 'Амортизаторы', 'Ремень ГРМ и ролики'];
+        for (var i = 0; i < picks.length; i++) {
+            mb.push({ label: picks[i], q: aiBrand + ' ' + aiModel + ' ' + picks[i] });
+        }
+        aiAdd('Модель: <b>' + esc(aiModel) + '</b>. Что нужно найти?', 'bot', mb);
+        return;
     }
-}
+    if (act === 'brand') {
+        aiBrand = b.getAttribute('data-brand');
+        aiModel = null;
+        aiAnalyze(b.getAttribute('data-brand'));
+    }
+});
 
-function catPick(partName) {
-    var brand = document.getElementById('cat-brand').value;
-    if (!brand) { alert('Сначала выберите марку автомобиля'); return; }
-    var modelKey = document.getElementById('cat-model').value;
-    var year = document.getElementById('cat-year').value.trim();
-    var q = translit(brand);
-    if (modelKey) q += ' ' + translit(modelKey);
-    q += ' ' + translit(partName);
-    if (year) q += ' ' + year;
-    aiRunSearch(q, 'Подобрано: ' + brand + (modelKey ? ' ' + modelKey : '') + ' — ' + partName + (year ? ', ' + year : ''));
-}
-
-/* ---------- ИИ-ПОДБОР ---------- */
-function aiPush(cls, html) {
-    var chat = document.getElementById('ai-chat');
-    var div = document.createElement('div');
-    if (cls === 'user') {
-        div.className = 'flex justify-end';
-        div.innerHTML = '<div class="bg-blue-600 text-white rounded-2xl rounded-br-md px-4 py-2 max-w-[80%] text-sm">' + html + '</div>';
+(function initSession() {
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem('ad_user')); } catch (err) { saved = null; }
+    if (saved && saved.uid && saved.token) {
+        currentUser = saved;
+        fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + saved.uid + '&select=*', {
+            headers: sbHeaders(saved.token)
+        })
+        .then(function(r) { return r.ok ? r.json() : []; })
+        .then(function(rows) {
+            if (rows && rows.length) {
+                currentProfile = rows[0];
+                updateNavUI();
+                processAutoPay();
+                showPage('shop');
+            } else {
+                localStorage.removeItem('ad_user');
+                currentUser = null;
+                updateNavUI();
+                showPage('guest');
+            }
+        });
     } else {
-        div.className = 'flex justify-start';
-        div.innerHTML = '<div class="bg-white border rounded-2xl rounded-bl-md px-4 py-3 max-w-[85%] text-sm leading-relaxed">' + html + '</div>';
+        updateNavUI();
+        showPage('guest');
     }
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-}
-
-function aiWelcome() {
-    aiPush('bot', 'Здравствуйте! Я помогу подобрать запчасти. Напишите, например: <b>«передние колодки на Kia Rio 2015»</b> или <b>«хочу Академия Volkswagen Polo»</b>. Также отвечу на вопросы о магазине.');
-}
-
-function aiSend() {
-    var inp = document.getElementById('ai-input');
-    var t = inp.value.trim();
-    if (!t) return;
-    aiPush('user', esc(t));
-    inp.value = '';
-    setTimeout(function () { aiProcess(t.toLowerCase()); }, 300);
-}
-
-function aiAnswerFaq(t) {
-    if (/(привет|здравств|добрый день|добрый вечер)/.test(t)) {
-        return 'Здравствуйте! Опишите авто и деталь — например: «масляный фильтр Toyota Camry 2016». Или спросите про график, адрес, оплату.';
-    }
-    if (/(график|работает|часы|режим|открывает)/.test(t)) {
-        return 'Мы работаем <b>ежедневно с 09:00 до 17:00</b>. Телефон: +7 (927) 834-39-93.';
-    }
-    if (/(адрес|где вы|где находит|как доехать)/.test(t)) {
-        return 'Мы в г. Димитровград. Уточнить адрес и маршрут можно по телефону <b>+7 (927) 834-39-93</b>.';
-    }
-    if (/(оплат|карт|наличн|как заплатить)/.test(t)) {
-        return 'Оплатить можно наличными или картой при получении заказа в магазине.';
-    }
-    if (/(доставк|срок|когда приде|сколько ждать|почта)/.test(t)) {
-        return 'Сроки поставки указаны в каждой карточке товара. Возможна доставка до пункта выдачи или самовывоз из магазина.';
-    }
-    if (/(гарант|возврат|поменять|вернуть)/.test(t)) {
-        return 'На запчасти действует гарантия. По вопросам возврата обращайтесь по телефону +7 (927) 834-39-93.';
-    }
-    if (/(заказ|оформить|купить|как купить)/.test(t)) {
-        return 'Найдите деталь через поиск или каталог, добавьте в корзину 🛒 и оформите заказ — достаточно имени и телефона.';
-    }
-    return null;
-}
-
-function aiFindBrand(t) {
-    for (var brand in BRAND_SYNONYMS) {
-        var syns = BRAND_SYNONYMS[brand];
-        for (var i = 0; i < syns.length; i++) {
-            if (t.indexOf(syns[i]) !== -1) return brand;
-        }
-    }
-    return null;
-}
-
-function aiFindModel(t, brand) {
-    if (!brand || !CAR_CATALOG[brand]) return null;
-    var models = CAR_CATALOG[brand];
-    for (var i = 0; i < models.length; i++) {
-        if (t.indexOf(translit(models[i].k)) !== -1 || t.indexOf(models[i].k.toLowerCase()) !== -1) return models[i];
-    }
-    return null;
-}
-
-function aiFindPart(t) {
-    for (var i = 0; i < PARTS.length; i++) {
-        var syns = PARTS[i].syn;
-        for (var j = 0; j < syns.length; j++) {
-            if (t.indexOf(syns[j]) !== -1) return PARTS[i].name;
-        }
-    }
-    return null;
-}
-
-function aiBuildQuery(brand, model, part, year) {
-    var q = translit(brand);
-    if (model) q += ' ' + translit(model.k);
-    q += ' ' + translit(part);
-    if (year) q += ' ' + year;
-    return q;
-}
-
-function aiProcess(t) {
-    var faq = aiAnswerFaq(t);
-    if (faq) { aiPush('bot', faq); return; }
-
-    var brand = aiFindBrand(t);
-    var model = aiFindModel(t, brand);
-    var part = aiFindPart(t);
-    var yearMatch = t.match(/\b(19|20)\d{2}\b/);
-    var year = yearMatch ? yearMatch[0] : '';
-
-    if (brand && part) {
-        var q = aiBuildQuery(brand, model, part, year);
-        var extra = RELATED[part]
-            ? '<br><br>💡 Совет: к этой детали обычно берут ещё «<b>' + RELATED[part].join('</b>» или «<b>') + '</b>».'
-            : '';
-        aiPush('bot', 'Понял: <b>' + esc(brand) + (model ? ' ' + esc(model.n) : '') + '</b>, деталь — <b>' + esc(part) + '</b>' + (year ? ', ' + esc(year) + ' год' : '') + '. Запускаю поиск по складам:' + extra);
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'mt-2 w-full bg-blue-600 text-white rounded-lg py-2 font-bold text-sm hover:bg-blue-700';
-        btn.textContent = '🔍 Искать: ' + q;
-        btn.onclick = function () { aiRunSearch(q); };
-        document.getElementById('ai-chat').lastChild.firstChild.appendChild(btn);
-        document.getElementById('ai-chat').scrollTop = 999999;
-        return;
-    }
-
-    if (part && !brand) {
-        var popular = ['Kia', 'Hyundai', 'Toyota', 'Volkswagen', 'Renault', 'Lada'];
-        var html = 'Выбрали деталь: <b>' + esc(part) + '</b>. А какой у вас автомобиль?';
-        for (var i = 0; i < popular.length; i++) {
-            (function (b) {
-                var b2 = document.createElement('button');
-                b2.type = 'button';
-                b2.className = 'mt-1 mr-1 px-3 py-1.5 rounded-lg border bg-white text-sm font-semibold hover:bg-blue-50';
-                b2.textContent = b;
-                b2.onclick = function () { aiRunSearch(aiBuildQuery(b, null, part, '')); };
-                document.getElementById('ai-chat').lastChild.firstChild.appendChild(b2);
-            })(popular[i]);
-        }
-        aiPush('bot', html);
-        document.getElementById('ai-chat').scrollTop = 999999;
-        return;
-    }
-
-    if (brand && !part) {
-        var names = PARTS.slice(0, 12).map(function (p) { return p.name; });
-        var html2 = 'Автомобиль: <b>' + esc(brand) + '</b> — принято. Какую деталь ищем? Выберите или напишите текстом:';
-        aiPush('bot', html2);
-        for (var j = 0; j < names.length; j++) {
-            (function (pName) {
-                var b3 = document.createElement('button');
-                b3.type = 'button';
-                b3.className = 'mt-1 mr-1 px-3 py-1.5 rounded-lg border bg-white text-sm hover:bg-blue-50';
-                b3.textContent = pName;
-                b3.onclick = function () { aiRunSearch(aiBuildQuery(brand, null, pName, '')); };
-                document.getElementById('ai-chat').lastChild.firstChild.appendChild(b3);
-            })(names[j]);
-        }
-        document.getElementById('ai-chat').scrollTop = 999999;
-        return;
-    }
-
-    aiPush('bot', 'Не совсем понял запрос 🙂 Опишите так: <b>марка + модель + деталь</b>, например «передние колодки Kia Rio 2015». Или откройте вкладку «Ручной подбор» и выберите из списка.');
-}
-
-function aiRunSearch(q, note) {
-    if (note) aiPush('bot', esc(note));
-    runSearch(q);
-}
-
-/* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
-(function init() {
-    catInitBrands();
-    catRenderParts();
-    aiWelcome();
-    try {
-        var saved = localStorage.getItem('ad_user');
-        if (saved) {
-            currentUser = JSON.parse(saved);
-            loadProfile();
-        }
-    } catch (e) {}
-    updateNavUI();
+    aiHello();
 })();
 </script>
 </body>
