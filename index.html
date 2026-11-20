@@ -1,1315 +1,993 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Автозапчасти — интернет-магазин</title>
+<title>AutoBrand73 — Магазин автозапчастей</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#f4f6f9;color:#1c2733;min-height:100vh}
-header{background:#141d2b;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;position:sticky;top:0;z-index:50}
-.logo{font-size:20px;font-weight:700;letter-spacing:.5px}
-.logo span{color:#ff7a1a}
-.pills{display:flex;gap:6px;flex-wrap:wrap}
-.pill{padding:7px 14px;border-radius:20px;background:#223047;color:#cdd7e4;cursor:pointer;font-size:14px;border:none}
-.pill:hover{background:#2c3d58}
-.pill.active{background:#ff7a1a;color:#fff}
-main{max-width:1100px;margin:20px auto;padding:0 16px 60px}
+body{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#f2f4f8;color:#1c2733;min-height:100vh}
+.hidden{display:none!important}
+.topbar{background:#eef1f6;font-size:13px;padding:8px 16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:#44506a}
+.topbar .links{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.topbar a,.link-btn{color:#1c5fd6;text-decoration:none;cursor:pointer;background:none;border:none;font-size:13px;padding:0}
+.header{background:#141d2b;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo-badge{width:44px;height:44px;border-radius:10px;background:#ff7a1a;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:18px}
+.header h1{font-size:20px}
+.header .sub{font-size:13px;color:#9fb0c7}
+.nav{background:#1b2739;display:flex;gap:6px;padding:8px 16px;flex-wrap:wrap}
+.nav-btn{color:#cdd8e8;background:transparent;border:none;padding:8px 14px;border-radius:20px;cursor:pointer;font-size:14px}
+.nav-btn:hover{background:#27364d;color:#fff}
+.nav-btn.active{background:#ff7a1a;color:#fff;font-weight:600}
+main{max-width:1100px;margin:0 auto;padding:18px 14px 60px}
 .page{display:none}
 .page.active{display:block}
-.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 1px 4px rgba(20,29,43,.08);margin-bottom:14px}
-h1{font-size:22px;margin-bottom:12px}
-h2{font-size:18px;margin-bottom:10px}
-h3{font-size:16px;margin:10px 0 8px}
-.btn{background:#2f6fed;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:15px;cursor:pointer}
-.btn:hover{background:#255cd0}
-.btn.gray{background:#5a6b80}
-.btn.orange{background:#ff7a1a}
-.btn.red{background:#d64545}
-.btn.small{padding:6px 12px;font-size:13px}
-input,select,textarea{width:100%;padding:10px;border:1px solid #d4dbe4;border-radius:8px;font-size:15px;margin-bottom:10px;background:#fff}
-label{display:block;font-size:13px;color:#5a6b80;margin-bottom:4px}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.row>div{flex:1;min-width:140px}
-.msg{padding:10px;border-radius:8px;font-size:14px;margin:8px 0;display:none}
-.msg.show{display:block}
-.msg.ok{background:#e6f7ec;color:#1e7c43}
-.msg.err{background:#fdecec;color:#b3261e}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{padding:8px;border-bottom:1px solid #e6ebf1;text-align:left}
-th{color:#5a6b80;font-weight:600}
-.chip{display:inline-block;background:#eef3fb;color:#2f6fed;border:1px solid #bcd0f7;border-radius:16px;padding:6px 14px;margin:4px;cursor:pointer;font-size:14px}
-.tag{display:inline-block;background:#eef3fb;color:#2f6fed;border-radius:6px;padding:2px 8px;font-size:12px;margin:2px}
-.big{font-size:24px;font-weight:700}
-.muted{color:#5a6b80;font-size:13px}
-.item{border:1px solid #e6ebf1;border-radius:10px;padding:12px;margin-bottom:8px}
-.item .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
-.price{font-size:18px;font-weight:700;color:#141d2b;white-space:nowrap}
-.modal-bg{position:fixed;inset:0;background:rgba(20,29,43,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
-.modal-bg.show{display:flex}
-.modal{background:#fff;border-radius:12px;max-width:480px;width:100%;padding:20px;max-height:90vh;overflow:auto}
-.brand-btn{display:block;width:100%;text-align:left;padding:12px;border:1px solid #e6ebf1;border-radius:10px;background:#fff;margin-bottom:6px;cursor:pointer;font-size:15px}
-.brand-btn:hover{border-color:#2f6fed}
-.ai-msg{padding:10px 14px;border-radius:10px;margin-bottom:10px;font-size:14px;white-space:pre-wrap;max-width:85%}
-.ai-msg.bot{background:#eef3fb}
-.ai-msg.user{background:#2f6fed;color:#fff;margin-left:auto}
-.tabbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.tabbtn{padding:8px 16px;border-radius:8px;border:1px solid #d4dbe4;background:#fff;cursor:pointer;font-size:14px}
-.tabbtn.active{background:#141d2b;color:#fff;border-color:#141d2b}
-.footer-note{color:#8a97a6;font-size:12px;margin-top:20px;text-align:center}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(20,29,43,.08)}
+.hero{text-align:center;padding:40px 16px}
+.hero h2{font-size:28px;margin-bottom:10px}
+.muted{color:#67748a}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+input,select,textarea{font:inherit;padding:9px 12px;border:1px solid #ccd5e0;border-radius:8px;background:#fff;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid #1c5fd633;border-color:#1c5fd6}
+label{font-size:13px;color:#44506a}
+.btn{border:none;border-radius:8px;padding:10px 16px;cursor:pointer;font-size:14px;background:#e8edf4;color:#1c2733}
+.btn-primary{background:#1c5fd6;color:#fff}
+.btn-primary:hover{background:#174fae}
+.btn-danger{background:#fdecec;color:#c22}
+.btn-ghost{background:transparent;border:1px solid #ccd5e0}
+.btn[disabled]{opacity:.5;cursor:default}
+.chip{border:1px solid #ccd5e0;background:#fff;border-radius:18px;padding:7px 14px;cursor:pointer;font-size:13px}
+.chip.active{background:#1c5fd6;border-color:#1c5fd6;color:#fff}
+.tabbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tab-btn{border:1px solid #ccd5e0;background:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:14px}
+.tab-btn.active{background:#141d2b;color:#fff;border-color:#141d2b}
+.offer{display:flex;flex-direction:column;gap:6px}
+.offer-brand{font-weight:700}
+.offer-art{font-family:monospace;color:#44506a}
+.offer-price{font-size:20px;font-weight:700;color:#1c5fd6}
+.offer-meta{font-size:13px;color:#67748a}
+.sup-card .sup-row{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.sup-card .sup-row label{min-width:150px}
+.sup-card .sup-row input[type=number]{width:110px}
+.sup-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.markup-row input{width:120px}
+#search-loading{padding:14px;color:#44506a}
+#ai-log{max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.msg{padding:9px 12px;border-radius:10px;max-width:85%;font-size:14px}
+.msg.user{align-self:flex-end;background:#1c5fd6;color:#fff}
+.msg.bot{align-self:flex-start;background:#eef1f6}
+.stat-row{display:flex;gap:30px;flex-wrap:wrap;margin-bottom:12px}
+.big{font-size:22px;font-weight:700}
+.mono{font-family:monospace}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#141d2b;color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;z-index:99}
+.toast.show{opacity:1}
+.modal{position:fixed;inset:0;background:rgba(10,16,28,.55);display:none;align-items:flex-start;justify-content:center;padding:40px 14px;z-index:50;overflow:auto}
+.modal.open{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:20px;max-width:480px;width:100%}
+.modal-box h3{margin-bottom:14px}
+.modal-box .close-x{float:right;background:none;border:none;font-size:18px;cursor:pointer;color:#67748a}
+.modal-box .field{margin-bottom:12px}
+footer{background:#141d2b;color:#9fb0c7;text-align:center;padding:20px;font-size:13px;margin-top:30px}
+h2{margin-bottom:12px}h3{margin:16px 0 10px}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">АВТО<span>ЗАПЧАСТИ</span></div>
-  <nav class="pills" id="nav-pills"></nav>
+
+<div class="topbar">
+  <div>📍 г. Димитровград • 🕒 Ежедневно 09:00–17:00</div>
+  <div class="links">
+    <a href="tel:+79278343993">+7 (927) 834-39-93</a>
+    <button class="link-btn" onclick="openVIN()">Запрос по VIN</button>
+  </div>
+</div>
+
+<header class="header">
+  <div class="logo-badge">AB</div>
+  <div>
+    <h1>AutoBrand73</h1>
+    <div class="sub">Запчасти для иномарок</div>
+  </div>
 </header>
+
+<nav class="nav">
+  <button class="nav-btn" data-page="search" onclick="showPage('search')">Каталог</button>
+  <button class="nav-btn" data-page="orders" onclick="showPage('orders')">Мои заказы</button>
+  <button class="nav-btn hidden" id="nav-admin" data-page="admin" onclick="showPage('admin')">⚙️ Админ-панель</button>
+  <button class="nav-btn hidden" id="nav-logout" onclick="doLogout()">Выйти</button>
+  <button class="nav-btn" id="nav-login" onclick="openLogin()">Войти</button>
+  <button class="nav-btn" id="nav-cart" onclick="showCart()">🛒 0</button>
+</nav>
+
 <main>
-  <section class="page card" id="page-config">
-    <h1>Сайт ещё не настроен</h1>
-    <p>В начале скрипта файла <b>index.html</b> нужно вписать адрес проекта и публичный ключ Supabase (Project Settings → API: <b>Project URL</b> и ключ <b>anon / publishable</b>). Ключ состоит только из латиницы и цифр — кириллица в этих строках вызывает ошибку входа.</p>
-    <p class="muted">После вписывания ключей обновите страницу.</p>
-  </section>
-
   <section class="page" id="page-home">
-    <div class="card" style="text-align:center;padding:40px 20px">
-      <h1>Интернет-магазин автозапчастей</h1>
-      <p style="margin:10px 0 20px;color:#5a6b80">Поиск по складам поставщиков, каталог марок и моделей, ИИ-подбор запчастей.<br>Цены и каталог доступны зарегистрированным пользователям.</p>
-      <button class="btn" id="btn-go-auth">Войти / Зарегистрироваться</button>
-      <div style="margin-top:14px"><button class="btn gray" data-page="vin">Запрос по VIN</button></div>
-    </div>
-  </section>
-
-  <section class="page" id="page-auth">
-    <div class="card" style="max-width:420px;margin:0 auto">
-      <h1>Вход и регистрация</h1>
-      <label>Email</label><input id="inp-email" type="email" placeholder="you@mail.ru">
-      <label>Пароль</label><input id="inp-pass" type="password" placeholder="не менее 6 символов">
-      <div class="row">
-        <div><button class="btn" id="btn-login" style="width:100%">Войти</button></div>
-        <div><button class="btn gray" id="btn-signup" style="width:100%">Зарегистрироваться</button></div>
-      </div>
-      <div class="msg" id="auth-msg"></div>
+    <div class="card hero">
+      <h2>AutoBrand73 — запчасти для иномарок</h2>
+      <p class="muted">Поиск по складам, ручной и ИИ-подбор, заказы с оплатой по балансу.<br>Димитровград, ежедневно 09:00–17:00, тел. +7 (927) 834-39-93</p>
+      <p style="margin-top:16px"><button class="btn btn-primary" onclick="showPage('search')">Войти и искать запчасти</button></p>
     </div>
   </section>
 
   <section class="page" id="page-search">
-    <div class="card">
-      <h1>Поиск запчастей</h1>
-      <label>Название или артикул</label>
-      <div class="row">
-        <div style="flex:3"><input id="inp-search" placeholder="Например: масляный фильтр или колодки передние"></div>
-        <div><button class="btn" id="btn-search" style="width:100%">Найти</button></div>
-      </div>
-      <div class="msg" id="search-status"></div>
+    <h2>Поиск автозапчастей по артикулу</h2>
+    <p class="muted">Актуальные цены и сроки со складов поставщиков</p>
+    <div class="card row">
+      <input id="search-input" placeholder="Артикул или название детали" onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="btn btn-primary" onclick="doSearch()">Найти</button>
     </div>
-    <div id="search-results"></div>
-  </section>
+    <p class="muted">Не знаете артикул? <button class="link-btn" onclick="openVIN()">Отправьте запрос по VIN-коду</button></p>
+    <div id="search-loading" class="hidden">⏳ Ищем запчасть...</div>
+    <div class="grid" id="search-results"></div>
 
-  <section class="page" id="page-catalog">
-    <div class="card">
-      <h1>Каталог</h1>
-      <div id="cat-selected" class="muted" style="margin-bottom:8px">Выберите группу</div>
-      <div id="cat-groups" class="row"></div>
-      <div id="cat-brands"></div>
-      <div id="cat-models"></div>
-      <div id="cat-years"></div>
-      <div id="cat-pgs"></div>
-      <button class="btn" id="btn-cat-search" style="display:none;margin-top:10px">Найти запчасти</button>
+    <div class="row" style="margin:18px 0 10px">
+      <button class="btn btn-ghost" onclick="toggleBlock('manual-block')">🔧 Ручной подбор</button>
+      <button class="btn btn-ghost" onclick="toggleBlock('ai-block')">🤖 ИИ-подбор</button>
     </div>
-    <div id="cat-results"></div>
-  </section>
 
-  <section class="page" id="page-ai">
-    <div class="card">
-      <h1>🤖 ИИ-подбор запчастей</h1>
-      <div id="ai-chat" style="max-height:420px;overflow:auto;margin-bottom:10px"></div>
-      <div class="row">
-        <div style="flex:3"><input id="ai-input" placeholder="Например: передние колодки на хавал джолион 2022"></div>
-        <div><button class="btn" id="btn-ai-send" style="width:100%">Отправить</button></div>
+    <div id="manual-block" class="hidden">
+      <div class="card">
+        <h3>Подбор запчастей по автомобилю</h3>
+        <div class="row" style="margin-bottom:10px">
+          <div style="flex:1;min-width:180px"><label>Марка</label><select id="sel-brand" onchange="onBrandChange()"></select></div>
+          <div style="flex:1;min-width:180px"><label>Модель</label><select id="sel-model"></select></div>
+          <div style="flex:1;min-width:180px"><label>Год выпуска (необязательно)</label><select id="sel-year"></select></div>
+        </div>
+        <h3>Выберите группу запчастей:</h3>
+        <div class="row" id="part-chips" style="gap:6px"></div>
+        <p style="margin-top:12px"><button class="btn btn-primary" onclick="applyManualSelect()">Найти запчасти</button></p>
       </div>
     </div>
-  </section>
 
-  <section class="page" id="page-vin">
-    <div class="card" style="max-width:520px;margin:0 auto">
-      <h1>Запрос по VIN</h1>
-      <label>VIN автомобиля (17 символов)</label>
-      <input id="inp-vin" maxlength="17" placeholder="WAUZZZ...">
-      <label>Какие запчасти нужны</label>
-      <textarea id="inp-vin-text" rows="3" placeholder="Например: комплект ГРМ, колодки"></textarea>
-      <label>Ваш телефон</label>
-      <input id="inp-vin-phone" placeholder="+7 ...">
-      <button class="btn" id="btn-vin-send">Отправить запрос</button>
-      <div class="msg" id="vin-msg"></div>
-      <p class="muted">Запрос попадает к менеджеру. Для отправки требуется вход в аккаунт.</p>
-    </div>
-  </section>
-
-  <section class="page" id="page-cart">
-    <div class="card">
-      <h1>Корзина</h1>
-      <div id="cart-items"></div>
-      <div class="row" style="margin-top:12px;align-items:center">
-        <div><label style="margin-bottom:0"><input type="checkbox" id="chk-balance-pay" style="width:auto;margin-right:6px">Оплатить с баланса</label></div>
-        <div class="big" id="cart-total">0 ₽</div>
+    <div id="ai-block" class="hidden">
+      <div class="card">
+        <h3>🤖 ИИ-помощник по подбору</h3>
+        <p class="muted">Опишите автомобиль и нужную деталь обычными словами — например: «передние колодки на Kia Rio 2015». Помощник сам распознает марку, модель и деталь и запустит поиск.</p>
+        <div id="ai-log"></div>
+        <div class="row">
+          <input id="ai-input" placeholder="Например: передние колодки на хавал джолион 2022" onkeydown="if(event.key==='Enter')sendAI()">
+          <button class="btn btn-primary" onclick="sendAI()">Отправить</button>
+        </div>
       </div>
-      <button class="btn" id="btn-checkout" style="margin-top:12px">Оформить заказ</button>
-      <div class="msg" id="cart-msg"></div>
     </div>
   </section>
 
   <section class="page" id="page-orders">
-    <div class="card"><h1>Мои заказы</h1><div id="orders-list"></div></div>
-  </section>
-
-  <section class="page" id="page-profile">
-    <div class="card">
-      <h1>Личный кабинет</h1>
-      <p><b>Ваш ID:</b> <span id="profile-id"></span> <button class="btn small gray" id="btn-copy-id">Копировать</button></p>
-      <p style="margin:8px 0"><b>Баланс:</b> <span id="profile-balance" class="big">0 ₽</span></p>
-      <label>Сумма пополнения, ₽</label>
-      <div class="row">
-        <div><input id="inp-topup" type="number" min="100" placeholder="1000"></div>
-        <div><button class="btn orange" id="btn-topup" style="width:100%">＋ Пополнить баланс</button></div>
-      </div>
-      <div class="msg" id="autopay-msg"></div>
-      <button class="btn gray" id="btn-logout" style="margin-top:10px">Выйти</button>
-    </div>
+    <h2>Личный кабинет</h2>
+    <div id="cabinet-box">Загрузка...</div>
+    <h3>Мои заказы</h3>
+    <div id="my-orders"></div>
+    <div id="my-transactions"></div>
   </section>
 
   <section class="page" id="page-admin">
-    <div class="card">
-      <h1>Админ-панель</h1>
-      <div class="tabbar" id="admin-tabs"></div>
-      <div id="admin-tab-orders"></div>
-      <div id="admin-tab-suppliers" style="display:none"></div>
-      <div id="admin-tab-markups" style="display:none"></div>
-      <div id="admin-tab-balances" style="display:none"></div>
-      <div id="admin-tab-qr" style="display:none"></div>
+    <h2>Админ-панель</h2>
+    <div class="tabbar">
+      <button class="tab-btn" data-tab="orders" onclick="adminTab('orders')">Заказы</button>
+      <button class="tab-btn" data-tab="suppliers" onclick="adminTab('suppliers')">Поставщики</button>
+      <button class="tab-btn" data-tab="markups" onclick="adminTab('markups')">Наценки</button>
     </div>
-  </section>
-
-  <div class="modal-bg" id="modal-qr">
-    <div class="modal">
-      <div id="qr-content"></div>
-      <div class="row" style="margin-top:12px">
-        <div><button class="btn" id="btn-qr-paid" style="width:100%">Я оплатил</button></div>
-        <div><button class="btn gray" id="btn-qr-close" style="width:100%">Закрыть</button></div>
+    <div id="tab-orders"><div id="admin-orders"></div></div>
+    <div id="tab-suppliers" class="hidden">
+      <div class="card">
+        <h3>Добавить поставщика (API-ключи)</h3>
+        <div class="row">
+          <input id="sup-new-name" placeholder="Название (видно только вам)" style="max-width:220px">
+          <input id="sup-new-key1" placeholder="KEY1" style="max-width:220px">
+          <input id="sup-new-key2" placeholder="KEY2" style="max-width:220px">
+          <input id="sup-new-days" type="number" placeholder="Доп. дней" style="width:110px">
+          <button class="btn btn-primary" onclick="addSupplier()">＋ Добавить поставщика</button>
+        </div>
+      </div>
+      <div id="suppliers-list"></div>
+    </div>
+    <div id="tab-markups" class="hidden">
+      <div class="card">
+        <h3>Наценки по диапазонам цен закупки</h3>
+        <div id="markups-list"></div>
       </div>
     </div>
-  </div>
-
-  <div class="footer-note">© Автозапчасти — цены и наличие уточняйте у менеджера</div>
+  </section>
 </main>
-<script>"use strict";
-// ==== КОНФИГ ====
-var SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
-var SUPABASE_KEY = 'YOUR-ANON-KEY';
-var API_URL = (location.origin || '') + '/api/search';
 
-(function checkConfig(){
-  var okUrl = /^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(SUPABASE_URL);
-  var okKey = /^[A-Za-z0-9._-]{20,}$/.test(SUPABASE_KEY);
-  if(!okUrl || !okKey){
-    var pg = document.getElementById('page-config');
-    if(pg) pg.classList.add('active');
-    var nav = document.getElementById('nav-pills');
-    if(nav) nav.style.display = 'none';
-    throw new Error('Config not set');
-  }
-})();
+<footer>AutoBrand73 • Димитровград • Ежедневно 09:00–17:00 • +7 (927) 834-39-93</footer>
 
-var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-var currentUser = null, profile = null;
-var cart = [];
-try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch(e) { cart = []; }
+<div class="modal" id="modal-cart">
+  <div class="modal-box">
+    <button class="close-x" onclick="closeCart()">✕</button>
+    <h3>Корзина</h3>
+    <div id="cart-items"></div>
+    <div style="margin-top:12px;font-weight:700">Итого: <span id="cart-total">0 ₽</span></div>
+    <div class="row" style="margin-top:12px"><button class="btn btn-primary" onclick="checkout()">Оформить заказ</button></div>
+  </div>
+</div>
 
-function esc(s){
-  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-  });
-}
-function fmt(n){ return Number(n || 0).toLocaleString('ru-RU', {maximumFractionDigits: 2}) + ' ₽'; }
-function showMsg(id, text, ok){
-  var el = document.getElementById(id);
-  if(!el) return;
-  el.textContent = text;
-  el.className = 'msg show ' + (ok ? 'ok' : 'err');
-}
-function hideMsg(id){ var el = document.getElementById(id); if(el) el.className = 'msg'; }
-function saveCart(){ try { localStorage.setItem('cart', JSON.stringify(cart)); } catch(e) {} }
+<div class="modal" id="modal-login">
+  <div class="modal-box">
+    <button class="close-x" onclick="closeLogin()">✕</button>
+    <h3>Вход в личный кабинет</h3>
+    <div class="field"><label>Email</label><input id="login-email" type="email"></div>
+    <div class="field"><label>Пароль</label><input id="login-pass" type="password"></div>
+    <div class="row">
+      <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Войти</button>
+      <button class="btn btn-ghost" id="register-btn" onclick="doRegister()">Нет аккаунта? Зарегистрироваться</button>
+    </div>
+  </div>
+</div>
 
-// ==== НАВИГАЦИЯ ====
-var NAV_ITEMS = [
-  {id:'search', name:'Поиск'},
-  {id:'catalog', name:'Каталог'},
-  {id:'ai', name:'🤖 ИИ-подбор'},
-  {id:'vin', name:'Запрос по VIN'},
-  {id:'cart', name:'Корзина'},
-  {id:'orders', name:'Заказы'},
-  {id:'profile', name:'Кабинет'},
-  {id:'admin', name:'Админ-панель', admin:true}
-];
+<div class="modal" id="modal-vin">
+  <div class="modal-box">
+    <button class="close-x" onclick="closeVIN()">✕</button>
+    <h3>Запрос по VIN-коду</h3>
+    <div class="field"><label>VIN</label><input id="vin-input" placeholder="Например: XTA2115001000000"></div>
+    <div class="field"><label>Что нужно найти</label><textarea id="vin-comment" rows="3" placeholder="Опишите деталь"></textarea></div>
+    <div class="row"><button class="btn btn-primary" id="vin-btn" onclick="sendVIN()">Отправить запрос</button></div>
+  </div>
+</div>
 
-function renderNav(){
-  var nav = document.getElementById('nav-pills');
-  var html = '';
-  if(!currentUser){
-    html += '<button class="pill" data-page="home">Главная</button>';
-    html += '<button class="pill" data-page="auth">Войти</button>';
-    html += '<button class="pill" data-page="vin">Запрос по VIN</button>';
-  } else {
-    NAV_ITEMS.forEach(function(it){
-      if(it.admin && (!profile || profile.role !== 'admin')) return;
-      html += '<button class="pill" data-page="' + it.id + '">' + it.name + '</button>';
-    });
-  }
-  nav.innerHTML = html;
+<div class="modal" id="modal-qr">
+  <div class="modal-box">
+    <button class="close-x" onclick="closeQr()">✕</button>
+    <h3>Оплата пополнения</h3>
+    <img id="qr-img" alt="QR" style="width:220px;height:220px;display:block;margin:0 auto">
+    <p id="qr-text" class="muted" style="margin-top:10px;text-align:center"></p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+
+const SB_URL = 'https://fnlupijomjpopqtnyodv.supabase.co';
+const SB_KEY = 'sb_publishable_l1pVfFfga-1Tu9Yr1ms2Lw_PrY1CoZw';
+const API_SEARCH = '/api/search';
+const QR_REQUISITES = 'AutoBrand73, г. Димитровград. Карта 2202 2036 1234 5678. Назначение: пополнение баланса.';
+const YEAR_FROM = 1990, YEAR_TO = 2026;
+
+if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(SB_URL) || SB_KEY.length < 20) {
+  document.body.innerHTML = '<div style="margin:40px auto;max-width:560px;font:16px/1.6 sans-serif"><h2>Сайт ещё не настроен</h2><p>Впишите адрес проекта и ключ Supabase в начале скрипта index.html.</p></div>';
+  throw new Error('Config not set');
 }
 
-function showPage(id){
-  if(!currentUser && id !== 'home' && id !== 'auth' && id !== 'vin' && id !== 'config') id = 'home';
-  if(id === 'admin' && (!profile || profile.role !== 'admin')) id = 'home';
-  var pages = document.querySelectorAll('.page');
-  for(var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
-  var pg = document.getElementById('page-' + id);
-  if(pg) pg.classList.add('active');
-  var pills = document.querySelectorAll('.pill');
-  for(var j = 0; j < pills.length; j++){
-    pills[j].className = 'pill' + (pills[j].getAttribute('data-page') === id ? ' active' : '');
-  }
-  if(id === 'cart') renderCart();
-  if(id === 'orders') loadOrders();
-  if(id === 'profile') renderProfileInfo();
-  if(id === 'admin') openAdmin();
-  if(id === 'catalog') renderCatalog();
-  window.scrollTo(0, 0);
-}
+const sb = supabase.createClient(SB_URL, SB_KEY);
+let currentUser = null;
+let profile = null;
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('ab_cart') || '[]') || []; } catch (e) { cart = []; }
+let lastItems = [];
+let myOrders = [];
+let supList = [];
+let mkList = [];
+let selectedGroups = [];
+let currentChips = [];
+let toastTimer = null;
 
-// ==== АВТОРИЗАЦИЯ ====
-async function doLogin(){
-  hideMsg('auth-msg');
-  var email = document.getElementById('inp-email').value.trim();
-  var pass = document.getElementById('inp-pass').value;
-  if(!email || !pass){ showMsg('auth-msg', 'Введите email и пароль'); return; }
-  try{
-    var r = await sb.auth.signInWithPassword({email: email, password: pass});
-    if(r.error) throw r.error;
-    currentUser = r.data.user;
-    await afterAuth();
-  }catch(e){
-    showMsg('auth-msg', 'Ошибка входа: ' + (e && e.message ? e.message : e));
-  }
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function money(n) { return (Math.round(Number(n || 0) * 100) / 100).toLocaleString('ru-RU') + ' ₽'; }
+function toast(msg) {
+  const t = $('toast');
+  if (!t) { alert(msg); return; }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.classList.remove('show'); }, 3500);
 }
-
-async function doSignup(){
-  hideMsg('auth-msg');
-  var email = document.getElementById('inp-email').value.trim();
-  var pass = document.getElementById('inp-pass').value;
-  if(!email || pass.length < 6){ showMsg('auth-msg', 'Введите email и пароль не менее 6 символов'); return; }
-  try{
-    var r = await sb.auth.signUp({email: email, password: pass});
-    if(r.error) throw r.error;
-    if(!r.data || !r.data.user){
-      showMsg('auth-msg', 'Проверьте почту: отправлено письмо с подтверждением', true);
-      return;
-    }
-    var pi = await sb.from('profiles').insert({id: r.data.user.id, email: email, role: 'client', balance: 0});
-    if(pi.error) throw pi.error;
-    currentUser = r.data.user;
-    await afterAuth();
-  }catch(e){
-    showMsg('auth-msg', 'Ошибка регистрации: ' + (e && e.message ? e.message : e));
-  }
+function updateCartBtn() {
+  try { localStorage.setItem('ab_cart', JSON.stringify(cart)); } catch (e) {}
+  const b = $('nav-cart');
+  if (b) b.textContent = '🛒 ' + cart.length;
 }
+function toggleBlock(id) { const el = $(id); if (el) el.classList.toggle('hidden'); }
 
-async function afterAuth(){
-  try{
-    await loadProfile();
-  }catch(e){
-    showMsg('auth-msg', 'Профиль недоступен: ' + (e && e.message ? e.message : e) + '. Проверьте RLS-политики таблицы profiles.');
-    return;
-  }
-  renderNav();
+function openLogin() { $('modal-login').classList.add('open'); }
+function closeLogin() { $('modal-login').classList.remove('open'); }
+async function doLogin() {
+  const email = $('login-email').value.trim();
+  const pass = $('login-pass').value;
+  if (!email || !pass) { toast('Введите email и пароль'); return; }
+  const btn = $('login-btn');
+  btn.disabled = true;
+  const res = await sb.auth.signInWithPassword({ email: email, password: pass });
+  btn.disabled = false;
+  if (res.error) { toast('Ошибка входа: ' + res.error.message); return; }
+  currentUser = res.data.user;
+  await refreshProfile();
+  closeLogin();
+  applyAuthUI();
   showPage('search');
-  processAutoPay();
 }
-
-async function doLogout(){
+async function doRegister() {
+  const email = $('login-email').value.trim();
+  const pass = $('login-pass').value;
+  if (!email || pass.length < 6) { toast('Введите email и пароль (минимум 6 символов)'); return; }
+  const res = await sb.auth.signUp({ email: email, password: pass });
+  if (res.error) { toast('Ошибка регистрации: ' + res.error.message); return; }
+  if (res.data.user && res.data.session) {
+    currentUser = res.data.user;
+    await refreshProfile();
+    closeLogin();
+    applyAuthUI();
+    showPage('search');
+  } else {
+    toast('Аккаунт создан. Подтвердите почту по письму и войдите.');
+  }
+}
+async function doLogout() {
   await sb.auth.signOut();
-  currentUser = null; profile = null; cart = [];
-  saveCart();
-  renderNav();
+  currentUser = null;
+  profile = null;
+  applyAuthUI();
   showPage('home');
 }
 
-async function loadProfile(){
-  var r = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
-  if(r.error) throw r.error;
-  profile = r.data || {id: currentUser.id, email: currentUser.email, role: 'client', balance: 0};
-  renderProfileInfo();
-}
-
-function renderProfileInfo(){
-  if(!profile) return;
-  var idEl = document.getElementById('profile-id');
-  if(idEl) idEl.textContent = profile.id;
-  var balEl = document.getElementById('profile-balance');
-  if(balEl) balEl.textContent = fmt(profile.balance);
-}
-
-// ==== ПОПОЛНЕНИЕ И QR ====
-async function loadSetting(key){
-  var r = await sb.from('settings').select('*').eq('key', key).maybeSingle();
-  if(r.error || !r.data) return null;
-  try { return JSON.parse(r.data.value); } catch(e){ return null; }
-}
-async function saveSetting(key, obj){
-  return await sb.from('settings').upsert({key: key, value: JSON.stringify(obj)}, {onConflict: 'key'});
-}
-
-var qrCtx = null;
-async function openQrModal(title, amount, orderId){
-  qrCtx = orderId ? {type:'order', orderId: orderId} : {type:'topup'};
-  var s = await loadSetting('qr') || {link:'', text:''};
-  var html = '<h2>' + esc(title) + '</h2>';
-  if(s.link){
-    html += '<p class="muted">Оплата через СБП — откройте ссылку и оплатите сумму ' + fmt(amount) + ':</p>';
-    html += '<p><a class="btn orange" style="display:inline-block;text-decoration:none" href="' + esc(s.link) + '" target="_blank">Открыть оплату СБП</a></p>';
-  } else {
-    html += '<p class="muted">Реквизиты оплаты ещё не заданы администратором.</p>';
+async function refreshProfile() {
+  if (!currentUser) { profile = null; return; }
+  let r = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+  if (r.error) { profile = null; toast('Профиль: ' + r.error.message); return; }
+  if (!r.data) {
+    const ins = await sb.from('profiles').insert({ id: currentUser.id, name: (currentUser.email || 'user').split('@')[0], balance: 0, role: 'user' });
+    if (ins.error) { profile = null; toast('Создание профиля: ' + ins.error.message); return; }
+    r = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
   }
-  if(s.text) html += '<p style="margin-top:8px;white-space:pre-wrap">' + esc(s.text) + '</p>';
-  html += '<p class="muted" style="margin-top:8px">Сумма к оплате: <b>' + fmt(amount) + '</b></p>';
-  document.getElementById('qr-content').innerHTML = html;
-  document.getElementById('modal-qr').classList.add('show');
+  profile = r.data || null;
+}
+function isAdmin() { return !!(profile && profile.role === 'admin'); }
+
+function applyAuthUI() {
+  const logged = !!currentUser;
+  $('nav-login').classList.toggle('hidden', logged);
+  $('nav-logout').classList.toggle('hidden', !logged);
+  $('nav-admin').classList.toggle('hidden', !isAdmin());
 }
 
-async function qrPaid(){
-  document.getElementById('modal-qr').classList.remove('show');
-  try{
-    if(qrCtx && qrCtx.type === 'order' && qrCtx.orderId){
-      await sb.from('orders').update({status: 'Оплачен — проверка'}).eq('id', qrCtx.orderId);
-      loadOrders();
-    }
-    if(qrCtx && qrCtx.type === 'topup'){
-      showMsg('autopay-msg', 'Спасибо! Заявка ждёт подтверждения администратором.', true);
-    }
-  }catch(e){ showMsg('autopay-msg', 'Ошибка: ' + (e && e.message ? e.message : e)); }
-}
-
-async function doTopup(){
-  hideMsg('autopay-msg');
-  var amount = Number(document.getElementById('inp-topup').value);
-  if(!(amount >= 100)){ showMsg('autopay-msg', 'Минимальная сумма пополнения — 100 ₽'); return; }
-  try{
-    var r = await sb.from('transactions').insert({user_id: currentUser.id, amount: amount, type: 'Пополнение', status: 'Ожидает подтверждения'}).select().maybeSingle();
-    if(r.error) throw r.error;
-    await openQrModal('Пополнение баланса на ' + fmt(amount), amount, null);
-    showMsg('autopay-msg', 'Заявка создана. Оплатите по QR и нажмите «Я оплатил». После подтверждения администратором баланс зачислится.', true);
-  }catch(e){
-    showMsg('autopay-msg', 'Не удалось создать заявку: ' + (e && e.message ? e.message : e));
-  }
-}
-
-// ==== АВТОПЛАТА ====
-async function processAutoPay(){
-  if(!currentUser || !profile) return;
-  try{
-    var r = await sb.from('orders').select('*').eq('user_id', currentUser.id).eq('status', 'Ожидает оплаты').order('created_at', {ascending: true});
-    var orders = r.data || [];
-    var bal = Number(profile.balance || 0), paid = 0;
-    for(var i = 0; i < orders.length; i++){
-      var total = Number(orders[i].total || 0);
-      if(total > 0 && bal >= total){
-        bal -= total; paid++;
-        var u = await sb.from('orders').update({status: 'Оплачен с баланса'}).eq('id', orders[i].id);
-        if(u.error) throw u.error;
-      }
-    }
-    if(paid > 0){
-      var pb = await sb.from('profiles').update({balance: bal}).eq('id', currentUser.id);
-      if(pb.error) throw pb.error;
-      profile.balance = bal;
-      showMsg('autopay-msg', 'Автоматически оплачено заказов: ' + paid + '. Остаток на балансе: ' + fmt(bal), true);
-      renderProfileInfo();
-    }
-  }catch(e){
-    showMsg('autopay-msg', 'Автоплата не выполнена: ' + (e && e.message ? e.message : e));
-  }
-}
-
-// ==== ПОИСК ====
-async function getApiToken(){
-  var r = await sb.auth.getSession();
-  return r && r.data && r.data.session ? r.data.session.access_token : null;
-}
-
-async function apiSearch(params){
-  var token = await getApiToken();
-  if(!token){ showMsg('search-status', 'Требуется вход в аккаунт'); return null; }
-  try{
-    var r = await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
-      body: JSON.stringify(params)
-    });
-    if(r.status === 401){ showMsg('search-status', 'Требуется вход в аккаунт'); return null; }
-    var d = await r.json();
-    if(!d.ok) throw new Error(d.error || 'Ошибка сервера');
-    return d.items || [];
-  }catch(e){
-    showMsg('search-status', 'Ошибка поиска: ' + (e && e.message ? e.message : e));
-    return null;
-  }
-}
-
-async function runSearch(){
-  hideMsg('search-status');
-  var q = document.getElementById('inp-search').value.trim();
-  if(!q){ showMsg('search-status', 'Введите название запчасти или артикул'); return; }
-  showMsg('search-status', 'Ищу по складам поставщиков…', true);
-  var items = await apiSearch({text: q});
-  document.getElementById('search-status').className = 'msg';
-  if(items === null) return;
-  renderResults('search-results', items, q);
-}
-
-function renderResults(containerId, items, title){
-  var el = document.getElementById(containerId);
-  if(!items || !items.length){
-    el.innerHTML = '<div class="card"><p>Ничего не найдено. Попробуйте другой артикул или уточните название.</p></div>';
+function showPage(name) {
+  if (!currentUser) {
+    document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
+    $('page-home').classList.add('active');
     return;
   }
-  var html = '<div class="card"><h2>Результаты: ' + esc(title) + ' (' + items.length + ')</h2>';
-  items.forEach(function(it, i){
-    html += '<div class="item"><div class="top"><div><b>' + esc(it.brand) + '</b> ' + esc(it.name) +
-      '<br><span class="muted">Артикул: ' + esc(it.article) + ' · Срок: ' + esc(it.days) + ' дн. · Остаток: ' + esc(it.stock) + '</span></div>' +
-      '<div style="text-align:right"><div class="price">' + fmt(it.price) + '</div>' +
-      '<button class="btn small" data-idx="' + i + '" data-src="' + containerId + '">В корзину</button></div></div></div>';
-  });
-  html += '</div>';
-  el.innerHTML = html;
-  el._items = items;
+  if (name === 'admin' && !isAdmin()) { toast('Раздел доступен только администратору'); name = 'search'; }
+  document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
+  const el = $('page-' + name);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-btn[data-page]').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-page') === name); });
+  try { window.scrollTo(0, 0); } catch (e) {}
+  if (name === 'orders') loadMyOrders();
+  if (name === 'admin') adminTab('orders');
+  if (name === 'search') buildCatalogUI();
 }
 
-// ==== КОРЗИНА ====
-function addToCart(it){
-  cart.push({brand: it.brand, name: it.name, article: it.article, price: Number(it.price), days: it.days, qty: 1});
-  saveCart();
-  renderCart();
+function openVIN() { $('modal-vin').classList.add('open'); }
+function closeVIN() { $('modal-vin').classList.remove('open'); }
+async function sendVIN() {
+  const vin = $('vin-input').value.trim();
+  const comment = $('vin-comment').value.trim();
+  if (vin.length < 5 && comment.length < 5) { toast('Введите VIN или опишите деталь'); return; }
+  const btn = $('vin-btn');
+  btn.disabled = true;
+  const ins = await sb.from('vin_requests').insert({ vin: vin, comment: comment });
+  btn.disabled = false;
+  if (ins.error) { toast('Не удалось сохранить запрос: ' + ins.error.message); return; }
+  closeVIN();
+  $('vin-input').value = '';
+  $('vin-comment').value = '';
+  toast('Запрос отправлен — перезвоним в рабочее время');
 }
 
-function renderCart(){
-  var el = document.getElementById('cart-items');
-  if(!el) return;
-  if(!cart.length){
-    el.innerHTML = '<p class="muted">Корзина пуста</p>';
-    var t = document.getElementById('cart-total');
-    if(t) t.textContent = fmt(0);
-    return;
-  }
-  var html = '', total = 0;
-  cart.forEach(function(c, i){
-    total += Number(c.price) * Number(c.qty);
-    html += '<div class="item"><div class="top"><div><b>' + esc(c.brand) + '</b> ' + esc(c.name) +
-      '<br><span class="muted">Артикул: ' + esc(c.article) + '</span></div>' +
-      '<div style="text-align:right"><div class="price">' + fmt(c.price * c.qty) + '</div>' +
-      '<button class="btn small red" data-del="' + i + '">Удалить</button></div></div></div>';
-  });
-  el.innerHTML = html;
-  var tEl = document.getElementById('cart-total');
-  if(tEl) tEl.textContent = fmt(total);
-  cart._total = total;
+async function doSearch(q) {
+  const query = (typeof q === 'string' ? q : $('search-input').value).trim();
+  if (!query) { toast('Введите артикул или название'); return; }
+  $('search-input').value = query;
+  $('search-loading').classList.remove('hidden');
+  $('search-results').innerHTML = '';
+  let token = '';
+  try {
+    const s = await sb.auth.getSession();
+    if (s.data && s.data.session) token = s.data.session.access_token;
+  } catch (e) {}
+  try {
+    const res = await fetch(API_SEARCH + '?q=' + encodeURIComponent(query), { headers: { 'Authorization': 'Bearer ' + token } });
+    const data = await res.json();
+    if (!data.ok) renderSearchResults([], data.error || 'Ошибка поиска');
+    else renderSearchResults(data.items || []);
+  } catch (e) { renderSearchResults([], 'Ошибка соединения: ' + e.message); }
+  $('search-loading').classList.add('hidden');
 }
-
-async function checkout(){
-  hideMsg('cart-msg');
-  if(!cart.length){ showMsg('cart-msg', 'Корзина пуста'); return; }
-  var total = Number(cart._total || 0);
-  var useBalance = document.getElementById('chk-balance-pay').checked;
-  var bal = Number(profile && profile.balance || 0);
-  var status = (useBalance && bal >= total) ? 'Оплачен с баланса' : 'Ожидает оплаты';
-  try{
-    var payload = {user_id: currentUser.id, items: cart, total: total, status: status, created_at: new Date().toISOString()};
-    var r = await sb.from('orders').insert(payload).select().maybeSingle();
-    if(r.error) throw r.error;
-    var oid = r.data ? r.data.id : '';
-    if(status === 'Оплачен с баланса'){
-      var nb = bal - total;
-      var pu = await sb.from('profiles').update({balance: nb}).eq('id', currentUser.id);
-      if(pu.error) throw pu.error;
-      profile.balance = nb;
-      renderProfileInfo();
-      showMsg('cart-msg', 'Заказ оплачен с баланса', true);
-    } else {
-      showMsg('cart-msg', 'Заказ создан. Оплатите по QR.', true);
-      await openQrModal('Оплата заказа', total, oid);
-    }
-    cart = [];
-    saveCart();
-    renderCart();
-  }catch(e){
-    showMsg('cart-msg', 'Не удалось оформить: ' + (e && e.message ? e.message : e));
-  }
-}
-
-// ==== ЗАКАЗЫ ====
-async function loadOrders(){
-  if(!currentUser) return;
-  var el = document.getElementById('orders-list');
-  if(!el) return;
-  var r = await sb.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', {ascending: false});
-  if(r.error){ el.innerHTML = '<p class="muted">Не удалось загрузить заказы: ' + esc(r.error.message) + '</p>'; return; }
-  var orders = r.data || [];
-  if(!orders.length){ el.innerHTML = '<p class="muted">Заказов пока нет</p>'; return; }
-  var html = '';
-  orders.forEach(function(o){
-    var items = (typeof o.items === 'string' ? JSON.parse(o.items) : o.items) || [];
-    var lines = items.map(function(it){ return esc(it.name) + ' × ' + it.qty; }).join(', ');
-    var btn = '';
-    if(o.status === 'Ожидает оплаты'){
-      btn = ' <button class="btn small orange" data-payqr="' + o.id + '" data-total="' + Number(o.total || 0) + '">Оплатить по QR</button>' +
-            ' <button class="btn small" data-paybal="' + o.id + '">Оплатить с баланса</button>';
-    }
-    html += '<div class="item"><div class="top"><div><b>Заказ от ' + esc(String(o.created_at || '').slice(0, 10)) + '</b>' +
-      '<br><span class="muted">' + lines + '</span></div>' +
-      '<div style="text-align:right"><div class="price">' + fmt(o.total) + '</div><span class="tag">' + esc(o.status) + '</span>' + btn + '</div></div></div>';
-  });
-  el.innerHTML = html;
-}
-
-async function payFromBalance(orderId){
-  try{
-    var r = await sb.from('orders').select('*').eq('id', orderId).maybeSingle();
-    if(r.error || !r.data) throw (r.error || new Error('Заказ не найден'));
-    var total = Number(r.data.total || 0), bal = Number(profile.balance || 0);
-    if(bal < total){
-      showMsg('autopay-msg', 'На балансе недостаточно средств: нужно ' + fmt(total) + ', есть ' + fmt(bal));
-      showPage('profile');
-      return;
-    }
-    await sb.from('orders').update({status: 'Оплачен с баланса'}).eq('id', orderId);
-    var nb = bal - total;
-    var pu = await sb.from('profiles').update({balance: nb}).eq('id', currentUser.id);
-    if(pu.error) throw pu.error;
-    profile.balance = nb;
-    renderProfileInfo();
-    loadOrders();
-  }catch(e){
-    showMsg('autopay-msg', 'Ошибка: ' + (e && e.message ? e.message : e));
-    showPage('profile');
-  }
-}
-
-// ==== VIN-ЗАПРОС ====
-async function submitVinOrder(){
-  hideMsg('vin-msg');
-  var vin = document.getElementById('inp-vin').value.trim().toUpperCase();
-  var text = document.getElementById('inp-vin-text').value.trim();
-  var phone = document.getElementById('inp-vin-phone').value.trim();
-  if(vin.length !== 17){ showMsg('vin-msg', 'VIN должен содержать 17 символов'); return; }
-  if(!text){ showMsg('vin-msg', 'Опишите, какие запчасти нужны'); return; }
-  try{
-    await sb.from('vin_requests').insert({vin: vin, text: text, phone: phone, user_id: currentUser ? currentUser.id : null});
-    showMsg('vin-msg', 'Запрос отправлен. Менеджер свяжется с вами.', true);
-    document.getElementById('inp-vin').value = '';
-    document.getElementById('inp-vin-text').value = '';
-  }catch(e){
-    showMsg('vin-msg', 'Не удалось отправить запрос: ' + (e && e.message ? e.message : e) + '. Убедитесь, что вы вошли в аккаунт.');
-  }
-}
-
-// ==== КАТАЛОГ ====
-var CATALOG = {
-  import: {title: '🚗 Легковые: импортные', brands: [
-    {n:'Audi', m:['A3','A4','A6','Q5','Q7']},
-    {n:'BMW', m:['1 серия','3 серия','5 серия','X3','X5']},
-    {n:'BYD', m:['F3','Song Plus','Seal']},
-    {n:'Chevrolet', m:['Aveo','Cruze','Lacetti','Niva']},
-    {n:'Chrysler', m:['300C','Pacifica']},
-    {n:'Citroen', m:['C3','C4','C5']},
-    {n:'Daewoo', m:['Matiz','Nexia']},
-    {n:'Daihatsu', m:['Terios']},
-    {n:'Dodge', m:['Caravan','Caliber']},
-    {n:'Fiat', m:['Albea','Ducato','Punto']},
-    {n:'Ford', m:['Focus','Fiesta','Mondeo','Transit','Explorer']},
-    {n:'Honda', m:['Accord','Civic','CR-V','Fit']},
-    {n:'Hyundai', m:['Accent','Creta','Elantra','Getz','i30','Solaris','Sonata','Tucson']},
-    {n:'Infiniti', m:['FX35','QX56']},
-    {n:'Kia', m:['Ceed','Cerato','Optima','Picanto','Rio','Sorento','Sportage','Stinger']},
-    {n:'Land Rover', m:['Defender','Discovery','Freelander','Range Rover']},
-    {n:'Lexus', m:['GS300','IS250','NX200','RX350']},
-    {n:'Lifan', m:['Solano','X60']},
-    {n:'Mazda', m:['3','6','CX-5','CX-9','MPV']},
-    {n:'Mercedes-Benz', m:['C-класс','E-класс','S-класс','GLE','Sprinter']},
-    {n:'Mitsubishi', m:['ASX','L200','Lancer','Outlander','Pajero']},
-    {n:'Nissan', m:['Almera','Juke','Murano','Note','Patrol','Qashqai','Teana','X-Trail']},
-    {n:'Opel', m:['Astra','Insignia','Mokka','Zafira']},
-    {n:'Peugeot', m:['206','308','408','Partner']},
-    {n:'Ravon', m:['R2','R4']},
-    {n:'Renault', m:['Duster','Kangoo','Kaptur','Logan','Sandero','Symbol']},
-    {n:'Skoda', m:['Fabia','Octavia','Rapid','Superb','Yeti']},
-    {n:'SsangYong', m:['Actyon','Korando']},
-    {n:'Subaru', m:['Forester','Impreza','Legacy','Outback']},
-    {n:'Suzuki', m:['Grand Vitara','Jimny','SX4','Swift']},
-    {n:'Toyota', m:['Camry','Corolla','Highlander','Land Cruiser','RAV4','Yaris']},
-    {n:'Volkswagen', m:['Caddy','Golf','Jetta','Passat','Polo','Tiguan','Touareg']},
-    {n:'Volvo', m:['S60','S80','XC60','XC90']}
-  ]},
-  domestic: {title: '🇷🇺 Отечественные', brands: [
-    {n:'Lada', m:['2106','2107','2110','2114','Granta','Kalina','Largus','Niva Legend','Niva Travel','Vesta','X-Ray']},
-    {n:'УАЗ', m:['Патриот','Хантер','Буханка (2206)','Профи']},
-    {n:'ГАЗ', m:['Волга','Соболь','ГАЗель Next']}
-  ]},
-  china: {title: '🇨🇳 Китайские легковые', brands: [
-    {n:'Brilliance', m:['V5']},
-    {n:'Changan', m:['Alsvin','CS35 Plus','CS55 Plus','Uni-T']},
-    {n:'Chery', m:['Amulet','Arrizo 8','Tiggo 4','Tiggo 7 Pro','Tiggo 8 Pro']},
-    {n:'Dongfeng', m:['H30','S30']},
-    {n:'Exeed', m:['LX','TXL','VX']},
-    {n:'FAW', m:['Besturn T77']},
-    {n:'GAC', m:['GS8','Trumpchi']},
-    {n:'Geely', m:['Atlas','Atlas Pro','Coolray','Emgrand','Tugella']},
-    {n:'Great Wall', m:['Hover H3','Hover H5','Wingle 5','Wingle 7']},
-    {n:'Haval', m:['Dargo','H3','H5','H9','Jolion']},
-    {n:'JAC', m:['S3','T6']},
-    {n:'Jetour', m:['Dashing','X70 Plus','X90 Plus']},
-    {n:'Omoda', m:['C5']},
-    {n:'Tank', m:['300','500']},
-    {n:'Voyah', m:['Free','Dreamer']},
-    {n:'Zeekr', m:['001','X']}
-  ]},
-  truck: {title: '🚚 Грузовые и коммерческие', brands: [
-    {n:'КАМАЗ', m:['4308','43118','5320','5490','65115','6520']},
-    {n:'ГАЗель', m:['2705','Business','Next A21','Next A22']},
-    {n:'ГАЗон Next', m:['A90','C41R13']},
-    {n:'ЗИЛ', m:['130','4331','Бычок']},
-    {n:'МАЗ', m:['4370','5337','5440','5551']},
-    {n:'Урал', m:['4320','5557','Next']},
-    {n:'ПАЗ', m:['3204','3205','Vector Next']},
-    {n:'Isuzu', m:['ELF','NQR','NPR']},
-    {n:'Hyundai HD', m:['HD65','HD78','HD120']},
-    {n:'Foton', m:['Auman EST','Auman GTL','Tunner']},
-    {n:'Sinotruk Howo', m:['Howo A7','Howo T5G','Howo T7H']},
-    {n:'Shacman', m:['F3000','H3000','X3000']},
-    {n:'DAF', m:['XF105','XF106','LF']},
-    {n:'Iveco', m:['Daily','Stralis','Trakker']},
-    {n:'MAN', m:['TGA','TGS','TGX']},
-    {n:'Mercedes Actros', m:['Actros MP2','Actros MP3','Actros MP4','Atego']},
-    {n:'Renault Trucks', m:['Premium','T-range','K-range']},
-    {n:'Scania', m:['P-серия','R-серия','G-серия']},
-    {n:'Volvo Trucks', m:['FH','FM','FL']},
-    {n:'Hino', m:['300','500']}
-  ]}
-};
-
-var PART_GROUPS_LIGHT = ['Двигатель','Система охлаждения','Топливная система','Турбина и нагнетатель','Выпуск и глушители','Сцепление','КПП и трансмиссия','Приводы и ШРУС','Тормозная система','Подвеска','Рулевое управление','Колёса и ступицы','Электрика','Датчики','Освещение','Салон и интерьер','Кузов и оптика','Стёкла и зеркала','Отопление и кондиционер','Фильтры и расходники','Масла и техжидкости','Ремни и ГРМ','Прокладки и сальники','Крепёж','Печка и радиаторы','Замки и ручки','Подлокотники и обивка','Антенны и камеры','Сигнализация и электроника','Разное'];
-
-var PART_GROUPS_TRUCK = ['Тормозная система','Пневмосистема','Двигатель и гильзы','Поршни и вкладыши','Топливная аппаратура','Форсунки','ТНВД','Рессоры и подвеска','Рулевое и ГУР','КПП и сцепление','Задний мост и редуктор','Электрика','Кабина и оптика','Фильтры и расходники','Карданы и крестовины','Ступицы и турбина'];
-
-var cat = {group: null, brand: null, model: null, year: null, pg: null};
-
-function renderCatalog(){
-  var gEl = document.getElementById('cat-groups');
-  var html = '';
-  Object.keys(CATALOG).forEach(function(k){
-    html += '<div><button class="btn gray" style="width:100%" data-catgroup="' + k + '">' + CATALOG[k].title + '</button></div>';
-  });
-  gEl.innerHTML = html;
-  renderCatalogSteps();
-}
-
-function setCatGroup(k){ cat = {group: k, brand: null, model: null, year: null, pg: null}; renderCatalogSteps(); }
-function setCatBrand(n){ cat.brand = n; cat.model = null; cat.pg = null; renderCatalogSteps(); }
-function setCatModel(n){ cat.model = n; cat.pg = null; renderCatalogSteps(); }
-function setCatYear(y){ cat.year = y; cat.pg = null; renderCatalogSteps(); }
-function setCatPg(g){ cat.pg = g; renderCatalogSteps(); }
-
-function renderCatalogSteps(){
-  var sel = document.getElementById('cat-selected');
-  var path = [];
-  if(cat.group) path.push(CATALOG[cat.group].title);
-  if(cat.brand) path.push(cat.brand);
-  if(cat.model) path.push(cat.model);
-  if(cat.year) path.push(cat.year + ' г.');
-  if(cat.pg) path.push(cat.pg);
-  sel.textContent = path.length ? 'Выбрано: ' + path.join(' → ') : 'Выберите группу';
-  var bEl = document.getElementById('cat-brands');
-  var mEl = document.getElementById('cat-models');
-  var yEl = document.getElementById('cat-years');
-  var pEl = document.getElementById('cat-pgs');
-  var btn = document.getElementById('btn-cat-search');
-  bEl.innerHTML = ''; mEl.innerHTML = ''; yEl.innerHTML = ''; pEl.innerHTML = '';
-  btn.style.display = 'none';
-  if(!cat.group) return;
-  var html = '<h3>Марка</h3>';
-  CATALOG[cat.group].brands.forEach(function(b){
-    html += '<button class="brand-btn" data-catbrand="' + esc(b.n) + '">' + esc(b.n) + ' <span class="muted">(' + b.m.length + ' моделей)</span></button>';
-  });
-  bEl.innerHTML = html;
-  if(!cat.brand) return;
-  var brand = null;
-  CATALOG[cat.group].brands.forEach(function(b){ if(b.n === cat.brand) brand = b; });
-  html = '<h3>Модель</h3>';
-  brand.m.forEach(function(m){
-    html += '<button class="chip" data-catmodel="' + esc(m) + '">' + esc(m) + '</button>';
-  });
-  mEl.innerHTML = html;
-  if(!cat.model) return;
-  html = '<h3>Год</h3>';
-  var cy = new Date().getFullYear();
-  for(var y = cy; y >= 1990; y--){
-    html += '<button class="chip" data-catyear="' + y + '">' + y + '</button>';
-  }
-  yEl.innerHTML = html;
-  if(!cat.year) return;
-  var groups = cat.group === 'truck' ? PART_GROUPS_TRUCK : PART_GROUPS_LIGHT;
-  html = '<h3>Группа запчастей</h3>';
-  groups.forEach(function(g){
-    html += '<button class="chip" data-catpg="' + esc(g) + '">' + esc(g) + '</button>';
-  });
-  pEl.innerHTML = html;
-  if(cat.pg) btn.style.display = 'block';
-}
-
-async function runCatalogSearch(){
-  if(!cat.group || !cat.brand || !cat.model || !cat.pg) return;
-  showPage('search');
-  showMsg('search-status', 'Ищу по складам поставщиков…', true);
-  var items = await apiSearch({text: [cat.brand, cat.model, cat.pg].join(' '), brand: cat.brand, model: cat.model, year: cat.year, group: cat.pg});
-  document.getElementById('search-status').className = 'msg';
-  if(items === null) return;
-  renderResults('search-results', items, cat.brand + ' ' + cat.model + ' — ' + cat.pg);
-}
-
-// ==== ИИ-ПОДБОР ====
-var AI_ALIAS_BRAND = {
-  'хавал':'Haval', 'джили':'Geely', 'чери':'Chery', 'шери':'Chery', 'чанган':'Changan',
-  'эксид':'Exeed', 'омода':'Omoda', 'джетур':'Jetour', 'грейт вол':'Great Wall', 'грейтвол':'Great Wall',
-  'танк':'Tank', 'зикр':'Zeekr', 'воя':'Voyah', 'бид':'BYD', 'джак':'JAC', 'гак':'GAC',
-  'дунфенг':'Dongfeng', 'лифан':'Lifan', 'брилианс':'Brilliance',
-  'киа':'Kia', 'тойота':'Toyota', 'ниссан':'Nissan', 'хонда':'Honda', 'мазда':'Mazda',
-  'маз':'МАЗ', 'камаз':'КАМАЗ', 'газель':'ГАЗель', 'газон':'ГАЗон Next', 'соболь':'ГАЗ',
-  'урал':'Урал', 'паз':'ПАЗ', 'зил':'ЗИЛ',
-  'шакман':'Shacman', 'хауво':'Sinotruk Howo', 'синотрук':'Sinotruk Howo', 'фотон':'Foton', 'ауман':'Foton',
-  'ман':'MAN', 'скания':'Scania', 'даф':'DAF', 'ивеко':'Iveco', 'актрос':'Mercedes Actros',
-  'вольво':'Volvo Trucks', 'исудзу':'Isuzu', 'хино':'Hino', 'хюндай':'Hyundai', 'ходай':'Hyundai',
-  'форд':'Ford', 'фольксваген':'Volkswagen', 'шкода':'Skoda', 'опель':'Opel', 'рено':'Renault',
-  'шевроле':'Chevrolet', 'субару':'Subaru', 'сузуки':'Suzuki', 'лексус':'Lexus',
-  'лада':'Lada', 'уаз':'УАЗ', 'ауди':'Audi', 'бмв':'BMW', 'ситроен':'Citroen', 'фиат':'Fiat',
-  'инфинити':'Infiniti', 'ландровер':'Land Rover', 'спейсер':'Land Rover'
-};
-
-var AI_ALIAS_MODEL = {
-  'джолион':'Jolion', 'джоли':'Jolion', 'дарго':'Dargo', 'тигго':'Tiggo', 'тиго':'Tiggo',
-  'рио':'Rio', 'солярис':'Solaris', 'сид':'Ceed', 'крид':'Ceed',
-  'камри':'Camry', 'крузак':'Land Cruiser', 'ланд крузер':'Land Cruiser',
-  'веста':'Vesta', 'гранта':'Granta', 'ларгус':'Largus', 'калина':'Kalina',
-  'патриот':'Патриот', 'буханка':'Буханка (2206)', 'хантер':'Хантер', 'норсер':'Патриот',
-  'ховер':'Hover', 'винлай':'Wingle', 'ашей':'H3'
-};
-
-var AI_PART_HINTS = [
-  ['колодк','Тормозная система'], ['тормозн','Тормозная система'], ['диск торм','Тормозная система'],
-  ['накладк','Тормозная система'], ['фильтр','Фильтры и расходники'],
-  ['аморт','Подвеска'], ['стойк','Подвеска'], ['рычаг','Подвеска'], ['шаров','Подвеска'], ['пружин','Подвеска'],
-  ['сальник','Прокладки и сальники'], ['прокладк','Прокладки и сальники'],
-  ['ремень','Ремни и ГРМ'], ['грм','Ремни и ГРМ'], ['цепь','Ремни и ГРМ'],
-  ['свеч','Электрика'], ['аккумулятор','Электрика'], ['генератор','Электрика'], ['стартер','Электрика'],
-  ['фар','Кузов и оптика'], ['фонар','Кузов и оптика'], ['крыло','Кузов и оптика'], ['бампер','Кузов и оптика'],
-  ['масло','Масла и техжидкости'], ['антифриз','Масла и техжидкости'],
-  ['гильз','Двигатель и гильзы'], ['вкладыш','Поршни и вкладыши'], ['поршен','Поршни и вкладыши'], ['поршн','Поршни и вкладыши'],
-  ['форсунк','Форсунки'], ['тнвд','ТНВД'],
-  ['крестовин','Карданы и крестовины'], ['кардан','Карданы и крестовины'],
-  ['рессор','Рессоры и подвеска'], ['ступиц','Ступицы и турбина'], ['турбин','Ступицы и турбина'],
-  ['сцеплен','КПП и сцепление'], ['редуктор','Задний мост и редуктор'],
-  ['пневм','Пневмосистема'], ['компрессор','Пневмосистема'], ['гур','Рулевое и ГУР'], ['рейк','Рулевое управление']
-];
-
-function aiParse(text){
-  var t = ' ' + String(text).toLowerCase().replace(/[^a-zа-яё0-9]+/gi, ' ') + ' ';
-  var found = {brand: null, model: null, group: null, year: null};
-  var ym = t.match(/20\d\d/);
-  if(ym) found.year = ym[0];
-  var keys = Object.keys(AI_ALIAS_BRAND).sort(function(a, b){ return b.length - a.length; });
-  for(var i = 0; i < keys.length; i++){
-    if(t.indexOf(' ' + keys[i] + ' ') !== -1 || t.indexOf(' ' + keys[i] + ' ') === -1 && t.trim().indexOf(keys[i]) === 0){
-      found.brand = AI_ALIAS_BRAND[keys[i]];
-      break;
-    }
-  }
-  if(found.brand){
-    keys.forEach(function(k){
-      if(AI_ALIAS_BRAND[k] === found.brand) t = t.split(' ' + k + ' ').join(' ');
-    });
-    keys.forEach(function(k){
-      if(AI_ALIAS_BRAND[k] === found.brand){
-        var trimmed = t.trim();
-        if(trimmed.indexOf(k) === 0) t = ' ' + trimmed.slice(k.length) + ' ';
-      }
-    });
-  }
-  var mKeys = Object.keys(AI_ALIAS_MODEL).sort(function(a, b){ return b.length - a.length; });
-  for(var j = 0; j < mKeys.length; j++){
-    if(t.indexOf(' ' + mKeys[j] + ' ') !== -1 || t.trim().indexOf(mKeys[j]) === 0){
-      found.model = AI_ALIAS_MODEL[mKeys[j]];
-      break;
-    }
-  }
-  for(var k = 0; k < AI_PART_HINTS.length; k++){
-    if(t.indexOf(AI_PART_HINTS[k][0]) !== -1){ found.group = AI_PART_HINTS[k][1]; break; }
-  }
-  return found;
-}
-
-function isTruckBrand(b){
-  if(b === 'КАМАЗ' || b === 'МАЗ' || b === 'Урал' || b === 'ПАЗ' || b === 'ЗИЛ' || b === 'ГАЗель' || b === 'ГАЗон Next' || b === 'ГАЗ') return true;
-  var found = false;
-  CATALOG.truck.brands.forEach(function(x){ if(x.n === b) found = true; });
-  return found;
-}
-
-function aiPartChips(brand){
-  var arr = (brand && isTruckBrand(brand)) ? PART_GROUPS_TRUCK : PART_GROUPS_LIGHT;
-  return arr.slice(0, 10).map(function(g){
-    return '<button class="chip" data-ai-part="' + esc(g) + '">' + esc(g) + '</button>';
-  }).join(' ');
-}
-
-function aiBrandChips(){
-  var list = ['Haval','Chery','Geely','Kia','Toyota','Lada','КАМАЗ','ГАЗель','Sinotruk Howo','Shacman'];
-  return list.map(function(b){
-    return '<button class="chip" data-ai-brand="' + esc(b) + '">' + esc(b) + '</button>';
-  }).join(' ');
-}
-
-function aiReply(userText){
-  var chat = document.getElementById('ai-chat');
-  chat.innerHTML += '<div class="ai-msg user">' + esc(userText) + '</div>';
-  var f = aiParse(userText);
-  window._aiCtx = f;
-  window._aiText = userText;
-  var html = '<div class="ai-msg bot">';
-  if(!f.group && !f.brand){
-    html += 'Напишите, какую запчасть ищете и для какого автомобиля. Например: «передние колодки на хавал джолион 2022» или «тормозные накладки камаз 65115». Или выберите деталь сразу: ';
-    html += aiPartChips(null);
-  } else if(f.group && f.brand){
-    html += 'Ищу <b>' + esc(f.group) + '</b> для <b>' + esc(f.brand) + '</b>' + (f.model ? ' ' + esc(f.model) : '') + (f.year ? ' ' + f.year + ' г.' : '') + '. Запускаю поиск:';
-    html += '<br><button class="btn small" data-ai-go="1">Найти запчасти</button>';
-    html += '<br><span class="muted">Или выберите другую группу:</span> ' + aiPartChips(f.brand);
-  } else if(f.brand && !f.group){
-    html += 'Понял марку: <b>' + esc(f.brand) + '</b>. Какая группа запчастей нужна?';
-    html += aiPartChips(f.brand);
-  } else {
-    html += 'Понял деталь: <b>' + esc(f.group) + '</b>. Уточните марку автомобиля:';
-    html += aiBrandChips();
-  }
-  html += '</div>';
-  chat.innerHTML += html;
-  chat.scrollTop = chat.scrollHeight;
-}
-
-async function aiGoSearch(){
-  var f = window._aiCtx || {};
-  var title = (f.brand ? f.brand + ' ' : '') + (f.model ? f.model + ' ' : '') + (f.group || '');
-  showPage('search');
-  showMsg('search-status', 'Ищу по складам поставщиков…', true);
-  var items = await apiSearch({text: [f.brand, f.model, f.year, f.group].filter(Boolean).join(' '), brand: f.brand, model: f.model, year: f.year, group: f.group});
-  document.getElementById('search-status').className = 'msg';
-  if(items === null) return;
-  renderResults('search-results', items, title.trim());
-}
-
-// ==== АДМИН-ПАНЕЛЬ ====
-function openAdmin(){
-  if(!profile || profile.role !== 'admin') return;
-  var tabs = [['orders','Заказы'],['suppliers','Поставщики'],['markups','Наценки'],['balances','Балансы'],['qr','Оплата QR']];
-  var bar = document.getElementById('admin-tabs');
-  bar.innerHTML = tabs.map(function(t){
-    return '<button class="tabbtn" data-admtab="' + t[0] + '">' + t[1] + '</button>';
-  }).join('');
-  showAdminTab('orders');
-}
-
-function showAdminTab(t){
-  var btns = document.querySelectorAll('.tabbtn');
-  for(var i = 0; i < btns.length; i++){
-    btns[i].classList.toggle('active', btns[i].getAttribute('data-admtab') === t);
-  }
-  ['orders','suppliers','markups','balances','qr'].forEach(function(x){
-    var el = document.getElementById('admin-tab-' + x);
-    if(el) el.style.display = x === t ? 'block' : 'none';
-  });
-  if(t === 'orders') loadAdminOrders();
-  if(t === 'suppliers') renderSuppliers();
-  if(t === 'markups') renderMarkups();
-  if(t === 'balances') renderBalances();
-  if(t === 'qr') renderQrSettings();
-}
-
-// --- Заказы ---
-async function loadAdminOrders(){
-  var el = document.getElementById('admin-tab-orders');
-  var r = await sb.from('orders').select('*').order('created_at', {ascending: false}).limit(100);
-  if(r.error){ el.innerHTML = '<p class="muted">Ошибка: ' + esc(r.error.message) + '</p>'; return; }
-  var orders = r.data || [];
-  if(!orders.length){ el.innerHTML = '<p class="muted">Заказов нет</p>'; return; }
-  var statuses = ['Ожидает оплаты','Оплачен с баланса','Оплачен — проверка','В сборке','Отправлен','Доставлен'];
-  var html = '<table><tr><th>Дата</th><th>ID клиента</th><th>Состав</th><th>Сумма</th><th>Закупка</th><th>Прибыль</th><th>Статус</th></tr>';
-  orders.forEach(function(o){
-    var items = (typeof o.items === 'string' ? JSON.parse(o.items) : o.items) || [];
-    var lines = items.map(function(it){ return esc(it.name); }).join(', ');
-    html += '<tr><td>' + esc(String(o.created_at || '').slice(0, 10)) + '</td><td>' + esc(o.user_id) + '</td><td>' + lines + '</td>' +
-      '<td>' + fmt(o.total) + '</td>' +
-      '<td><input class="adm-cost" data-oid="' + o.id + '" value="' + Number(o.total_cost || 0) + '" style="width:90px;padding:4px"></td>' +
-      '<td>' + fmt(Number(o.total || 0) - Number(o.total_cost || 0)) + '</td>' +
-      '<td><select class="adm-status" data-oid="' + o.id + '" style="padding:4px">' +
-      statuses.map(function(s){ return '<option' + (o.status === s ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select></td></tr>';
-  });
-  html += '</table><button class="btn small" id="btn-adm-save-orders" style="margin-top:10px">Сохранить изменения</button>';
-  el.innerHTML = html;
-}
-
-async function saveAdminOrders(){
-  var rows = document.querySelectorAll('#admin-tab-orders .adm-status');
-  for(var i = 0; i < rows.length; i++){
-    var oid = rows[i].getAttribute('data-oid');
-    var st = rows[i].value;
-    var costInp = document.querySelector('#admin-tab-orders .adm-cost[data-oid="' + oid + '"]');
-    var cost = costInp ? Number(costInp.value || 0) : 0;
-    await sb.from('orders').update({status: st, total_cost: cost}).eq('id', oid);
-  }
-  loadAdminOrders();
-}
-
-// --- Поставщики ---
-async function renderSuppliers(){
-  var el = document.getElementById('admin-tab-suppliers');
-  var r = await sb.from('suppliers').select('*').order('name');
-  var list = r.error ? [] : (r.data || []);
-  var html = '<h2>Добавить поставщика</h2>' +
-    '<div class="row">' +
-    '<div><label>Название (внутреннее)</label><input id="sup-name" placeholder="Росско"></div>' +
-    '<div><label>KEY1</label><input id="sup-key1"></div>' +
-    '<div><label>KEY2</label><input id="sup-key2"></div>' +
-    '<div><label>Доп. дней к сроку</label><input id="sup-days" type="number" value="0" min="0"></div>' +
-    '</div>' +
-    '<button class="btn" id="btn-sup-add">＋ Добавить поставщика</button>' +
-    '<div class="msg" id="sup-msg"></div>' +
-    '<h2 style="margin-top:16px">Поставщики (' + list.length + ')</h2><div id="suppliers-list"></div>';
-  el.innerHTML = html;
-  var html2 = '';
-  list.forEach(function(s){
-    html2 += '<div class="item" data-sid="' + s.id + '"><div class="row">' +
-      '<div><label>Название</label><input class="s-name" value="' + esc(s.name) + '"></div>' +
-      '<div><label>KEY1</label><input class="s-key1" value="' + esc(s.key1) + '"></div>' +
-      '<div><label>KEY2</label><input class="s-key2" value="' + esc(s.key2) + '"></div>' +
-      '<div><label>Доп. дней</label><input class="s-days" type="number" value="' + Number(s.extra_days || 0) + '"></div>' +
-      '</div>' +
-      '<label style="margin-top:6px"><input type="checkbox" class="s-active"' + (s.active === false ? '' : ' checked') + ' style="width:auto;margin-right:6px">активен</label>' +
-      '<div class="row" style="margin-top:6px">' +
-      '<div><button class="btn small" data-ssave="' + s.id + '">Сохранить</button></div>' +
-      '<div><button class="btn small orange" data-scheck="' + s.id + '">🔎 Проверить ключ</button></div>' +
-      '<div><button class="btn small red" data-sdel="' + s.id + '">Удалить</button></div>' +
-      '</div><div class="msg" id="supmsg-' + s.id + '"></div></div>';
-  });
-  var lst = document.getElementById('suppliers-list');
-  if(lst) lst.innerHTML = html2 || '<p class="muted">Пока нет поставщиков</p>';
-  if(r.error) showMsg('sup-msg', 'Не удалось прочитать таблицу suppliers: ' + r.error.message);
-}
-
-async function addSupplier(){
-  var name = document.getElementById('sup-name').value.trim();
-  var k1 = document.getElementById('sup-key1').value.trim();
-  var k2 = document.getElementById('sup-key2').value.trim();
-  var days = Number(document.getElementById('sup-days').value || 0);
-  if(!name || !k1){ showMsg('sup-msg', 'Заполните название и KEY1'); return; }
-  var r = await sb.from('suppliers').insert({name: name, key1: k1, key2: k2, extra_days: days, active: true});
-  if(r.error){ showMsg('sup-msg', 'Ошибка: ' + r.error.message); return; }
-  showMsg('sup-msg', 'Поставщик добавлен', true);
-  renderSuppliers();
-}
-
-async function saveSupplier(id){
-  var card = document.querySelector('#admin-tab-suppliers .item[data-sid="' + id + '"]');
-  if(!card) return;
-  var r = await sb.from('suppliers').update({
-    name: card.querySelector('.s-name').value.trim(),
-    key1: card.querySelector('.s-key1').value.trim(),
-    key2: card.querySelector('.s-key2').value.trim(),
-    extra_days: Number(card.querySelector('.s-days').value || 0),
-    active: card.querySelector('.s-active').checked
-  }).eq('id', id);
-  var msg = card.querySelector('.msg');
-  if(msg){
-    msg.textContent = r.error ? 'Ошибка: ' + r.error.message : 'Сохранено';
-    msg.className = 'msg show ' + (r.error ? 'err' : 'ok');
-  }
-}
-
-async function delSupplier(id){
-  if(!confirm('Удалить поставщика?')) return;
-  await sb.from('suppliers').delete().eq('id', id);
-  renderSuppliers();
-}
-
-async function checkSupplierKey(id){
-  var card = document.querySelector('#admin-tab-suppliers .item[data-sid="' + id + '"]');
-  var msg = card ? card.querySelector('.msg') : null;
-  var token = await getApiToken();
-  try{
-    var r = await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
-      body: JSON.stringify({supplier: id, text: 'масляный фильтр'})
-    });
-    var d = await r.json();
-    if(msg){
-      if(d.ok && d.found > 0){
-        msg.className = 'msg show ok';
-        msg.textContent = '✓ Работает: найдено ' + d.found + ' предложений';
-      } else if(d.ok && d.failed && d.failed.length){
-        msg.className = 'msg show err';
-        msg.textContent = 'Поставщик отклонил запрос: неверные ключи или лимит исчерпан';
-      } else if(d.ok){
-        msg.className = 'msg show ok';
-        msg.textContent = 'Ключ принят, но предложений по тестовому запросу нет';
-      } else {
-        msg.className = 'msg show err';
-        msg.textContent = 'Ошибка: ' + (d.error || 'неизвестная');
-      }
-    }
-  }catch(e){
-    if(msg){
-      msg.className = 'msg show err';
-      msg.textContent = 'Ошибка проверки: ' + (e && e.message ? e.message : e);
-    }
-  }
-}
-
-// --- Наценки ---
-function defaultRanges(){
-  return [{min:0, max:1000, pct:40},{min:1000, max:5000, pct:30},{min:5000, max:0, pct:20}];
-}
-
-async function renderMarkups(){
-  var el = document.getElementById('admin-tab-markups');
-  var s = await loadSetting('markup');
-  var rows = (s && s.ranges && s.ranges.length) ? s.ranges : defaultRanges();
-  el.innerHTML = '<h2>Наценки по сумме закупки</h2>' +
-    '<p class="muted">Наценка применяется к цене поставщика. 0 в поле «до» означает «без верхней границы».</p>' +
-    '<div id="markup-rows"></div>' +
-    '<button class="btn small gray" id="btn-markup-add">＋ Диапазон</button> ' +
-    '<button class="btn small" id="btn-markup-save">Сохранить наценки</button>' +
-    '<div class="msg" id="markup-msg"></div>';
-  drawMarkupRows(rows);
-}
-
-function drawMarkupRows(rows){
-  var el = document.getElementById('markup-rows');
-  el.innerHTML = rows.map(function(r){
-    return '<div class="row">' +
-      '<div><label>от, ₽</label><input class="mk-min" value="' + r.min + '" type="number"></div>' +
-      '<div><label>до, ₽ (0 — без границы)</label><input class="mk-max" value="' + r.max + '" type="number"></div>' +
-      '<div><label>наценка, %</label><input class="mk-pct" value="' + r.pct + '" type="number"></div>' +
+function renderSearchResults(items, err) {
+  const box = $('search-results');
+  if (err) { box.innerHTML = '<div class="card muted">' + esc(err) + '</div>'; return; }
+  if (!items.length) { box.innerHTML = '<div class="card muted">Ничего не найдено. Попробуйте другой артикул или ИИ-подбор.</div>'; return; }
+  lastItems = items;
+  box.innerHTML = items.map(function (it, i) {
+    return '<div class="card offer">' +
+      '<div class="offer-brand">' + esc(it.brand) + '</div>' +
+      '<div class="offer-art">' + esc(it.art) + '</div>' +
+      '<div class="offer-name">' + esc(it.name) + '</div>' +
+      '<div class="offer-meta">Склад: ' + esc(it.stock) + ' шт • ' + esc(it.days) + '</div>' +
+      '<div class="offer-price">' + money(it.price) + '</div>' +
+      '<button class="btn btn-primary" onclick="addToCart(' + i + ')">В корзину</button>' +
       '</div>';
   }).join('');
 }
-
-async function saveMarkups(){
-  var wrap = document.getElementById('markup-rows');
-  var minEls = wrap.querySelectorAll('.mk-min');
-  var maxEls = wrap.querySelectorAll('.mk-max');
-  var pctEls = wrap.querySelectorAll('.mk-pct');
-  var ranges = [];
-  for(var i = 0; i < minEls.length; i++){
-    ranges.push({min: Number(minEls[i].value || 0), max: Number(maxEls[i].value || 0), pct: Number(pctEls[i].value || 0)});
-  }
-  var r = await saveSetting('markup', {ranges: ranges});
-  showMsg('markup-msg', r.error ? 'Ошибка: ' + r.error.message : 'Наценки сохранены', !r.error);
+function addToCart(i) {
+  const it = lastItems[i];
+  if (!it) return;
+  cart.push({ brand: it.brand, art: it.art, name: it.name, price: it.price, stock: it.stock, days: it.days });
+  updateCartBtn();
+  toast('Добавлено в корзину');
 }
 
-// --- Балансы ---
-async function renderBalances(){
-  var el = document.getElementById('admin-tab-balances');
-  el.innerHTML = '<p class="muted">Загружаю…</p>';
-  var tp = await sb.from('transactions').select('*').eq('status', 'Ожидает подтверждения').order('created_at');
-  var all = await sb.from('profiles').select('*');
-  var html = '<h2>Заявки на пополнение</h2>';
-  var pend = tp.error ? [] : (tp.data || []);
-  html += pend.length ? pend.map(function(t){
-    return '<div class="item"><div class="top"><div><b>' + fmt(t.amount) + '</b> от <span class="muted">' + esc(t.user_id) + '</span>' +
-      '<br><span class="muted">' + esc(String(t.created_at || '').slice(0, 16)) + '</span></div>' +
-      '<div><button class="btn small" data-tok="' + t.id + '">✓ Подтвердить</button> ' +
-      '<button class="btn small red" data-trej="' + t.id + '">✕ Отклонить</button></div></div></div>';
-  }).join('') : '<p class="muted">Новых заявок нет</p>';
-  html += '<h2 style="margin-top:14px">Балансы клиентов</h2>';
-  var profs = all.error ? [] : (all.data || []);
-  html += profs.length ? profs.map(function(p){
-    return '<div class="item"><div class="top"><div><span class="muted">' + esc(p.id) + '</span>' +
-      (p.email ? '<br><span class="muted">' + esc(p.email) + '</span>' : '') + '</div>' +
-      '<div class="price">' + fmt(p.balance) + '</div></div></div>';
-  }).join('') : '<p class="muted">Нет данных</p>';
-  html += '<h2 style="margin-top:14px">Начислить вручную</h2>' +
-    '<div class="row">' +
-    '<div><label>ID пользователя</label><input id="inp-balance-user" placeholder="uuid из списка выше"></div>' +
-    '<div><label>Сумма, ₽</label><input id="inp-balance-amount" type="number"></div>' +
-    '</div><button class="btn" id="btn-balance-add">Начислить</button><div class="msg" id="bal-msg"></div>';
-  el.innerHTML = html;
+function showCart() {
+  $('modal-cart').classList.add('open');
+  renderCart();
+}
+function closeCart() { $('modal-cart').classList.remove('open'); }
+function renderCart() {
+  const box = $('cart-items');
+  if (!cart.length) { box.innerHTML = '<div class="muted">Корзина пуста</div>'; $('cart-total').textContent = '0 ₽'; return; }
+  box.innerHTML = cart.map(function (c, i) {
+    return '<div class="card row" style="margin-bottom:8px">' +
+      '<div style="flex:1"><b>' + esc(c.brand) + ' ' + esc(c.art) + '</b><div class="muted">' + esc(c.name) + ' • ' + esc(c.days) + '</div></div>' +
+      '<div style="font-weight:700">' + money(c.price) + '</div>' +
+      '<button class="btn btn-danger" onclick="removeFromCart(' + i + ')">✕</button></div>';
+  }).join('');
+  const total = cart.reduce(function (s, c) { return s + Number(c.price || 0); }, 0);
+  $('cart-total').textContent = money(total);
+}
+function removeFromCart(i) { cart.splice(i, 1); updateCartBtn(); renderCart(); }
+async function checkout() {
+  if (!cart.length) return;
+  const items = cart.map(function (c) { return { brand: c.brand, art: c.art, name: c.name, price: c.price, stock: c.stock, days: c.days }; });
+  const total = items.reduce(function (s, c) { return s + Number(c.price || 0); }, 0);
+  const ins = await sb.from('orders').insert({ user_id: currentUser.id, items: items, total: total, status: 'Ожидает оплаты' });
+  if (ins.error) { toast('Ошибка оформления: ' + ins.error.message); return; }
+  cart = [];
+  updateCartBtn();
+  closeCart();
+  toast('Заказ создан');
+  showPage('orders');
 }
 
-async function confirmTx(id, ok){
-  try{
-    var r = await sb.from('transactions').select('*').eq('id', id).maybeSingle();
-    if(r.error || !r.data) throw (r.error || new Error('Заявка не найдена'));
-    var t = r.data;
-    if(ok){
-      var pr = await sb.from('profiles').select('balance').eq('id', t.user_id).maybeSingle();
-      var nb = Number(pr.data && pr.data.balance || 0) + Number(t.amount);
-      var up = await sb.from('profiles').update({balance: nb}).eq('id', t.user_id);
-      if(up.error) throw up.error;
-      await sb.from('transactions').update({status: 'Подтверждено'}).eq('id', id);
-    } else {
-      await sb.from('transactions').update({status: 'Отклонено'}).eq('id', id);
+function renderCabinet() {
+  $('cabinet-box').innerHTML =
+    '<div class="card"><div class="stat-row">' +
+    '<div><div class="muted">Ваш ID</div><div class="mono">' + esc(profile.id.slice(0, 8).toUpperCase()) +
+    ' <button class="link-btn" onclick="copyUserId()">копировать</button></div></div>' +
+    '<div><div class="muted">Баланс</div><div class="big">' + money(profile.balance) + '</div></div>' +
+    '</div>' +
+    '<div class="row"><input type="number" id="topup-amount" placeholder="Сумма пополнения" min="100" style="max-width:200px">' +
+    '<button class="btn btn-primary" onclick="requestTopup()">Пополнить по QR</button></div>' +
+    '</div>';
+}
+function copyUserId() {
+  if (!profile) return;
+  try { navigator.clipboard.writeText(profile.id); toast('ID скопирован'); } catch (e) { toast(profile.id); }
+}
+function closeQr() { $('modal-qr').classList.remove('open'); }
+async function requestTopup() {
+  const v = parseFloat($('topup-amount').value);
+  if (!(v > 0)) { toast('Введите сумму пополнения'); return; }
+  const ins = await sb.from('transactions').insert({ user_id: currentUser.id, amount: v, status: 'pending', method: 'qr' });
+  if (ins.error) { toast('Ошибка заявки: ' + ins.error.message); return; }
+  const data = QR_REQUISITES + ' Сумма: ' + v.toFixed(2) + ' руб.';
+  $('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(data);
+  $('qr-text').textContent = QR_REQUISITES + ' • Сумма: ' + money(v) + ' • ID: ' + profile.id.slice(0, 8).toUpperCase();
+  $('modal-qr').classList.add('open');
+  toast('Заявка создана — дождитесь подтверждения администратора');
+  loadMyOrders();
+}
+async function payFromBalance(id) {
+  const o = myOrders.find(function (x) { return x.id === id; });
+  if (!o) return;
+  if (Number(profile.balance) < Number(o.total)) { toast('Недостаточно средств на балансе'); return; }
+  const nb = Number(profile.balance) - Number(o.total);
+  const up = await sb.from('orders').update({ status: 'Оплачен — проверка' }).eq('id', id);
+  if (up.error) { toast('Ошибка оплаты: ' + up.error.message); return; }
+  const pb = await sb.from('profiles').update({ balance: nb }).eq('id', currentUser.id);
+  if (pb.error) { toast('Ошибка списания: ' + pb.error.message); return; }
+  profile.balance = nb;
+  toast('Заказ оплачен');
+  loadMyOrders();
+}
+async function loadMyOrders() {
+  renderCabinet();
+  const res = await sb.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  if (res.error) { $('my-orders').innerHTML = '<div class="muted">Ошибка: ' + esc(res.error.message) + '</div>'; return; }
+  myOrders = res.data || [];
+  for (let i = 0; i < myOrders.length; i++) {
+    const o = myOrders[i];
+    if (o.status === 'Ожидает оплаты' && Number(profile.balance) >= Number(o.total)) {
+      const nb = Number(profile.balance) - Number(o.total);
+      const up = await sb.from('orders').update({ status: 'Оплачен — проверка' }).eq('id', o.id);
+      if (!up.error) {
+        await sb.from('profiles').update({ balance: nb }).eq('id', currentUser.id);
+        profile.balance = nb;
+        o.status = 'Оплачен — проверка';
+      }
     }
-    renderBalances();
-  }catch(e){ showMsg('bal-msg', 'Ошибка: ' + (e && e.message ? e.message : e)); }
+  }
+  $('my-orders').innerHTML = myOrders.length ? myOrders.map(function (o) {
+    const pending = o.status === 'Ожидает оплаты';
+    return '<div class="card order-card">' +
+      '<div class="row"><div style="flex:1"><b>Заказ от ' + esc(new Date(o.created_at).toLocaleDateString('ru-RU')) + '</b>' +
+      '<div class="muted">' + (o.items || []).length + ' позиций • Итого: ' + money(o.total) + '</div>' +
+      '<div class="muted">Статус: ' + esc(o.status) + '</div></div>' +
+      (pending ? '<button class="btn btn-primary" onclick="payFromBalance(\'' + o.id + '\')">Оплатить с баланса</button>' : '') +
+      '</div></div>';
+  }).join('') : '<div class="muted">Заказов пока нет. Добавьте детали в корзину и оформите заказ.</div>';
+  renderTransactions();
+}
+async function renderTransactions() {
+  const box = $('my-transactions');
+  const res = await sb.from('transactions').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(10);
+  if (res.error) { box.innerHTML = ''; return; }
+  const list = res.data || [];
+  if (!list.length) { box.innerHTML = ''; return; }
+  const names = { pending: 'Ожидает подтверждения администратором', confirmed: 'Зачислено', rejected: 'Отклонено' };
+  box.innerHTML = '<h3>Пополнения</h3>' + list.map(function (t) {
+    return '<div class="card row"><div style="flex:1">' + money(t.amount) +
+      '<div class="muted">' + esc(names[t.status] || t.status) + '</div></div></div>';
+  }).join('');
 }
 
-async function addBalanceManual(){
-  var uid = document.getElementById('inp-balance-user').value.trim();
-  var amount = Number(document.getElementById('inp-balance-amount').value);
-  if(!uid || !(amount > 0)){ showMsg('bal-msg', 'Заполните ID и сумму'); return; }
-  try{
-    var pr = await sb.from('profiles').select('balance').eq('id', uid).maybeSingle();
-    if(!pr.data){ showMsg('bal-msg', 'Пользователь не найден'); return; }
-    var nb = Number(pr.data.balance || 0) + amount;
-    var u = await sb.from('profiles').update({balance: nb}).eq('id', uid);
-    if(u.error) throw u.error;
-    await sb.from('transactions').insert({user_id: uid, amount: amount, type: 'Ручное начисление', status: 'Подтверждено'});
-    showMsg('bal-msg', 'Начислено ' + fmt(amount), true);
-    renderBalances();
-  }catch(e){ showMsg('bal-msg', 'Ошибка: ' + (e && e.message ? e.message : e)); }
+const CATALOG = {
+  'Импортные легковые': {
+    'Toyota': ['Camry','Corolla','RAV4','Land Cruiser','Land Cruiser Prado','Hilux','Auris','Yaris','C-HR','Avensis'],
+    'Lexus': ['RX','NX','ES','LX','GX','IS'],
+    'Nissan': ['Qashqai','X-Trail','Murano','Almera','Patrol','Juke','Note','Teana'],
+    'Mitsubishi': ['Outlander','Pajero','ASX','Lancer','Pajero Sport','Eclipse Cross'],
+    'Hyundai': ['Solaris','Creta','Tucson','Santa Fe','Elantra','i30','Sonata','Porter'],
+    'Kia': ['Rio','Ceed','Sportage','Sorento','Cerato','Carnival','Stinger','Bongo'],
+    'Chevrolet': ['Niva','Aveo','Cruze','Lacetti','Cobalt','Captiva','Trailblazer'],
+    'Ford': ['Focus','Mondeo','Explorer','Fiesta','Kuga','Transit','Ranger'],
+    'Opel': ['Astra','Mokka','Insignia','Zafira','Antara','Vectra'],
+    'Volkswagen': ['Polo','Passat','Touareg','Golf','Jetta','Tiguan','Caddy','Crafter'],
+    'Skoda': ['Octavia','Rapid','Kodiaq','Karoq','Superb','Yeti'],
+    'Renault': ['Logan','Duster','Sandero','Kaptur','Captur','Megane','Dokker'],
+    'Peugeot': ['308','408','3008','Partner','Boxer','508'],
+    'Citroen': ['C4','C5 Aircross','Berlingo','Jumper','C3'],
+    'Mazda': ['3','CX-5','CX-9','6','CX-30','MPV'],
+    'Honda': ['Accord','Civic','CR-V','Fit','Pilot'],
+    'Volvo': ['XC90','XC60','S60','S80','V40'],
+    'BMW': ['X5','X3','X1','3 серия','5 серия','7 серия'],
+    'Mercedes-Benz': ['C-Class','E-Class','S-Class','GLE','GLC','A-Class','Sprinter'],
+    'Audi': ['A4','A6','Q5','Q7','A3','80'],
+    'Subaru': ['Forester','Outback','Impreza','XV','Legacy'],
+    'Suzuki': ['Grand Vitara','SX4','Swift','Jimny','Vitara'],
+    'SsangYong': ['Actyon','Rexton','Korando','Tivoli'],
+    'Jeep': ['Grand Cherokee','Wrangler','Cherokee','Compass'],
+    'Land Rover': ['Defender','Discovery','Range Rover','Range Rover Sport','Evoque'],
+    'Porsche': ['Cayenne','Macan','911','Panamera'],
+    'Fiat': ['Ducato','Panda','Punto','500']
+  },
+  'Отечественные': {
+    'Lada': ['Granta','Vesta','Niva','Niva Legend','Niva Travel','Largus','Samara','Kalina','Priora','XRAY'],
+    'УАЗ': ['Patriot','Hunter','Bukhanka','Profi','Pickup']
+  },
+  'Китайские легковые': {
+    'Chery': ['Tiggo 4','Tiggo 7','Tiggo 8','Arrizo 8','QQ','Amulet'],
+    'Geely': ['Coolray','Atlas','Tugella','Emgrand','MK','Okavango'],
+    'Haval': ['Jolion','F7','F7x','Dargo','H9','H6','M6','H5'],
+    'Changan': ['CS35 Plus','CS55 Plus','CS75 Plus','Alsvin','UNI-K','UNI-T','Eado'],
+    'Exeed': ['TXL','LX','VX','RX'],
+    'Omoda': ['C5','S5','C9'],
+    'Jetour': ['Dashing','X70','X90','T2'],
+    'Great Wall': ['H5','H3','Wingle','Poer'],
+    'FAW': ['Bestune T77','Bestune T99','Junpai D60'],
+    'JAC': ['JS4','S4','J7','T9'],
+    'GAC': ['GS8','GN8','GS5','Empow'],
+    'Tank': ['300','500','400'],
+    'Zeekr': ['001','007','X'],
+    'Voyah': ['Free','Dream','Passion'],
+    'Lifan': ['Solano','X60','Myway'],
+    'BYD': ['Song Plus','Han','Seal','Qin Plus']
+  },
+  'Грузовые': {
+    'КАМАЗ': ['65115','6520','54901','43118','65117','53215'],
+    'ГАЗ': ['Gazelle Next','Valdai Next','Sadko Next','Gazon Next'],
+    'МАЗ': ['5440','6422','4371','5340'],
+    'Урал': ['4320','5557','63704','Next'],
+    'ЗИЛ': ['130','131','4331','Bychok'],
+    'ПАЗ': ['3204','3205','Vector Next','32053'],
+    'Sinotruk Howo': ['A7','T7H','TX','N7'],
+    'Shacman': ['X3000','X6000','H3000','F3000'],
+    'Foton Auman': ['EST','GTL','TX','H5'],
+    'Sitrak': ['C7H','G7H','C5H'],
+    'JAC Trucks': ['N75','N90','N120','HFC'],
+    'FAW Trucks': ['J6P','J5K','CA3250'],
+    'Isuzu': ['Elf','NQR','FVR','D-Max'],
+    'Hyundai Trucks': ['HD78','HD120','Porter II','HD65'],
+    'MAN': ['TGS','TGX','TGL','TGM'],
+    'Scania': ['R-series','G-series','P-series','S-series'],
+    'DAF': ['XF','CF','LF','XG'],
+    'Iveco': ['Stralis','Daily','Eurocargo','S-Way'],
+    'Volvo Trucks': ['FH','FM','FL','FE']
+  }
+};
+
+const PART_GROUPS_LIGHT = ['Двигатель','Тормозная система','Подвеска','Коробка передач','Электрика','Кузов и оптика','Фильтры','Масла и жидкости','Салон','Охлаждение','Ремни и ролики','Топливная система','Выхлопная система','Рулевое управление','Сцепление','Зажигание','Обогрев и кондиционер','Датчики','Аксессуары','Расходники'];
+const PART_GROUPS_TRUCK = ['Двигатель','Тормозная система','Подвеска','Рама и кузов','Электрика','Кабина','Топливная система','Гидравлика','Трансмиссия','Мосты','Сцепление','Охлаждение','Фильтры','Пневматика','Оптика','Аксессуары'];
+
+const BRAND_ALIAS = {
+  'toyota': 'Toyota', 'тойота': 'Toyota', 'lexus': 'Lexus', 'лексус': 'Lexus',
+  'nissan': 'Nissan', 'ниссан': 'Nissan', 'mitsubishi': 'Mitsubishi', 'митсубиси': 'Mitsubishi',
+  'hyundai': 'Hyundai', 'хендай': 'Hyundai', 'хендэ': 'Hyundai', 'хундай': 'Hyundai', 'хёндай': 'Hyundai',
+  'kia': 'Kia', 'киа': 'Kia', 'chevrolet': 'Chevrolet', 'шевроле': 'Chevrolet',
+  'ford': 'Ford', 'форд': 'Ford', 'opel': 'Opel', 'опель': 'Opel',
+  'volkswagen': 'Volkswagen', 'фольксваген': 'Volkswagen', 'skoda': 'Skoda', 'шкода': 'Skoda',
+  'renault': 'Renault', 'рено': 'Renault', 'peugeot': 'Peugeot', 'пежо': 'Peugeot',
+  'citroen': 'Citroen', 'ситроен': 'Citroen', 'mazda': 'Mazda', 'мазда': 'Mazda',
+  'honda': 'Honda', 'хонда': 'Honda', 'volvo': 'Volvo', 'вольво': 'Volvo',
+  'bmw': 'BMW', 'бмв': 'BMW', 'mercedes': 'Mercedes-Benz', 'мерседес': 'Mercedes-Benz',
+  'audi': 'Audi', 'ауди': 'Audi', 'subaru': 'Subaru', 'субару': 'Subaru',
+  'suzuki': 'Suzuki', 'сузуки': 'Suzuki', 'ssangyong': 'SsangYong', 'саньенг': 'SsangYong',
+  'jeep': 'Jeep', 'джип': 'Jeep', 'land rover': 'Land Rover', 'ленд ровер': 'Land Rover',
+  'porsche': 'Porsche', 'порше': 'Porsche', 'fiat': 'Fiat', 'фиат': 'Fiat',
+  'lada': 'Lada', 'лада': 'Lada', 'ваз': 'Lada',
+  'уаз': 'УАЗ', 'уазик': 'УАЗ',
+  'chery': 'Chery', 'чери': 'Chery', 'geely': 'Geely', 'джили': 'Geely',
+  'haval': 'Haval', 'хавал': 'Haval', 'changan': 'Changan', 'чанган': 'Changan',
+  'exeed': 'Exeed', 'ексид': 'Exeed', 'omoda': 'Omoda', 'омода': 'Omoda',
+  'jetour': 'Jetour', 'джетур': 'Jetour', 'tank': 'Tank', 'танк': 'Tank',
+  'zeekr': 'Zeekr', 'зикр': 'Zeekr', 'voyah': 'Voyah', 'воях': 'Voyah',
+  'byd': 'BYD', 'lifan': 'Lifan', 'лифан': 'Lifan', 'faw': 'FAW', 'gac': 'GAC', 'jac': 'JAC',
+  'great wall': 'Great Wall', 'грейт вол': 'Great Wall',
+  'камаз': 'КАМАЗ', 'kamaz': 'КАМАЗ', 'маз': 'МАЗ', 'maz': 'МАЗ',
+  'урал': 'Урал', 'зил': 'ЗИЛ', 'паз': 'ПАЗ', 'isuzu': 'Isuzu', 'исузу': 'Isuzu',
+  'howo': 'Sinotruk Howo', 'хово': 'Sinotruk Howo', 'синотрук': 'Sinotruk Howo',
+  'shacman': 'Shacman', 'шакман': 'Shacman', 'шacman': 'Shacman',
+  'foton': 'Foton Auman', 'фотон': 'Foton Auman', 'sitrak': 'Sitrak', 'ситрак': 'Sitrak',
+  'ман': 'MAN', 'man': 'MAN', 'scania': 'Scania', 'скания': 'Scania',
+  'daf': 'DAF', 'даф': 'DAF', 'iveco': 'Iveco', 'ивеко': 'Iveco'
+};
+
+const MODEL_ALIAS = {
+  'джолион': ['Haval', 'Jolion'], 'джулион': ['Haval', 'Jolion'],
+  'рио': ['Kia', 'Rio'], 'солярис': ['Hyundai', 'Solaris'], 'крета': ['Hyundai', 'Creta'],
+  'камри': ['Toyota', 'Camry'], 'королла': ['Toyota', 'Corolla'],
+  'рав4': ['Toyota', 'RAV4'], 'рав 4': ['Toyota', 'RAV4'],
+  'прадо': ['Toyota', 'Land Cruiser Prado'], 'ланд крузер': ['Toyota', 'Land Cruiser'],
+  'альмера': ['Nissan', 'Almera'], 'икс трейл': ['Nissan', 'X-Trail'], 'х трейл': ['Nissan', 'X-Trail'],
+  'мурано': ['Nissan', 'Murano'], 'патруль': ['Nissan', 'Patrol'],
+  'логан': ['Renault', 'Logan'], 'дастер': ['Renault', 'Duster'], 'сандеро': ['Renault', 'Sandero'],
+  'астер': ['Opel', 'Astra'], 'мокка': ['Opel', 'Mokka'],
+  'поло': ['Volkswagen', 'Polo'], 'пасат': ['Volkswagen', 'Passat'], 'пассат': ['Volkswagen', 'Passat'],
+  'туарег': ['Volkswagen', 'Touareg'], 'гольф': ['Volkswagen', 'Golf'], 'джетта': ['Volkswagen', 'Jetta'],
+  'октавиа': ['Skoda', 'Octavia'], 'октавия': ['Skoda', 'Octavia'], 'рапид': ['Skoda', 'Rapid'],
+  'кодиак': ['Skoda', 'Kodiak'], 'карок': ['Skoda', 'Karoq'],
+  'фокус': ['Ford', 'Focus'], 'мондео': ['Ford', 'Mondeo'], 'эксплорер': ['Ford', 'Explorer'],
+  'соренто': ['Kia', 'Sorento'], 'спортейдж': ['Kia', 'Sportage'], 'церато': ['Kia', 'Cerato'],
+  'аккорд': ['Honda', 'Accord'], 'црв': ['Honda', 'CR-V'], 'срв': ['Honda', 'CR-V'], 'сивик': ['Honda', 'Civic'],
+  'хс90': ['Volvo', 'XC90'], 'хс60': ['Volvo', 'XC60'], 'х5': ['BMW', 'X5'], 'х3': ['BMW', 'X3'],
+  'гранта': ['Lada', 'Granta'], 'веста': ['Lada', 'Vesta'], 'нива': ['Lada', 'Niva'],
+  'ларгус': ['Lada', 'Largus'], 'калина': ['Lada', 'Kalina'],
+  'патриот': ['УАЗ', 'Patriot'], 'хантер': ['УАЗ', 'Hunter'], 'буханка': ['УАЗ', 'Bukhanka'],
+  'газель': ['ГАЗ', 'Gazelle Next'], 'газель некст': ['ГАЗ', 'Gazelle Next'],
+  'соболь': ['ГАЗ', 'Gazon Next'], 'валдай': ['ГАЗ', 'Valdai Next'],
+  'актрос': ['Mercedes-Benz', 'Sprinter'],
+  'джили': null
+};
+delete MODEL_ALIAS['джили'];
+
+function aliasHit(key, norm, tokens) {
+  if (key.indexOf(' ') >= 0) return (' ' + norm + ' ').indexOf(' ' + key + ' ') >= 0;
+  for (let t = 0; t < tokens.length; t++) {
+    if (tokens[t] === key) return true;
+    if (key.length >= 4 && tokens[t].length <= key.length + 2 && tokens[t].slice(0, key.length - 1) === key.slice(0, -1)) return true;
+  }
+  return false;
 }
 
-// --- Настройка QR ---
-async function renderQrSettings(){
-  var el = document.getElementById('admin-tab-qr');
-  var s = await loadSetting('qr') || {link:'', text:''};
-  el.innerHTML = '<h2>Оплата по QR</h2>' +
-    '<label>Ссылка СБП / QR (https://…)</label><input id="inp-sbp-link" value="' + esc(s.link) + '">' +
-    '<label>Текст реквизитов (показывается под QR)</label><textarea id="inp-qr-text" rows="3">' + esc(s.text) + '</textarea>' +
-    '<button class="btn" id="btn-qr-save">Сохранить</button><div class="msg" id="qrset-msg"></div>';
+function parseAI(raw) {
+  const norm = raw.toLowerCase().replace(/[^a-zа-яё0-9]+/gi, ' ').replace(/\s+/g, ' ').trim();
+  if (!norm) return null;
+  const tokens = norm.split(' ');
+  let brand = null, model = null, group = null, year = null;
+  const mKeys = Object.keys(MODEL_ALIAS);
+  for (let i = 0; i < mKeys.length; i++) {
+    if (aliasHit(mKeys[i], norm, tokens)) { brand = MODEL_ALIAS[mKeys[i]][0]; model = MODEL_ALIAS[mKeys[i]][1]; break; }
+  }
+  if (!brand) {
+    const bKeys = Object.keys(BRAND_ALIAS);
+    for (let i = 0; i < bKeys.length; i++) {
+      if (aliasHit(bKeys[i], norm, tokens)) { brand = BRAND_ALIAS[bKeys[i]]; break; }
+    }
+  }
+  if (brand && !model) {
+    const groups = Object.keys(CATALOG);
+    for (let g = 0; g < groups.length; g++) {
+      const models = CATALOG[groups[g]][brand];
+      if (!models) continue;
+      for (let j = 0; j < models.length; j++) {
+        const m = models[j].toLowerCase();
+        if (m.length >= 2 && norm.indexOf(m) >= 0) { model = models[j]; break; }
+      }
+      if (model) break;
+    }
+  }
+  const ym = raw.match(/\b(19[89]\d|20[0-2]\d)\b/);
+  if (ym) year = ym[1];
+  const PG = [
+    ['колод', 'Тормозная система'], ['тормоз', 'Тормозная система'], ['ступиц', 'Тормозная система'],
+    ['фильтр', 'Фильтры'], ['амортиз', 'Подвеска'], ['рычаг', 'Подвеска'], ['шаров', 'Подвеска'],
+    ['стойк', 'Подвеска'], ['сайлентблок', 'Подвеска'], ['подшипник', 'Подвеска'],
+    ['свеч', 'Зажигание'], ['катушк', 'Зажигание'],
+    ['гильз', 'Двигатель'], ['поршн', 'Двигатель'], ['прокладк', 'Двигатель'], ['сальник', 'Двигатель'], ['клапан', 'Двигатель'], ['вкладыш', 'Двигатель'],
+    ['форсунк', 'Топливная система'], ['насос', 'Топливная система'], ['инжектор', 'Топливная система'],
+    ['аккумулятор', 'Электрика'], ['генератор', 'Электрика'], ['стартер', 'Электрика'], ['датчик', 'Электрика'],
+    ['фар', 'Кузов и оптика'], ['бампер', 'Кузов и оптика'], ['крыл', 'Кузов и оптика'],
+    ['масл', 'Масла и жидкости'], ['антифриз', 'Охлаждение'], ['радиатор', 'Охлаждение'],
+    ['сцеплен', 'Сцепление'], ['сцепл', 'Сцепление'],
+    ['крестовин', 'Трансмиссия'], ['кардан', 'Трансмиссия'],
+    ['ремень', 'Ремни и ролики'], ['ролик', 'Ремни и ролики'], ['грм', 'Ремни и ролики'],
+    ['кондиционер', 'Обогрев и кондиционер'], ['печк', 'Обогрев и кондиционер']
+  ];
+  for (let i = 0; i < PG.length; i++) { if (norm.indexOf(PG[i][0]) >= 0) { group = PG[i][1]; break; } }
+  if (!brand && !model && !group) return null;
+  return { brand: brand, model: model, group: group, year: year };
 }
 
-async function saveQrSettings(){
-  var r = await saveSetting('qr', {
-    link: document.getElementById('inp-sbp-link').value.trim(),
-    text: document.getElementById('inp-qr-text').value
-  });
-  showMsg('qrset-msg', r.error ? 'Ошибка: ' + r.error.message : 'Сохранено', !r.error);
+function appendChat(role, text) {
+  const log = $('ai-log');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.textContent = text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
 }
-
-// ==== ДЕЛЕГИРОВАНИЕ КЛИКОВ ====
-document.addEventListener('click', function(e){
-  var el;
-  if((el = e.target.closest('button[data-idx]'))){
-    var src = document.getElementById(el.getAttribute('data-src'));
-    var items = src && src._items ? src._items : [];
-    var it = items[Number(el.getAttribute('data-idx'))];
-    if(it) addToCart(it);
+function sendAI() {
+  const text = $('ai-input').value.trim();
+  if (!text) return;
+  appendChat('user', text);
+  $('ai-input').value = '';
+  const p = parseAI(text);
+  if (!p) {
+    appendChat('bot', 'Не удалось распознать. Уточните марку и модель (например: «передние колодки на хавал джолион 2022») или воспользуйтесь ручным подбором.');
     return;
   }
-  if((el = e.target.closest('button[data-del]'))){ cart.splice(Number(el.getAttribute('data-del')), 1); saveCart(); renderCart(); return; }
-  if((el = e.target.closest('button[data-payqr]'))){ openQrModal('Оплата заказа', Number(el.getAttribute('data-total') || 0), el.getAttribute('data-payqr')); return; }
-  if((el = e.target.closest('button[data-paybal]'))){ payFromBalance(el.getAttribute('data-paybal')); return; }
-  if((el = e.target.closest('button[data-catgroup]'))){ setCatGroup(el.getAttribute('data-catgroup')); return; }
-  if((el = e.target.closest('button[data-catbrand]'))){ setCatBrand(el.getAttribute('data-catbrand')); return; }
-  if((el = e.target.closest('button[data-catmodel]'))){ setCatModel(el.getAttribute('data-catmodel')); return; }
-  if((el = e.target.closest('button[data-catyear]'))){ setCatYear(el.getAttribute('data-catyear')); return; }
-  if((el = e.target.closest('button[data-catpg]'))){ setCatPg(el.getAttribute('data-catpg')); return; }
-  if((el = e.target.closest('button[data-ai-part]'))){ aiReply('Мне нужна группа: ' + el.getAttribute('data-ai-part')); return; }
-  if((el = e.target.closest('button[data-ai-brand]'))){ aiReply('Автомобиль: ' + el.getAttribute('data-ai-brand') + (window._aiCtx && window._aiCtx.group ? ', нужна группа: ' + window._aiCtx.group : '')); return; }
-  if((el = e.target.closest('button[data-ai-go]'))){ aiGoSearch(); return; }
-  if((el = e.target.closest('.pill[data-page]'))){ showPage(el.getAttribute('data-page')); return; }
-  if((el = e.target.closest('button[data-page]'))){ showPage(el.getAttribute('data-page')); return; }
-  if((el = e.target.closest('button[data-admtab]'))){ showAdminTab(el.getAttribute('data-admtab')); return; }
-  if(e.target.id === 'btn-sup-add'){ addSupplier(); return; }
-  if((el = e.target.closest('button[data-ssave]'))){ saveSupplier(el.getAttribute('data-ssave')); return; }
-  if((el = e.target.closest('button[data-scheck]'))){ checkSupplierKey(el.getAttribute('data-scheck')); return; }
-  if((el = e.target.closest('button[data-sdel]'))){ delSupplier(el.getAttribute('data-sdel')); return; }
-  if(e.target.id === 'btn-adm-save-orders'){ saveAdminOrders(); return; }
-  if(e.target.id === 'btn-markup-add'){
-    var wrap = document.getElementById('markup-rows');
-    var cur = [];
-    var mn = wrap.querySelectorAll('.mk-min');
-    var mx = wrap.querySelectorAll('.mk-max');
-    var pc = wrap.querySelectorAll('.mk-pct');
-    for(var i = 0; i < mn.length; i++){ cur.push({min: mn[i].value, max: mx[i].value, pct: pc[i].value}); }
-    cur.push({min: 0, max: 0, pct: 0});
-    drawMarkupRows(cur);
-    return;
-  }
-  if(e.target.id === 'btn-markup-save'){ saveMarkups(); return; }
-  if((el = e.target.closest('button[data-tok]'))){ confirmTx(el.getAttribute('data-tok'), true); return; }
-  if((el = e.target.closest('button[data-trej]'))){ confirmTx(el.getAttribute('data-trej'), false); return; }
-  if(e.target.id === 'btn-balance-add'){ addBalanceManual(); return; }
-  if(e.target.id === 'btn-qr-save'){ saveQrSettings(); return; }
-});
-
-// ==== ИНИЦИАЛИЗАЦИЯ ====
-function bindEvents(){
-  document.getElementById('btn-login').onclick = doLogin;
-  document.getElementById('btn-signup').onclick = doSignup;
-  document.getElementById('btn-search').onclick = runSearch;
-  document.getElementById('btn-cat-search').onclick = runCatalogSearch;
-  document.getElementById('btn-ai-send').onclick = function(){
-    var v = document.getElementById('ai-input').value.trim();
-    if(v){ aiReply(v); document.getElementById('ai-input').value = ''; }
-  };
-  document.getElementById('btn-vin-send').onclick = submitVinOrder;
-  document.getElementById('btn-checkout').onclick = checkout;
-  document.getElementById('btn-copy-id').onclick = function(){
-    if(profile && navigator.clipboard) navigator.clipboard.writeText(profile.id);
-  };
-  document.getElementById('btn-topup').onclick = doTopup;
-  document.getElementById('btn-logout').onclick = doLogout;
-  document.getElementById('btn-qr-paid').onclick = qrPaid;
-  document.getElementById('btn-qr-close').onclick = function(){
-    document.getElementById('modal-qr').classList.remove('show');
-  };
-  document.getElementById('ai-input').addEventListener('keydown', function(e){
-    if(e.key === 'Enter') document.getElementById('btn-ai-send').click();
-  });
-  document.getElementById('inp-search').addEventListener('keydown', function(e){
-    if(e.key === 'Enter') runSearch();
-  });
+  const q = (p.brand || p.model) ? [p.group, p.brand, p.model, p.year].filter(Boolean).join(' ') : text;
+  appendChat('bot', 'Ищу: ' + q);
+  doSearch(q);
 }
 
-async function initSession(){
-  try{
-    var r = await sb.auth.getSession();
-    if(r.data && r.data.session){
-      currentUser = r.data.session.user;
-      try { await loadProfile(); } catch(e){ profile = {id: currentUser.id, email: currentUser.email, role: 'client', balance: 0}; }
-      renderNav();
-      showPage('search');
-      processAutoPay();
-    } else {
-      renderNav();
-      showPage('home');
+function buildCatalogUI() {
+  const selB = $('sel-brand');
+  if (selB.options.length > 1) return;
+  selB.innerHTML = '<option value="">— выберите марку —</option>';
+  const groups = Object.keys(CATALOG);
+  for (let g = 0; g < groups.length; g++) {
+    const og = document.createElement('optgroup');
+    og.label = groups[g];
+    Object.keys(CATALOG[groups[g]]).forEach(function (b) { og.appendChild(new Option(b, b)); });
+    selB.appendChild(og);
+  }
+  fillYears();
+  renderChips();
+}
+function fillYears() {
+  const sel = $('sel-year');
+  sel.innerHTML = '<option value="">— любой —</option>';
+  for (let y = YEAR_TO; y >= YEAR_FROM; y--) sel.appendChild(new Option(y, y));
+}
+function findModels(brand) {
+  const groups = Object.keys(CATALOG);
+  for (let i = 0; i < groups.length; i++) { if (CATALOG[groups[i]][brand]) return CATALOG[groups[i]][brand]; }
+  return [];
+}
+function isTruck(brand) { return Object.keys(CATALOG['Грузовые']).indexOf(brand) >= 0; }
+function onBrandChange() {
+  const b = $('sel-brand').value;
+  const selM = $('sel-model');
+  selM.innerHTML = '<option value="">— выберите модель —</option>';
+  if (b) findModels(b).forEach(function (m) { selM.appendChild(new Option(m, m)); });
+  renderChips();
+}
+function renderChips() {
+  const b = $('sel-brand').value;
+  currentChips = (b && isTruck(b)) ? PART_GROUPS_TRUCK.slice() : PART_GROUPS_LIGHT.slice();
+  selectedGroups = [];
+  $('part-chips').innerHTML = currentChips.map(function (g, i) {
+    return '<button class="chip" onclick="toggleChip(' + i + ', this)">' + esc(g) + '</button>';
+  }).join('');
+}
+function toggleChip(i, el) {
+  const g = currentChips[i];
+  const pos = selectedGroups.indexOf(g);
+  if (pos >= 0) { selectedGroups.splice(pos, 1); el.classList.remove('active'); }
+  else { selectedGroups.push(g); el.classList.add('active'); }
+}
+function applyManualSelect() {
+  const b = $('sel-brand').value;
+  if (!b) { toast('Выберите марку'); return; }
+  const m = $('sel-model').value;
+  const y = $('sel-year').value;
+  const group = selectedGroups.length ? selectedGroups.join(' ') : '';
+  doSearch([group, b, m, y].filter(Boolean).join(' '));
+}
+
+function adminTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-tab') === name); });
+  ['orders', 'suppliers', 'markups'].forEach(function (t) { $('tab-' + t).classList.toggle('hidden', t !== name); });
+  if (name === 'orders') loadAdminOrders();
+  if (name === 'suppliers') loadSuppliers();
+  if (name === 'markups') loadMarkups();
+}
+async function loadAdminOrders() {
+  const box = $('admin-orders');
+  box.innerHTML = '<div class="muted">Загрузка...</div>';
+  const res = await sb.from('orders').select('*, profiles(name)').order('created_at', { ascending: false }).limit(100);
+  let html = '<h3>Пополнения баланса (ожидают подтверждения)</h3>';
+  const tx = await sb.from('transactions').select('*, profiles(name)').eq('status', 'pending').order('created_at', { ascending: false });
+  if (tx.error) html += '<div class="muted">Не удалось загрузить пополнения: ' + esc(tx.error.message) + '</div>';
+  else if (!(tx.data || []).length) html += '<div class="muted">Нет заявок на пополнение.</div>';
+  else html += tx.data.map(function (t) {
+    return '<div class="card row">Заявка ' + esc((t.profiles && t.profiles.name) || t.user_id) + ' на ' + money(t.amount) +
+      ' <button class="btn btn-primary" onclick="confirmTopup(\'' + t.id + '\',\'' + t.user_id + '\',' + Number(t.amount) + ')">Подтвердить</button>' +
+      ' <button class="btn btn-ghost" onclick="rejectTopup(\'' + t.id + '\')">Отклонить</button></div>';
+  }).join('');
+  html += '<h3>Заказы</h3>';
+  if (res.error) { html += '<div class="muted">Ошибка: ' + esc(res.error.message) + '</div>'; box.innerHTML = html; return; }
+  const orders = res.data || [];
+  if (!orders.length) html += '<div class="muted">Заказов пока нет.</div>';
+  else html += orders.map(function (o) {
+    let buy = 0, sell = 0;
+    (o.items || []).forEach(function (it) { sell += Number(it.price || 0); buy += Number(it.buy == null ? it.price : it.buy); });
+    const profit = sell - buy;
+    return '<div class="card order-card">' +
+      '<div><b>Заказ №' + esc((o.id || '').slice(0, 8)) + '</b> • ' + esc((o.profiles && o.profiles.name) || o.user_id) + '</div>' +
+      '<div class="muted">' + esc(new Date(o.created_at).toLocaleString('ru-RU')) + '</div>' +
+      '<div>Сумма: ' + money(o.total) + ' • Закупка: ' + money(buy) + ' • Прибыль: ' + money(profit) + '</div>' +
+      '<div class="muted">Статус: ' + esc(o.status) + '</div></div>';
+  }).join('');
+  box.innerHTML = html;
+}
+async function confirmTopup(txId, userId, amount) {
+  const up = await sb.from('transactions').update({ status: 'confirmed' }).eq('id', txId);
+  if (up.error) { toast('Ошибка: ' + up.error.message); return; }
+  const pr = await sb.from('profiles').select('balance').eq('id', userId).maybeSingle();
+  if (pr.data) {
+    const upd = await sb.from('profiles').update({ balance: Number(pr.data.balance || 0) + amount }).eq('id', userId);
+    if (upd.error) { toast('Не удалось зачислить баланс: ' + upd.error.message); return; }
+  }
+  toast('Пополнение подтверждено');
+  loadAdminOrders();
+}
+async function rejectTopup(txId) {
+  await sb.from('transactions').update({ status: 'rejected' }).eq('id', txId);
+  loadAdminOrders();
+}
+async function loadSuppliers() {
+  const box = $('suppliers-list');
+  box.innerHTML = '<div class="muted">Загрузка...</div>';
+  const res = await sb.from('suppliers').select('*').order('created_at', { ascending: true });
+  if (res.error) { box.innerHTML = '<div class="muted">Ошибка: ' + esc(res.error.message) + '</div>'; return; }
+  supList = res.data || [];
+  if (!supList.length) { box.innerHTML = '<div class="muted">Поставщиков пока нет. Добавьте первого — например, Росско.</div>'; return; }
+  box.innerHTML = supList.map(function (s, i) { return supplierCard(s, i); }).join('');
+}
+function supplierCard(s, i) {
+  const active = s.is_active ? ' checked' : '';
+  return '<div class="card sup-card">' +
+    '<div class="sup-row"><label>Название</label><input id="sup-name-' + i + '" value="' + esc(s.name) + '"></div>' +
+    '<div class="sup-row"><label>KEY1</label><input id="sup-key1-' + i + '" value="' + esc(s.key1 || '') + '"></div>' +
+    '<div class="sup-row"><label>KEY2</label><input id="sup-key2-' + i + '" value="' + esc(s.key2 || '') + '"></div>' +
+    '<div class="sup-row"><label>Доп. дней к сроку</label><input id="sup-days-' + i + '" type="number" min="0" value="' + Number(s.extra_days || 0) + '"></div>' +
+    '<div class="sup-row"><label><input type="checkbox" id="sup-active-' + i + '"' + active + '> Активен</label></div>' +
+    '<div class="sup-actions">' +
+    '<button class="btn btn-primary" onclick="saveSupplier(' + i + ')">Сохранить</button>' +
+    '<button class="btn btn-ghost" onclick="testSupplier(' + i + ')">🔎 Проверить ключ</button>' +
+    '<button class="btn btn-danger" onclick="delSupplier(' + i + ')">Удалить</button>' +
+    '</div>' +
+    '<div id="sup-test-' + i + '" class="muted"></div>' +
+    '</div>';
+}
+async function addSupplier() {
+  const name = $('sup-new-name').value.trim();
+  const k1 = $('sup-new-key1').value.trim();
+  const k2 = $('sup-new-key2').value.trim();
+  const days = parseInt($('sup-new-days').value, 10) || 0;
+  if (!name || !k1 || !k2) { toast('Заполните название и оба ключа'); return; }
+  const ins = await sb.from('suppliers').insert({ name: name, key1: k1, key2: k2, extra_days: days, is_active: true });
+  if (ins.error) { toast('Ошибка добавления: ' + ins.error.message); return; }
+  $('sup-new-name').value = ''; $('sup-new-key1').value = ''; $('sup-new-key2').value = ''; $('sup-new-days').value = '';
+  toast('Поставщик добавлен');
+  loadSuppliers();
+}
+async function saveSupplier(i) {
+  const s = supList[i];
+  if (!s) return;
+  const upd = await sb.from('suppliers').update({
+    name: $('sup-name-' + i).value.trim(),
+    key1: $('sup-key1-' + i).value.trim(),
+    key2: $('sup-key2-' + i).value.trim(),
+    extra_days: parseInt($('sup-days-' + i).value, 10) || 0,
+    is_active: $('sup-active-' + i).checked
+  }).eq('id', s.id);
+  if (upd.error) { toast('Ошибка сохранения: ' + upd.error.message); return; }
+  toast('Сохранено');
+  loadSuppliers();
+}
+async function delSupplier(i) {
+  const s = supList[i];
+  if (!s) return;
+  if (!confirm('Удалить поставщика «' + s.name + '»?')) return;
+  const del = await sb.from('suppliers').delete().eq('id', s.id);
+  if (del.error) { toast('Ошибка удаления: ' + del.error.message); return; }
+  toast('Удалено');
+  loadSuppliers();
+}
+async function testSupplier(i) {
+  const s = supList[i];
+  if (!s) return;
+  const span = $('sup-test-' + i);
+  span.textContent = 'Проверяю...';
+  let token = '';
+  try { const sess = await sb.auth.getSession(); if (sess.data && sess.data.session) token = sess.data.session.access_token; } catch (e) {}
+  try {
+    const res = await fetch(API_SEARCH + '?q=' + encodeURIComponent('масляный фильтр') + '&supplier=' + encodeURIComponent(s.id), { headers: { 'Authorization': 'Bearer ' + token } });
+    const data = await res.json();
+    if (!data.ok) { span.textContent = '✗ ' + (data.error || 'Ошибка'); return; }
+    if (data.found > 0) span.textContent = '✓ Работает: найдено предложений: ' + data.found;
+    else span.textContent = 'Ключ принят, но предложений не найдено';
+  } catch (e) { span.textContent = 'Ошибка соединения: ' + e.message; }
+}
+async function loadMarkups() {
+  const res = await sb.from('markups').select('*').order('price_from', { ascending: true });
+  if (res.error) { $('markups-list').innerHTML = '<div class="muted">Ошибка: ' + esc(res.error.message) + '</div>'; return; }
+  mkList = res.data || [];
+  renderMarkups();
+}
+function renderMarkups() {
+  $('markups-list').innerHTML = mkList.map(function (r, i) {
+    return '<div class="card row markup-row" style="margin-bottom:8px">' +
+      '<input type="number" id="mk-from-' + i + '" value="' + Number(r.price_from) + '" placeholder="от">' +
+      '<input type="number" id="mk-to-' + i + '" value="' + Number(r.price_to) + '" placeholder="до">' +
+      '<input type="number" id="mk-pct-' + i + '" value="' + Number(r.percent) + '" placeholder="%">' +
+      '<button class="btn btn-danger" onclick="delMarkup(' + i + ')">✕</button></div>';
+  }).join('') +
+  '<div class="row"><button class="btn btn-ghost" onclick="addMarkup()">+ Добавить диапазон</button>' +
+  '<button class="btn btn-primary" onclick="saveMarkups()">Сохранить наценки</button></div>';
+}
+function addMarkup() { mkList.push({ price_from: 0, price_to: 0, percent: 15 }); renderMarkups(); }
+function delMarkup(i) { mkList.splice(i, 1); renderMarkups(); }
+async function saveMarkups() {
+  const rows = [];
+  for (let i = 0; i < mkList.length; i++) {
+    const f = parseFloat($('mk-from-' + i).value);
+    const t = parseFloat($('mk-to-' + i).value);
+    const p = parseFloat($('mk-pct-' + i).value);
+    if (!(f >= 0) || !(t >= f) || !(p >= 0)) { toast('Проверьте диапазон №' + (i + 1)); return; }
+    rows.push({ price_from: f, price_to: t, percent: p });
+  }
+  const del = await sb.from('markups').delete().not('id', 'is', null);
+  if (del.error) { toast('Ошибка сохранения: ' + del.error.message); return; }
+  if (rows.length) {
+    const ins = await sb.from('markups').insert(rows);
+    if (ins.error) { toast('Ошибка сохранения: ' + ins.error.message); return; }
+  }
+  toast('Наценки сохранены');
+  loadMarkups();
+}
+
+async function init() {
+  updateCartBtn();
+  applyAuthUI();
+  const r = await sb.auth.getUser();
+  currentUser = (r.data && r.data.user) || null;
+  await refreshProfile();
+  applyAuthUI();
+  showPage('home');
+  sb.auth.onAuthStateChange(function (ev, session) {
+    const next = (session && session.user) || null;
+    if (next !== currentUser) {
+      currentUser = next;
+      refreshProfile().then(applyAuthUI);
+      if (!next) showPage('home');
     }
-  }catch(e){
-    renderNav();
-    showPage('home');
-  }
+  });
 }
+init();
 
-bindEvents();
-initSession();
 </script>
 </body>
 </html>
